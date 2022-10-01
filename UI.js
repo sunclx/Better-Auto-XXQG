@@ -14,8 +14,8 @@ ui.layout(
     <drawer id="drawer">
         <vertical>
             <appbar>
-                <toolbar id="toolbar" bg="#ff4fb3ff" title="强国助手"/>
-                <tabs id="tabs" bg="#ff4fb3ff"/>
+                <toolbar id="toolbar" bg="#ff4fb3ff" title="强国助手" />
+                <tabs id="tabs" bg="#ff4fb3ff" />
             </appbar>
             <viewpager id="viewpager">
                 <frame>
@@ -58,31 +58,31 @@ ui.layout(
                         </vertical>
                         <button h="60" layout_gravity="center" id="log" textSize="18sp" text="查看日志" />
                         <button h="60" layout_gravity="center" id="update" textSize="18sp" />
-                        <button id="start" text="开 始 学 习" textSize="25sp" color="#ffffff" bg="#FF4FB3FF" foreground="?selectableItemBackground"/>
+                        <button id="start" text="开 始 学 习" textSize="25sp" color="#ffffff" bg="#FF4FB3FF" foreground="?selectableItemBackground" />
                     </vertical>
                 </frame>
                 <ScrollView>
                     <frame>
                         <vertical id="ttxs_pro" gravity="center">
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="看门狗(秒)" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="填1800就是超过30分钟重试" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="空着或0默认5400秒，超过即重新执行" />
-                                </vertical> 
-                                <input id="ttxs_pro_watchdog" marginLeft="4" marginRight="6" text="1800"  hint="秒"  textSize="13sp"  inputType="number" />
+                                </vertical>
+                                <input id="ttxs_pro_watchdog" marginLeft="4" marginRight="6" text="1800" hint="秒" textSize="13sp" inputType="number" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="滑动验证的滑动时间(ms)" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="空着或0不开启自动滑动验证，滑动分3段" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="中间会折返一下，总时间是填的数值*3" />
-                                </vertical> 
-                                <input id="ttxs_pro_slide_verify" marginLeft="4" marginRight="6" text="300" textSize="13sp"  inputType="number" />
+                                </vertical>
+                                <input id="ttxs_pro_slide_verify" marginLeft="4" marginRight="6" text="300" textSize="13sp" inputType="number" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="无障碍模式2" />
@@ -90,14 +90,14 @@ ui.layout(
                                 </vertical>
                                 <checkbox id="ttxs_pro_fast_mode" marginLeft="4" marginRight="6" checked="false" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="点点通功能" />
                                 </vertical>
                                 <checkbox id="ttxs_pro_ddtong" marginLeft="4" marginRight="6" checked="false" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="开始前强制结束强国" />
@@ -105,87 +105,87 @@ ui.layout(
                                 </vertical>
                                 <checkbox id="ttxs_pro_is_exit" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="评论" />
                                 </vertical>
                                 <checkbox id="ttxs_pro_pinglun" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="视听学习次数" />
                                 </vertical>
                                 <checkbox id="ttxs_pro_shipin" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="文章次数与时长" />
                                 </vertical>
                                 <checkbox id="ttxs_pro_wenzhang" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="每日答题" />
                                 </vertical>
                                 <checkbox id="ttxs_pro_meiri" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="每周答题" />
                                     <spinner id="ttxs_pro_meizhou" marginLeft="4" marginRight="6" entries="最近一次已作答开始倒序|正序答题|不做" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="专项答题" />
                                     <spinner id="ttxs_pro_zhuanxiang" marginLeft="4" marginRight="6" entries="最近一次已作答开始倒序|正序答题|不做" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="挑战答题" />
                                 </vertical>
                                 <checkbox id="ttxs_pro_tiaozhan" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="OCR选择" />
                                     <spinner id="ttxs_pro_ocr_choice" marginLeft="4" marginRight="6" entries="GoogleMLKit|PaddleOCR|第三方插件" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="ocr识别跳过阈值(ms)" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="空着或0默认5000，超过此时间会跳过多人对战" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="建议按照平时正常的ocr识别时间设置" />
-                                </vertical> 
-                                <input id="ttxs_pro_ocr_maxtime" marginLeft="4" marginRight="6" text="5000" textSize="13sp"  inputType="number" />
+                                </vertical>
+                                <input id="ttxs_pro_ocr_maxtime" marginLeft="4" marginRight="6" text="5000" textSize="13sp" inputType="number" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="对战选项模式" />
                                     <spinner id="ttxs_pro_duizhan_mode" marginLeft="4" marginRight="6" entries="随机顺序(等选项显示后识别答案)|固定顺序(历史遗留选项)|手动答题(识别答案后等待用户手动点击)" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="对战极速模式延迟(历史遗留选项)" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="只在选项固定顺序时生效" />
-                                </vertical> 
-                                <input id="ttxs_pro_jisu" marginLeft="4" marginRight="6" text="0" textSize="13sp"  inputType="number" />
+                                </vertical>
+                                <input id="ttxs_pro_jisu" marginLeft="4" marginRight="6" text="0" textSize="13sp" inputType="number" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="是否挂机跳过四人赛首局" />
@@ -193,51 +193,51 @@ ui.layout(
                                 </vertical>
                                 <checkbox id="ttxs_pro_guaji" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="四人赛" />
                                 </vertical>
                                 <checkbox id="ttxs_pro_siren" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="平衡胜率(答错)次数" />
-                                </vertical> 
-                                <input id="ttxs_pro_dacuo_num" marginLeft="4" marginRight="6" text="2" textSize="13sp"  inputType="number" />
+                                </vertical>
+                                <input id="ttxs_pro_dacuo_num" marginLeft="4" marginRight="6" text="2" textSize="13sp" inputType="number" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="双人对战" />
                                 </vertical>
                                 <checkbox id="ttxs_pro_shuangren" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="本地" />
                                 </vertical>
                                 <checkbox id="ttxs_pro_bendi" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="订阅" />
                                     <spinner id="ttxs_pro_dingyue" marginLeft="4" marginRight="6" entries="不做|正序订阅|只订阅年度上新" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="pushplus_token(微信推送)" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="微信关注pushplus推送加，复制token填入" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="注意！搜索结果有两个，一定要关注正确" />
                                     <input id="ttxs_pro_pushplus" text="" textSize="13sp" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="是否启用音量调节" />
@@ -245,15 +245,15 @@ ui.layout(
                                 </vertical>
                                 <checkbox id="ttxs_pro_yl_on" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="音量" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="调节音量百分比(只填数字)" />
-                                </vertical> 
-                                <input id="ttxs_pro_yinliang" marginLeft="4" marginRight="6" text="0" textSize="13sp"  inputType="number" />
+                                </vertical>
+                                <input id="ttxs_pro_yinliang" marginLeft="4" marginRight="6" text="0" textSize="13sp" inputType="number" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="多账号(选填，不限个数)" />
@@ -263,7 +263,7 @@ ui.layout(
                                     <text w="auto" textColor="#999999" textSize="12sp" text="新增多账号1对1微信推送，按格式配置即可" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="没有则根据上面配置的pushplus_token为主" />
                                     <input id="ttxs_pro_zhanghao" text="" textSize="13sp" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
                             <horizontal>
                                 <button style="Widget.AppCompat.Button.Colored" id="ttxs_pro_save" text="保存配置" padding="12dp" w="*" />
@@ -273,7 +273,7 @@ ui.layout(
                             </horizontal>
                         </vertical>
                         <vertical id="ttxs" gravity="center">
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="测试" />
@@ -282,130 +282,130 @@ ui.layout(
                             </horizontal>
                         </vertical>
                         <vertical id="study" gravity="center">
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="文章学习和广播收听" />
                                 </vertical>
                                 <checkbox id="study_article" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="视频学习" />
                                     <spinner id="study_video" marginLeft="4" marginRight="6" entries="新百灵视频学习|看电视视频学习|百灵视频学习|不进行学习" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="每日答题" />
-                                </vertical> 
+                                </vertical>
                                 <checkbox id="study_meiri" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="挑战答题" />
-                                </vertical> 
+                                </vertical>
                                 <checkbox id="study_tiaozhan" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="专项答题" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="建议手动答题，否则不保证全对" />
-                                </vertical> 
+                                </vertical>
                                 <checkbox id="study_checkbox_01" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="每周答题" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="建议手动答题，否则不保证全对" />
-                                </vertical> 
+                                </vertical>
                                 <checkbox id="study_checkbox_02" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="滑块验证延迟" />
-                                </vertical> 
-                                <input id="study_huakuaidelay" marginLeft="4" marginRight="6" text="300" textSize="13sp"  inputType="number" />
+                                </vertical>
+                                <input id="study_huakuaidelay" marginLeft="4" marginRight="6" text="300" textSize="13sp" inputType="number" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="四人赛" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="可在答题页选择OCR配置，默认本地OCR" />
-                                </vertical> 
+                                </vertical>
                                 <checkbox id="study_checkbox_03" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="双人对抗" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="可在答题页选择OCR配置，默认本地OCR" />
-                                </vertical> 
+                                </vertical>
                                 <checkbox id="study_shuangren" marginLeft="4" marginRight="6" checked="true" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
-                                    <text w="auto" textColor="#222222" textSize="15sp" text="专项答题模式选择" /> 
+                                    <text w="auto" textColor="#222222" textSize="15sp" text="专项答题模式选择" />
                                     <spinner id="study_select" marginLeft="4" marginRight="6" entries="不向下滑动，只答当天的题目,没有则返回|向下滑动，直到找到可答题的题目" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="每周答题模式选择" />
                                     <spinner id="study_selectm" marginLeft="4" marginRight="6" entries="不向下滑动，只答当天的题目,没有则返回|向下滑动，直到找到可答题的题目" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="四人赛模式选择" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="注：一般手机本地识别速度大于云端，部分手机内置ocr识别较慢，请自行测试" />
                                     <spinner id="study_select_01" marginLeft="4" marginRight="6" entries="内置PaddleOCR->推荐|百度OCR接口,在OCR页配置" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="四人/双人不受积分限制开关" />
-                                </vertical> 
+                                </vertical>
                                 <checkbox id="study_xianzhi" marginLeft="4" marginRight="6" checked="false" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="四人/双人额外的随机答题次数(乱答)" />
-                                </vertical> 
-                                <input id="study_another" marginLeft="4" marginRight="6" text="1"  hint="乱答次数"  textSize="13sp"  inputType="number" />
+                                </vertical>
+                                <input id="study_another" marginLeft="4" marginRight="6" text="1" hint="乱答次数" textSize="13sp" inputType="number" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="每日、每周、专项答题增强模式" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="使用在线OCR识别答案" />
                                     <spinner id="study_stronger" marginLeft="4" marginRight="6" entries="关闭|使用百度OCR识别答案" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="百度OCR的API Key" />
-                                    <input id="study_AK" text=""  gravity="center" textSize="13sp" />
-                                </vertical> 
+                                    <input id="study_AK" text="" gravity="center" textSize="13sp" />
+                                </vertical>
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="百度OCR的Secret Key" />
-                                    <input id="study_SK" text=""  gravity="center" textSize="13sp" />
-                                </vertical> 
+                                    <input id="study_SK" text="" gravity="center" textSize="13sp" />
+                                </vertical>
                             </horizontal>
                             <horizontal>
                                 <button style="Widget.AppCompat.Button.Colored" id="study_baidusave" text="保存并检查" padding="12dp" w="*" />
@@ -415,51 +415,51 @@ ui.layout(
                             </horizontal>
                             <horizontal>
                                 <button style="Widget.AppCompat.Button.Colored" id="study_baiduregister" text="注册百度智能云" padding="12dp" w="*" />
-                            </horizontal><horizontal  gravity="center_vertical" padding="5 5" >
+                            </horizontal><horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="订阅" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="仅支持学习强国2.33.0及以下版本" />
                                     <spinner id="study_ssub" marginLeft="4" marginRight="6" entries="关闭|翻遍全部，直到订阅完成|只查看上新" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="点点通刷满" />
-                                </vertical> 
+                                </vertical>
                                 <checkbox id="study_diandian" marginLeft="4" marginRight="6" checked="false" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="看门狗(秒)" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="脚本运行的最长时间,超时/错误自动重启脚本" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="防止出现不可控错误,一般重启脚本即可解决" />
-                                </vertical> 
-                                <input id="study_alltime" marginLeft="4" marginRight="6" text="2000"  hint="秒"  textSize="13sp"  inputType="number" />
+                                </vertical>
+                                <input id="study_alltime" marginLeft="4" marginRight="6" text="2000" hint="秒" textSize="13sp" inputType="number" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="每篇文章学习时间" />
-                                </vertical> 
-                                <input id="study_time1" marginLeft="4" marginRight="6" text="61"  hint="秒"  textSize="13sp"  inputType="number" />
+                                </vertical>
+                                <input id="study_time1" marginLeft="4" marginRight="6" text="61" hint="秒" textSize="13sp" inputType="number" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="每个视频学习时间" />
-                                </vertical> 
-                                <input id="study_time2" marginLeft="4" marginRight="6" text="6"  hint="秒"  textSize="13sp"  inputType="number" />
+                                </vertical>
+                                <input id="study_time2" marginLeft="4" marginRight="6" text="6" hint="秒" textSize="13sp" inputType="number" />
                             </horizontal>
-                            <horizontal  gravity="center_vertical" padding="5 5" >
+                            <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                     <text w="auto" textColor="#222222" textSize="15sp" text="push+ 消息推送" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="注：有需要的自行填写push+的Token，否则留空即可" />
                                     <input id="study_Token" text="" textSize="13sp" />
-                                </vertical> 
+                                </vertical>
                             </horizontal>
                             <horizontal>
                                 <button style="Widget.AppCompat.Button.Colored" id="study_save" text="保存配置" padding="12dp" w="*" />
@@ -489,7 +489,7 @@ var thread = null;
 Initialize();
 
 // 版本更新检查
-var apkurl = "https://gh.fakev.cn/sec-an/Better-Auto-XXQG/releases/download/v2.2.0/v2.2.0.apk";
+var apkurl = "https://gh.fakev.cn/sunclx/Better-Auto-XXQG/releases/download/v2.2.0/v2.2.0.apk";
 var latest_version = "2.2.0";
 if (GLOBAL_CONFIG.get("NO_UPDATE", 0) && (app.versionName != latest_version)) {
     ui.update.visibility = 0;
@@ -500,7 +500,7 @@ if (GLOBAL_CONFIG.get("NO_UPDATE", 0) && (app.versionName != latest_version)) {
 
 
 // 创建选项菜单(右上角)
-ui.emitter.on("create_options_menu", menu=>{
+ui.emitter.on("create_options_menu", menu => {
     menu.add("日志");
     menu.add("关于");
     menu.add("Github");
@@ -508,16 +508,16 @@ ui.emitter.on("create_options_menu", menu=>{
 });
 
 // 监听选项菜单点击
-ui.emitter.on("options_item_selected", (e, item)=>{
-    switch(item.getTitle()){
+ui.emitter.on("options_item_selected", (e, item) => {
+    switch (item.getTitle()) {
         case "日志":
             app.startActivity("console");
             break;
         case "关于":
-            alert("关于", "强国助手 v"+latest_version);
+            alert("关于", "强国助手 v" + latest_version);
             break;
         case "Github":
-            app.openUrl("https://github.com/sec-an/Better-Auto-XXQG");
+            app.openUrl("https://github.com/sunclx/Better-Auto-XXQG");
             break;
         case "V2.33.0下载":
             app.openUrl("https://android-apps.pp.cn/fs08/2021/12/28/3/110_f37c420b0944cb7b9f60a2ad9b5518d2.apk?yingid=web_space&packageid=500730793&md5=664bb7bdcae57be189fc86100f4371c4&minSDK=21&size=191654161&shortMd5=1fee0bd160d08108a9d9e5f4773ce741&crc32=3879122865&did=ad484a175e19d0928044435e24bf03cb");
@@ -579,7 +579,7 @@ ui.consoleshow.on("check", function (checked) {
         });
     }
 });
- 
+
 // 当用户回到本界面时，resume事件会被触发
 ui.emitter.on("resume", function () {
     // 此时根据无障碍服务的开启情况，同步开关的状态
@@ -610,15 +610,15 @@ ui.start.click(function () {
         return;
     }
     threads.start(function () {
-        let url = 'https://ghproxy.com/https://raw.githubusercontent.com/sec-an/Better-Auto-XXQG/main/'+ui.script_chosen.getSelectedItemPosition()+'.js';
+        let url = 'https://ghproxy.com/https://raw.githubusercontent.com/sunclx/Better-Auto-XXQG/main/' + ui.script_chosen.getSelectedItemPosition() + '.js';
         execution = engines.execScript("强国助手", http.get(url).body.string());
     });
 });
 
 // 保存天天向上pro脚本设置
 ui.ttxs_pro_save.click(function () {
-    TTXS_PRO_CONFIG.put("watchdog", ui.ttxs_pro_watchdog.getText()+"");
-    TTXS_PRO_CONFIG.put("slide_verify", ui.ttxs_pro_slide_verify.getText()+"");
+    TTXS_PRO_CONFIG.put("watchdog", ui.ttxs_pro_watchdog.getText() + "");
+    TTXS_PRO_CONFIG.put("slide_verify", ui.ttxs_pro_slide_verify.getText() + "");
     TTXS_PRO_CONFIG.put("fast_mode", ui.ttxs_pro_fast_mode.isChecked());
     TTXS_PRO_CONFIG.put("ddtong", ui.ttxs_pro_ddtong.isChecked());
     TTXS_PRO_CONFIG.put("is_exit", ui.ttxs_pro_is_exit.isChecked());
@@ -630,19 +630,19 @@ ui.ttxs_pro_save.click(function () {
     TTXS_PRO_CONFIG.put("zhuanxiang", ui.ttxs_pro_zhuanxiang.getSelectedItemPosition());
     TTXS_PRO_CONFIG.put("tiaozhan", ui.ttxs_pro_tiaozhan.isChecked());
     TTXS_PRO_CONFIG.put("ocr_choice", ui.ttxs_pro_ocr_choice.getSelectedItemPosition());
-    TTXS_PRO_CONFIG.put("ocr_maxtime", ui.ttxs_pro_ocr_maxtime.getText()+"");
+    TTXS_PRO_CONFIG.put("ocr_maxtime", ui.ttxs_pro_ocr_maxtime.getText() + "");
     TTXS_PRO_CONFIG.put("duizhan_mode", ui.ttxs_pro_duizhan_mode.getSelectedItemPosition());
-    TTXS_PRO_CONFIG.put("jisu", ui.ttxs_pro_jisu.getText()+"");
+    TTXS_PRO_CONFIG.put("jisu", ui.ttxs_pro_jisu.getText() + "");
     TTXS_PRO_CONFIG.put("guaji", ui.ttxs_pro_guaji.isChecked());
     TTXS_PRO_CONFIG.put("siren", ui.ttxs_pro_siren.isChecked());
-    TTXS_PRO_CONFIG.put("dacuo_num", ui.ttxs_pro_dacuo_num.getText()+"");
+    TTXS_PRO_CONFIG.put("dacuo_num", ui.ttxs_pro_dacuo_num.getText() + "");
     TTXS_PRO_CONFIG.put("shuangren", ui.ttxs_pro_shuangren.isChecked());
     TTXS_PRO_CONFIG.put("bendi", ui.ttxs_pro_bendi.isChecked());
     TTXS_PRO_CONFIG.put("dingyue", ui.ttxs_pro_dingyue.getSelectedItemPosition());
-    TTXS_PRO_CONFIG.put("pushplus", ui.ttxs_pro_pushplus.getText()+"");
+    TTXS_PRO_CONFIG.put("pushplus", ui.ttxs_pro_pushplus.getText() + "");
     TTXS_PRO_CONFIG.put("yl_on", ui.ttxs_pro_yl_on.isChecked());
-    TTXS_PRO_CONFIG.put("yinliang", ui.ttxs_pro_yinliang.getText()+"");
-    TTXS_PRO_CONFIG.put("zhanghao", ui.ttxs_pro_zhanghao.getText()+"");
+    TTXS_PRO_CONFIG.put("yinliang", ui.ttxs_pro_yinliang.getText() + "");
+    TTXS_PRO_CONFIG.put("zhanghao", ui.ttxs_pro_zhanghao.getText() + "");
 
     toastLog("天天向上pro配置保存成功！");
 });
@@ -716,20 +716,20 @@ ui.study_save.click(function () {
     STUDY_CONFIG.put("checkbox_03", ui.study_checkbox_03.isChecked());
     STUDY_CONFIG.put("shuangren", ui.study_shuangren.isChecked());
 
-    STUDY_CONFIG.put("huakuaidelay", ui.study_huakuaidelay.getText()+"");
+    STUDY_CONFIG.put("huakuaidelay", ui.study_huakuaidelay.getText() + "");
     STUDY_CONFIG.put("select", ui.study_select.getSelectedItemPosition());
     STUDY_CONFIG.put("selectm", ui.study_selectm.getSelectedItemPosition());
     STUDY_CONFIG.put("select_01", ui.study_select_01.getSelectedItemPosition());
     STUDY_CONFIG.put("xianzhi", ui.study_xianzhi.isChecked());
-    STUDY_CONFIG.put("another", ui.study_another.getText()+"");
+    STUDY_CONFIG.put("another", ui.study_another.getText() + "");
     STUDY_CONFIG.put("stronger", ui.study_stronger.getSelectedItemPosition());
 
     STUDY_CONFIG.put("ssub", ui.study_ssub.getSelectedItemPosition());
     STUDY_CONFIG.put("diandian", ui.study_diandian.isChecked());
-    STUDY_CONFIG.put("alltime", ui.study_alltime.getText()+"");
-    STUDY_CONFIG.put("time1", ui.study_time1.getText()+"");
-    STUDY_CONFIG.put("time2", ui.study_time2.getText()+"");
-    STUDY_CONFIG.put("Token", ui.study_Token.getText()+"");
+    STUDY_CONFIG.put("alltime", ui.study_alltime.getText() + "");
+    STUDY_CONFIG.put("time1", ui.study_time1.getText() + "");
+    STUDY_CONFIG.put("time2", ui.study_time2.getText() + "");
+    STUDY_CONFIG.put("Token", ui.study_Token.getText() + "");
 
     toastLog("STUDY配置保存成功！");
 });
@@ -863,10 +863,10 @@ function check_baidu_api() {
         let SK = String(ui.study_SK.getText());
         var res = http.post(
             'https://aip.baidubce.com/oauth/2.0/token', {
-                grant_type: 'client_credentials',
-                client_id: AK,
-                client_secret: SK
-            }
+            grant_type: 'client_credentials',
+            client_id: AK,
+            client_secret: SK
+        }
         ).body.json();
         if ("error" in res) {
             toastLog("API Key或Secret Key存在错误");
@@ -891,14 +891,14 @@ function checkversion() {
         "* 1.基于AutoX v6.3.4重新打包\n" +
         "* 2.调整默认OCR为Google ML kIT OCR"
     dialogs.build({
-            title: "发现新版本",
-            content: releaseNotes,
-            positive: "立即下载",
-            negative: "取消",
-            neutral: "浏览器下载",
-            checkBoxPrompt: "不再提示",
-            cancelable: false
-        })
+        title: "发现新版本",
+        content: releaseNotes,
+        positive: "立即下载",
+        negative: "取消",
+        neutral: "浏览器下载",
+        checkBoxPrompt: "不再提示",
+        cancelable: false
+    })
         .on("positive", () => {
             download(apkurl);
         })

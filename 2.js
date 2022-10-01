@@ -154,10 +154,10 @@ function get_baidu_token() { // 百度ocr
     }
     var res = http.post(
         'https://aip.baidubce.com/oauth/2.0/token', {
-            grant_type: 'client_credentials',
-            client_id: BAIDUAPI.get("AK", "").replace(/ /g, ''),
-            client_secret: BAIDUAPI.get("SK", "").replace(/ /g, '')
-        }
+        grant_type: 'client_credentials',
+        client_id: BAIDUAPI.get("AK", "").replace(/ /g, ''),
+        client_secret: BAIDUAPI.get("SK", "").replace(/ /g, '')
+    }
     );
     var xad = res.body.json()['access_token'];
     if (xad == null) {
@@ -216,7 +216,7 @@ if (shuangren == true || siren == true || 订阅 != 0 || stronger != 0 || tiaozh
 
     if (tiaozhan || siren || shuangren)
         init();
-    if (tiaozhan && !(siren == true || shuangren == true || 订阅 != 0 || stronger != 0)) {} //只开了挑战答题的话
+    if (tiaozhan && !(siren == true || shuangren == true || 订阅 != 0 || stronger != 0)) { } //只开了挑战答题的话
     else {
         threads.start(function () {
             if (!requestScreenCapture(false)) {
@@ -282,7 +282,7 @@ function show_log() {
             try {
                 d.dismiss();
                 d = null;
-            } catch (e) {}
+            } catch (e) { }
             text = null;
             showlog = true;
         }
@@ -1009,7 +1009,7 @@ function stopRadio() {
     try {
         if (id("v_playing").exists())
             id("v_playing").findOnce(0).click();
-    } catch (e) {}
+    } catch (e) { }
 
 }
 
@@ -1194,7 +1194,7 @@ function meizhouAnswer() {
                 swipe(x, h1, x, h2, 100); // 下滑动
                 try {
                     textContains("月").findOnce(0).parent().parent().parent().scrollForward();
-                } catch (e) {}
+                } catch (e) { }
                 delay(1);
                 if (t % 10 == 0)
                     console.log("向下滑动中！！！");
@@ -1253,7 +1253,7 @@ function zhuanxiangAnswer() {
                 swipe(x, h1, x, h2, 100); // 下滑动
                 try {
                     textContains("专项").findOnce(0).parent().scrollForward();
-                } catch (e) {}
+                } catch (e) { }
 
                 //delay(1);
                 if (t % 10 == 0)
@@ -1509,7 +1509,7 @@ function dailyQuestionLoop() {
                     var t = text('提示').findOne(3000);
                     t = t.parent().parent().child(1).child(0).bounds();
                     img = images.clip(img, t.left, t.top, t.right - t.left, t.bottom - t.top);
-                } catch (e) {}
+                } catch (e) { }
                 answer = baidu_ocr_api(images.inRange(img, '#FFFF0000', '#FFFF0000'), ttt);
                 console.info("百度OCR识别的答案：" + answer);
                 back();
@@ -1546,7 +1546,7 @@ function dailyQuestionLoop() {
                     var t = text('提示').findOne(3000);
                     t = t.parent().parent().child(1).child(0).bounds();
                     img = images.clip(img, t.left, t.top, t.right - t.left, t.bottom - t.top);
-                } catch (e) {}
+                } catch (e) { }
                 answer = baidu_ocr_api(images.inRange(img, '#FFFF0000', '#FFFF0000'), ttt);
                 console.info("百度OCR识别的答案：" + answer);
                 back();
@@ -1847,15 +1847,15 @@ function challengeQuestionLoop(conNum) {
                 try {
                     item.child(0).click(); //点击答案
                     hasClicked = true;
-                } catch (e) {}
+                } catch (e) { }
                 delay(0.5); //等待0.5秒，是否出现X
                 if (!text("v5IOXn6lQWYTJeqX2eHuNcrPesmSud2JdogYyGnRNxujMT8RS7y43zxY4coWepspQkvw" +
-                        "RDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC").exists() || text("再来一局").exists()) //遇到❌号，则答错了,不再通过结束本局字样判断
+                    "RDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC").exists() || text("再来一局").exists()) //遇到❌号，则答错了,不再通过结束本局字样判断
                 {
                     // console.log("题库答案正确……");
                 }
                 if (text("v5IOXn6lQWYTJeqX2eHuNcrPesmSud2JdogYyGnRNxujMT8RS7y43zxY4coWepspQkvw" +
-                        "RDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC").exists() || text("再来一局").exists()) //遇到❌号，则答错了,不再通过结束本局字样判断
+                    "RDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC").exists() || text("再来一局").exists()) //遇到❌号，则答错了,不再通过结束本局字样判断
                 {
                     console.error("答案错误!!!");
                     /*checkAndUpdate(question, answer, ClickAnswer);*/
@@ -1873,12 +1873,12 @@ function challengeQuestionLoop(conNum) {
         console.log("随机点击:" + ClickAnswer);
         delay(0.5); //等待0.5秒，是否出现X
         if (!text("v5IOXn6lQWYTJeqX2eHuNcrPesmSud2JdogYyGnRNxujMT8RS7y43zxY4coWepspQkvw" +
-                "RDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC").exists() || text("再来一局").exists()) //遇到❌号，则答错了,不再通过结束本局字样判断
+            "RDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC").exists() || text("再来一局").exists()) //遇到❌号，则答错了,不再通过结束本局字样判断
         {
             console.log("随机点击正确……");
         }
         if (text("v5IOXn6lQWYTJeqX2eHuNcrPesmSud2JdogYyGnRNxujMT8RS7y43zxY4coWepspQkvw" +
-                "RDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC").exists() || text("再来一局").exists()) //遇到❌号，则答错了,不再通过结束本局字样判断
+            "RDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC").exists() || text("再来一局").exists()) //遇到❌号，则答错了,不再通过结束本局字样判断
         {
             console.error("随机点击错误!!!");
             /*checkAndUpdate(question, answer, ClickAnswer);*/
@@ -1930,7 +1930,7 @@ function challengeQuestion() {
         challengeQuestionLoop(conNum);
         delay(1);
         if (text('wrong@3x.9ccb997c').exists() || text('2kNFBadJuqbAAAAAElFTkSuQmCC').exists() || text("v5IOXn6lQWYTJeqX2eHuNcrPesmSud2JdogYyGnRNxujMT8RS7y43zxY4coWepspQkvw" +
-                "RDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC").exists()) //遇到❌号，则答错了,不再通过结束本局字样判断
+            "RDTJtCTsZ5JW+8sGvTRDzFnDeO+BcOEpP0Rte6f+HwcGxeN2dglWfgH8P0C7HkCMJOAAAAAElFTkSuQmCC").exists()) //遇到❌号，则答错了,不再通过结束本局字样判断
         {
             if (conNum >= qCount) {
                 lNum++;
@@ -2171,7 +2171,7 @@ function click_by_answer(ans, question) {
     question = question.replace(/:/g, '：');
     try {
         question = r.replace(question);
-    } catch (e) {}
+    } catch (e) { }
     // question = question.split('A.');
     question = question.replace(/c\./g, "C.");
     question = question.replace(/，/g, ".");
@@ -2274,12 +2274,12 @@ function baidu_ocr_api(img, tokens) {
     var answer = "";
     var res = http.post(
         'https://aip.baidubce.com/rest/2.0/ocr/v1/general', {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            access_token: tokens,
-            image: images.toBase64(img),
-        }
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        access_token: tokens,
+        image: images.toBase64(img),
+    }
     );
 
     var res = res.body.json();
@@ -2353,7 +2353,7 @@ function init() {
             var x = http.get('https://ghproxy.com/https://raw.githubusercontent.com/sec-an/Better-Auto-XXQG/main/Study/replace.js').body.string();
             files.write('/sdcard/replace.js', x);
             r = require('/sdcard/replace.js');
-        } catch (e) {}
+        } catch (e) { }
         x = null;
     });
 
@@ -2627,7 +2627,7 @@ function zsyAnswer() {
                 var t = className("ListView").findOne(5000).childCount();
                 t = randomNum(0, t - 1);
                 className('android.widget.RadioButton').depth(32).findOnce(t).click();
-            } catch (e) {}
+            } catch (e) { }
             if (text('继续挑战').exists()) break;
             sleep(200);
         }
@@ -2676,7 +2676,7 @@ function rt() {
         thread.join(ta * 1000);
         thread.interrupt();
         console.error('脚本超时或者出错！！！，重启脚本');
-        if (!(launchApp(decodeURI("%E5%AD%A6%E4%B9%A0%E5%BC%BA%E5%9B%BD")) || launch('cn.xuexi.android'))) {}
+        if (!(launchApp(decodeURI("%E5%AD%A6%E4%B9%A0%E5%BC%BA%E5%9B%BD")) || launch('cn.xuexi.android'))) { }
         console.info('等待10s后继续开始');
         toast('等待10s后继续开始');
         delay(10);
@@ -2702,11 +2702,11 @@ function push_score() {
     try {
         url = 'https://pushplus.hxtrip.com/send?token=' + STUDY_CONFIG.get("Token", "").replace(/ /g, '') + '&title=Study&content=' + score + '&template=html';
         http.get(url);
-    } catch (e) {}
+    } catch (e) { }
     try {
         url = 'http://www.pushplus.plus/send?token=' + STUDY_CONFIG.get("Token", "").replace(/ /g, '') + '&title=Study&content=' + score + '&template=html';
         http.get(url);
-    } catch (e) {}
+    } catch (e) { }
 }
 
 function re_store() {
@@ -2716,7 +2716,7 @@ function re_store() {
             zsyCount = 1;
             doubleCount = 1;
         }
-    } catch (e) {};
+    } catch (e) { };
 }
 
 function back_table() {
@@ -2734,7 +2734,7 @@ function back_table() {
         }
         if (num > 10) {
             console.error('返回超过10次，可能当前不在xxqg，正在启动app...');
-            if (!(launchApp(decodeURI("%E5%AD%A6%E4%B9%A0%E5%BC%BA%E5%9B%BD")) || launch('cn.xuexi.android'))) {}
+            if (!(launchApp(decodeURI("%E5%AD%A6%E4%B9%A0%E5%BC%BA%E5%9B%BD")) || launch('cn.xuexi.android'))) { }
             console.info('等待10s继续进行');
             delay(10);
             num = 0;
@@ -3085,9 +3085,9 @@ function diandian() {
                 log(name + ' ' + score);
                 点点通[name] *= 1;
                 点点通[name] += 1;
-            } catch (e) {}
+            } catch (e) { }
         });
-    } catch (e) {};
+    } catch (e) { };
     点点通['挑战答题'] *= 3;
     点点通['有效视听'] *= 6;
     点点通['有效浏览'] *= 6;
