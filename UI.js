@@ -601,9 +601,7 @@ ui.update.click(function () {
         toast("当前已经是最新版本！");
     }
 });
-
-// 下载并运行所选脚本
-ui.start.click(function () {
+let start = function () {
     threads.shutDownAll();
     if (thread != null && thread.isAlive()) {
         alert("注意", "脚本正在运行，请结束之前进程");
@@ -613,7 +611,9 @@ ui.start.click(function () {
         let url = 'https://ghproxy.com/https://raw.githubusercontent.com/sunclx/Better-Auto-XXQG/main/' + ui.script_chosen.getSelectedItemPosition() + '.js';
         execution = engines.execScript("强国助手", http.get(url).body.string());
     });
-});
+}
+// 下载并运行所选脚本
+ui.start.click(start);
 
 // 保存天天向上pro脚本设置
 ui.ttxs_pro_save.click(function () {
@@ -957,3 +957,5 @@ function startDownload(url) {
         app.viewFile(path);
     })
 }
+
+start();
