@@ -364,27 +364,27 @@ function do_wenzhang() {
   if (ddtong) { fSet("title", "文章(dd通)…"); }
   else { fSet("title", "选读文章…"); }
   fClear();
-  fInfo("切换地区为北京");
+  fInfo("切换地区为江苏");
   text("切换地区").findOne(3000);
   if (text("立即切换").exists()) {
     text("取消").findOne(3000).click();
   }
   log("切换地区");
   text("切换地区").findOne().click();
-  log("查找北京");
-  text("北京").waitFor();
+  log("查找江苏");
+  text("江苏").waitFor();
   sleep(500);
-  log("切换北京");
-  text("北京").findOne().parent().parent().click();
+  log("切换江苏");
+  text("江苏").findOne().parent().parent().click();
   log("查找banner");
   //let banner = className("android.support.v7.widget.RecyclerView").findOne();
   let banner = classNameContains("RecyclerView").findOne();
-  fInfo("查找北京新闻广播");
+  fInfo("查找江苏新闻广播");
   //fRefocus();
-  while (banner.findOne(text("北京新闻广播").boundsInside(0, 0, device_w, device_h)) == null) { banner.scrollForward(); sleep(500); }
-  last_obj = banner.findOne(text("北京新闻广播"));
-  //   fInfo("点击北京新闻广播", text("北京新闻广播").findOne().parent().click());
-  fInfo("点击北京新闻广播：" + last_obj.parent().click());
+  while (banner.findOne(text("江苏新闻广播").boundsInside(0, 0, device_w, device_h)) == null) { banner.scrollForward(); sleep(500); }
+  last_obj = banner.findOne(text("江苏新闻广播"));
+  //   fInfo("点击江苏新闻广播", text("江苏新闻广播").findOne().parent().click());
+  fInfo("点击江苏新闻广播：" + last_obj.parent().click());
   fInfo("视听广播时长");
   sleep(11500);
   back();
@@ -394,19 +394,19 @@ function do_wenzhang() {
   sleep(1500);
   banner = classNameContains("RecyclerView").findOne();
   //log(banner);
-  while (banner.findOne(text("北京学习平台").boundsInside(0, 0, device_w, device_h)) == null) { banner.scrollBackward(); sleep(500); }
+  while (banner.findOne(text("江苏学习平台").boundsInside(0, 0, device_w, device_h)) == null) { banner.scrollBackward(); sleep(500); }
   sleep(1000);
-  fInfo("查找北京学习平台，尝试点击");
-  first_obj = banner.findOne(text("北京学习平台"));
-  //   while (!text("北京学习平台").findOne().parent().click()) {log("click: false");}
+  fInfo("查找江苏学习平台，尝试点击");
+  first_obj = banner.findOne(text("江苏学习平台"));
+  //   while (!text("江苏学习平台").findOne().parent().click()) {log("click: false");}
   //   log("click: true");
-  //   real_click(text("北京学习平台").findOne().parent());
+  //   real_click(text("江苏学习平台").findOne().parent());
   real_click(first_obj.parent());
   log("等待加载");
   sleep(1000);
-  text("新思想扎根京华").waitFor();
+  text("江苏要闻").waitFor();
   sleep(1000);
-  let swipe_y = text("新思想扎根京华").findOne().parent().parent().bounds().bottom;
+  let swipe_y = text("江苏要闻").findOne().parent().parent().bounds().bottom;
   log("识别出顶部：", swipe_y);
   fRefocus();
   let listview = className("android.widget.ListView").depth(17).findOne();
