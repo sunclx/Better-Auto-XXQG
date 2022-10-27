@@ -379,12 +379,12 @@ function do_wenzhang() {
   log("查找banner");
   //let banner = className("android.support.v7.widget.RecyclerView").findOne();
   let banner = classNameContains("RecyclerView").findOne();
-  fInfo("查找江苏新闻广播");
+  fInfo("查找江苏综合新闻广播");
   //fRefocus();
-  while (banner.findOne(text("江苏新闻广播").boundsInside(0, 0, device_w, device_h)) == null) { banner.scrollForward(); sleep(500); }
-  last_obj = banner.findOne(text("江苏新闻广播"));
-  //   fInfo("点击江苏新闻广播", text("江苏新闻广播").findOne().parent().click());
-  fInfo("点击江苏新闻广播：" + last_obj.parent().click());
+  while (banner.findOne(text("江苏新闻综合广播").boundsInside(0, 0, device_w, device_h)) == null) { banner.scrollForward(); sleep(500); }
+  last_obj = banner.findOne(text("江苏新闻综合广播"));
+  //   fInfo("点击江苏新闻广播", text("江苏新闻综合广播").findOne().parent().click());
+  fInfo("点击江苏新闻综合广播：" + last_obj.parent().click());
   fInfo("视听广播时长");
   sleep(11500);
   back();
