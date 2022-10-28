@@ -2599,5 +2599,6 @@ fInfo("十秒后关闭悬浮窗");
 sleep(10000);
 console.hide();
 home();
+exit_app("学习强国");
 exit();
 
