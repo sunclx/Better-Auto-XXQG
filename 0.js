@@ -2477,12 +2477,13 @@ function xxqg(userinfo) {
     login(username, pwd);
   }
   /********获取用户姓名并读取本地数据*********/
-  text("我的").findOne().click();
-  name = id("my_display_name").findOne().text();
-  storage_user = storages.create('songgedodo:' + name);
-  fSet("username", name);
-  back();
-  ran_sleep();
+  //新版本"我的"界面无法获取信息
+  //text("我的").findOne().click();
+  //name = id("my_display_name").findOne().text();
+  //storage_user = storages.create('songgedodo:' + name);
+  //fSet("username", name);
+  // back();
+  //ran_sleep();
   if (meizhou == 1) { meizhou_dao = false; }
   else if (meizhou == 0) { meizhou_dao = true; }
   if (zhuanxiang == 1) { zhuanxiang_dao = false; }
