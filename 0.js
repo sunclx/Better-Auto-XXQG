@@ -2667,16 +2667,16 @@ function main(userinfo) {
 /********定义全局变量*********/
 var jifen_list, meizhou_dao, zhuanxiang_dao, dingyue_dao, storage_user, name, jinri, zongfen;
 var jifen_map = {
-  "评论": 10,
+  "评论": 6,
   "视频": 2,
   "文章": 1,
-  "每日": 4,
-  "专项": 5,
-  "挑战": 6,
-  "四人": 7,
-  "双人": 8,
-  "订阅": 9,
-  "本地": 11
+  "每日": 3,
+  "专项": 4,
+  "挑战": 4,
+  "四人": 4,
+  "双人": 4,
+  "订阅": 5,
+  "本地": 7
 },
   jifen_flag = "old";
 // 分割账号
