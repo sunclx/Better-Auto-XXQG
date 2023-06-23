@@ -2551,13 +2551,19 @@ function xxqg(userinfo) {
   }
   id("comm_head_xuexi_score").findOne().click();
   text("登录").waitFor();
+  toastLog("test flag 0");
+
   jifen_list = refind_jifen();
   nolocate_thread.isAlive() && (nolocate_thread.interrupt(), fInfo("终止位置权限弹窗检测"));
   noupdate_thread.isAlive() && (noupdate_thread.interrupt(), fInfo("终止更新弹窗检测"));
   nonotice_thread.isAlive() && (nonotice_thread.interrupt(), fInfo("终止消息通知检测"));
+  toastLog("test flag 1");
   true == pinglun && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).text().match(/\d+/)[0]) && (toastLog("开始评论"), do_pinglun(), jifen_list = refind_jifen());
+  toastLog("test flag 2");
   true == shipin && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), toastLog("开始视听次数"), do_shipin(), jifen_list = refind_jifen());
+  toastLog("test flag 3");
   true == wenzhang && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), toastLog("开始文章次数与时长"), do_wenzhang(), jifen_list = refind_jifen());
+  toastLog("test flag 4");
   true == meiri && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["每日"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["每日"]).child(4).text()) && (toastLog("每日答题开始"), do_meiri(), jifen_list = refind_jifen());
   c = 1;
   //2 != zhuanxiang && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["专项"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["专项"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["专项"]).child(3).text().match(/\d+/)[0]) && (toastLog("专项答题开始"), do_zhuanxiang(), jifen_list = refind_jifen());
@@ -2576,7 +2582,8 @@ function xxqg(userinfo) {
   // } else true == siren && true == shuangren && sign_list.push("ocr_false");
   true == bendi && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(4).text()) && (toastLog("本地开始"), do_bendi(), jifen_list = refind_jifen());
   d = 1;
-  0 != dingyue && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).text().match(/\d+/)[0]) && (toastLog("订阅开始"), d = do_dingyue(), jifen_list = refind_jifen());
+  toastLog("test flag 5");
+  //0 != dingyue && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).text().match(/\d+/)[0]) && (toastLog("订阅开始"), d = do_dingyue(), jifen_list = refind_jifen());
   if (pushplus || token) {
     fInfo("推送前等待积分刷新5秒");
     sleep(5E3);
@@ -2589,15 +2596,15 @@ function xxqg(userinfo) {
   }
   back();
   b = 1;
-  if (2 != meizhou) {
-    if (toastLog("每周答题开始"), text("我的").findOne().click(), sleep(1000), text("我要答题").findOne(3000)) {
-      text("我要答题").findOne().parent().click();
-      sleep(1000);
-      for (b = do_meizhou(); !b;) b = do_meizhou();
-      text("我的").waitFor();
-      b || fError("每周答题可能由于识别错误、包含视频题而不能满分，请手动作答")
-    } else fError("V2.42及以上不支持每周答题"), back(), ran_sleep();
-  }
+  // if (2 != meizhou) {
+  //   if (toastLog("每周答题开始"), text("我的").findOne().click(), sleep(1000), text("我要答题").findOne(3000)) {
+  //     text("我要答题").findOne().parent().click();
+  //     sleep(1000);
+  //     for (b = do_meizhou(); !b;) b = do_meizhou();
+  //     text("我的").waitFor();
+  //     b || fError("每周答题可能由于识别错误、包含视频题而不能满分，请手动作答")
+  //   } else fError("V2.42及以上不支持每周答题"), back(), ran_sleep();
+  // }
   0 == dingyue || d || fError("未能识别出订阅界面，订阅不支持学习强国V2.33.0以上版本");
   if (!zhanghao) return !0;
   b = text("我的").findOne();
