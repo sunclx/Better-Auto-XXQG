@@ -2379,7 +2379,7 @@ function login(username, pwd) {
 function refind_jifen() {
   className("android.webkit.WebView").scrollable().findOne().scrollForward();
   var a = className("android.widget.ListView").filter(function (b) {
-    return 10 < b.rowCount()
+    return 8 < b.rowCount()
   }).findOne();
   21 == a.depth() ? (jifen_flag = "old", fInfo("检测为旧版界面")) : 23 == a.depth() && (jifen_flag = 0 < a.child(0).child(3).childCount() ? "new1" : "new2", fInfo("检测为新版界面"));
   return a
