@@ -300,14 +300,14 @@ var thread = null;
 Initialize();
 
 // 版本更新检查
-var apkurl = "https://gh-proxy.com/https://github.com/sec-an/Better-Auto-XXQG/releases/download/v2.2.0/v2.2.0.apk";
+// var apkurl = "https://gh-proxy.com/https://github.com/sec-an/Better-Auto-XXQG/releases/download/v2.2.0/v2.2.0.apk";
 var latest_version = "2.2.0";
-if (GLOBAL_CONFIG.get("NO_UPDATE", 0) && (app.versionName != latest_version)) {
-    ui.update.visibility = 0;
-    ui.update.setText("点击更新至最新版v" + latest_version);
-} else if (app.versionName != latest_version) {
-    checkversion();
-}
+// if (GLOBAL_CONFIG.get("NO_UPDATE", 0) && (app.versionName != latest_version)) {
+//     ui.update.visibility = 0;
+//     ui.update.setText("点击更新至最新版v" + latest_version);
+// } else if (app.versionName != latest_version) {
+//     checkversion();
+// }
 
 
 // 创建选项菜单(右上角)
@@ -315,7 +315,7 @@ ui.emitter.on("create_options_menu", menu => {
     menu.add("日志");
     menu.add("关于");
     menu.add("Github");
-    menu.add("V2.33.0下载");
+    // menu.add("V2.33.0下载");
 });
 
 // 监听选项菜单点击
@@ -330,9 +330,9 @@ ui.emitter.on("options_item_selected", (e, item) => {
         case "Github":
             app.openUrl("https://github.com/sec-an/Better-Auto-XXQG");
             break;
-        case "V2.33.0下载":
-            app.openUrl("https://android-apps.pp.cn/fs08/2021/12/28/3/110_f37c420b0944cb7b9f60a2ad9b5518d2.apk?yingid=web_space&packageid=500730793&md5=664bb7bdcae57be189fc86100f4371c4&minSDK=21&size=191654161&shortMd5=1fee0bd160d08108a9d9e5f4773ce741&crc32=3879122865&did=ad484a175e19d0928044435e24bf03cb");
-            break;
+        // case "V2.33.0下载":
+        //     app.openUrl("https://android-apps.pp.cn/fs08/2021/12/28/3/110_f37c420b0944cb7b9f60a2ad9b5518d2.apk?yingid=web_space&packageid=500730793&md5=664bb7bdcae57be189fc86100f4371c4&minSDK=21&size=191654161&shortMd5=1fee0bd160d08108a9d9e5f4773ce741&crc32=3879122865&did=ad484a175e19d0928044435e24bf03cb");
+        //     break;
     }
     e.consumed = true;
 });
