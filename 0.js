@@ -800,7 +800,6 @@ function do_zhuanxiang() {
 
 /********挑战答题*********/
 function do_tiaozhan() {
-  entry_jifen_project("趣味答题");
   if (ddtong) {
     fSet("title", "挑战(dd通)…");
   } else {
@@ -905,7 +904,6 @@ function do_duizhan1(renshu) {
   fClear();
   if (renshu == 2) {
     // 点击进入双人对战
-    entry_jifen_project("趣味答题");
     fSet("title", "双人对战");
     fInfo("等待随机匹配");
     text("随机匹配").waitFor();
@@ -917,7 +915,6 @@ function do_duizhan1(renshu) {
     } while (text("随机匹配").exists());
   } else if (4 == renshu || 0 == renshu) {
     // 点击进入四人赛
-    entry_jifen_project("趣味答题");
     fSet("title", "四人赛");
     // 等待开始比赛并点击
     fInfo("等待开始比赛");
@@ -2576,35 +2573,56 @@ function xxqg(userinfo) {
     if (!("old" == jifen_flag && "0" == jifen_list.child(jifen_map["趣味答题"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["趣味答题"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["趣味答题"]).child(3).text().match(/\d+/)[0])) {
       return
     }
+    entry_jifen_project("趣味答题");
+    sleep(1000);
 
-    try {
-      if (true == tiaozhan) {
-        toastLog("挑战答题开始");
-        do_tiaozhan();
-        jifen_list = refind_jifen()
-      }
-    } catch (error) {
+    if (text("随机匹配").exists() && text("开始对战")) {
       if (ocr_test()) {
-        if (true == siren) {
-          try {
-            toastLog("四人赛开始");
-            guaji && do_duizhan1(0);
-            do_duizhan1(4);
-            do_duizhan1(4);
-            if (d = Number(dacuo_num))
-              for (fSet("title", "平衡胜率…"), fClear(), console.info("开始平衡胜率，答错次数：" + d), i = 0; i < d; i++) fInfo("答错第" + (i + 1) + "轮"), dacuo(4), fClear();
-            jifen_list = refind_jifen()
-          } catch (error) {
-            if (true == shuangren) {
-              toastLog("双人对战开始");
-              do_duizhan1(2)
-              jifen_list = refind_jifen()
-            }
-          }
-        } else true == siren && true == shuangren && sign_list.push("ocr_false");
-      }
+        if (true == shuangren) {
+          toastLog("双人对战开始");
+          do_duizhan1(2);
+          jifen_list = refind_jifen();
+        }
+      } else true == siren && true == shuangren && sign_list.push("ocr_false");
+      return
     }
+
+    if (text("开始比赛").exists()) {
+      if (ocr_test()) {
+        if (true == shuangren) {
+          toastLog("四人赛开始");
+          guaji && do_duizhan1(4);
+          jifen_list = refind_jifen();
+        }
+      } else true == siren && true == shuangren && sign_list.push("ocr_false");
+      return
+    }
+
+    if (true == tiaozhan) {
+      toastLog("挑战答题开始");
+      do_tiaozhan();
+      jifen_list = refind_jifen()
+      return
+    }
+
+    // if (ocr_test()) {
+    //   if (true == siren) {
+    //     toastLog("四人赛开始");
+    //     guaji && do_duizhan1(0);
+    //     do_duizhan1(4);
+    //     do_duizhan1(4);
+    //     if (d = Number(dacuo_num))
+    //       for (fSet("title", "平衡胜率…"), fClear(), console.info("开始平衡胜率，答错次数：" + d), i = 0; i < d; i++) fInfo("答错第" + (i + 1) + "轮"), dacuo(4), fClear();
+    //     jifen_list = refind_jifen()
+    //   }
+    //   if (true == shuangren) {
+    //     toastLog("双人对战开始");
+    //     do_duizhan1(2)
+    //     jifen_list = refind_jifen()
+    //   }
+    // } else true == siren && true == shuangren && sign_list.push("ocr_false");
   }
+
   qwdt();
 
 
