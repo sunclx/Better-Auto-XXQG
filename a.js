@@ -57,6 +57,7 @@ let window = floaty.window(
     <button id="startMeiri" text=" 每日答题等 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
     <button id="startShuangren" text=" 双人对战 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
     <button id="startSiren" text=" 四人对战 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
+    <button id="startZhuanxiang" text=" 专项答题 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
     <button id="stop" text=" 停止 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
     <button id="exit" text=" 退出悬浮窗 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
   </vertical>
@@ -178,7 +179,11 @@ window.startShuangren.click(() => {
 window.startSiren.click(() => {
 
 });
-
+//专项答题
+window.startZhuanxiang.click(() => {
+  fInfo("开始专项答题");
+  do_zhuanxiang();
+});
 
 //停止
 window.stop.click(() => {
@@ -848,7 +853,6 @@ function do_meizhou() {
 /*专项答题中提示的层次与每日每周的不一样
  * 专项答题出现的倒计时会影响22,23层的结构*/
 function do_zhuanxiang() {
-  entry_jifen_project("专项答题");
   fSet("title", "专项答题…");
   fClear();
   // 等待加载
