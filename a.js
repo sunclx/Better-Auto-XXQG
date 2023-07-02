@@ -151,7 +151,7 @@ window.startAuto.click(() => {
 });
 //浏览
 window.startWenzhang.click(() => {
-  th = threads.start(() => {
+  th = threads.start(function () {
     toastLog("开始文章次数与时长");
     id("comm_head_xuexi_score").findOne().click();
     text("登录").waitFor();
@@ -181,7 +181,7 @@ window.startSiren.click(() => {
 });
 //专项答题
 window.startZhuanxiang.click(() => {
-  th = threads.start(() => {
+  th = threads.start(function () {
     fInfo("开始专项答题");
     do_zhuanxiang();
   });
