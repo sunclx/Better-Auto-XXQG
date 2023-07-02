@@ -5,12 +5,14 @@ device.wakeUpIfNeeded();
 let window = floaty.window(
   <vertical>
     <button id="move" text=" 移动 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
-    <button id="switchXX" text=" 切到 强国 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
-    <button id="startLL" text=" 开始浏览 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
-    <button id="startSFP" text=" 收藏分享评论 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
-    <button id="startDT" text=" 挑战答题 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
-    <button id="startMR" text=" 每日答题等 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
-    <button id="startDZ" text=" 对战 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
+    <button id="switchXX" text=" 切到强国 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
+    <button id="startAuto" text=" 自动学习 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
+    <button id="startWenzhang" text=" 开始浏览 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
+    <button id="startShiting" text=" 开始视听 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
+    <button id="startTiaozhan" text=" 挑战答题 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
+    <button id="startMeiri" text=" 每日答题等 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
+    <button id="startShuangren" text=" 双人对战 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
+    <button id="startSiren" text=" 四人对战 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
     <button id="stop" text=" 停止 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
     <button id="exit" text=" 退出悬浮窗 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
   </vertical>
@@ -70,31 +72,61 @@ window.exit.click(() => {
 
 let th = null;
 
-//浏览
-window.startLL.click(() => {
-  let ss = "./xxqg_v3.1.3.js";
-  startTh(ss);
+//自动学习
+window.startAuto.click(() => {
+  // 开始执行
+  var noverify_thread = noverify();
+  main();
+  if (noverify_thread.isAlive()) {
+    noverify_thread.interrupt();
+  }
+
+  /*****************结束后配置*****************/
+  fInfo("已全部结束");
+  // 调回原始音量
+  if (yl_on) {
+    fInfo("调回初始音量:" + yuan_yl);
+    device.setMusicVolume(yuan_yl);
+  }
+
+  // 取消屏幕常亮
+  fInfo("取消屏幕常亮");
+  device.cancelKeepingAwake();
+
+  // 震动提示
+  device.vibrate(500);
+  fInfo("十秒后关闭悬浮窗");
+  device.cancelVibration();
+  sleep(10000);
+  console.hide();
+  home();
+  exit();
 });
-//收藏评论分享
-window.startSFP.click(() => {
-  let ss = "./collectCommentShare.js";
-  startTh(ss);
+//浏览
+window.startWenzhang.click(() => {
+
+});
+//视听
+window.startShiting.click(() => {
+
 });
 //挑战答题
-window.startDT.click(() => {
-  let ss = "./challengeAnswer.js";
-  startTh(ss);
+window.startTiaozhan.click(() => {
+
 });
 //每日答题
-window.startMR.click(() => {
-  let ss = "./dailyAnswer.js";
-  startTh(ss);
+window.startMeiri.click(() => {
+
 });
-//对战
-window.startDZ.click(() => {
-  let ss = "./zsyAnswer.js";
-  startTh(ss);
+//双人对战
+window.startShuangren.click(() => {
+
 });
+//四人对战
+window.startSiren.click(() => {
+
+});
+
 
 //停止
 window.stop.click(() => {
@@ -2849,52 +2881,3 @@ var jifen_map = {
   "本地": 7
 },
   jifen_flag = "old";
-// 分割账号
-var noverify_thread = noverify();
-if (zhanghao) {
-  var zhanghao_list = [];
-  for (let zh of zhanghao.split("\n")) {
-    let userinfo = zh.split(/:|：/);
-    zhanghao_list.push(userinfo);
-  };
-  // if (zhanghao_list.length > 3) {zhanghao_list.length = 3;}
-  //console.verbose(zhanghao_list);
-  for (let userinfo of zhanghao_list) {
-    console.verbose(userinfo);
-    main(userinfo);
-  }
-  fClear();
-  fInfo("登录回账号1");
-  console.verbose(zhanghao_list[0][0], zhanghao_list[0][1]);
-  login(zhanghao_list[0][0], zhanghao_list[0][1]);
-} else {
-  main();
-}
-if (noverify_thread.isAlive()) {
-  noverify_thread.interrupt();
-}
-
-/*****************结束后配置*****************/
-//console.show();
-// console.clear();
-fInfo("已全部结束");
-// 调回原始音量
-if (yl_on) {
-  fInfo("调回初始音量:" + yuan_yl);
-  device.setMusicVolume(yuan_yl);
-}
-// 取消屏幕常亮
-fInfo("取消屏幕常亮");
-device.cancelKeepingAwake();
-// exit_app("学习强国");
-// if (email) {
-//   send_email(email);
-// }
-// 震动提示
-device.vibrate(500);
-fInfo("十秒后关闭悬浮窗");
-device.cancelVibration();
-sleep(10000);
-console.hide();
-home();
-exit();

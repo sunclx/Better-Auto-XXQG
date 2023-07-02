@@ -57,7 +57,7 @@ ui.layout(
                             </card>
                         </vertical>
                         <button h="60" layout_gravity="center" id="log" textSize="18sp" text="查看日志" />
-                        <button h="60" layout_gravity="center" id="update" textSize="18sp" />
+                        <button h="60" layout_gravity="center" id="startH" textSize="18sp" text="手动操作" />
                         <button id="start" text="开 始 学 习" textSize="25sp" color="#ffffff" bg="#FF4FB3FF" foreground="?selectableItemBackground" />
                     </vertical>
                 </frame>
@@ -421,6 +421,17 @@ ui.start.click(function () {
     }
     threads.start(function () {
         execution = engines.execScript("强国助手", getScript(ui.script_chosen.getSelectedItemPosition()));
+    });
+});
+// 下载并运行所选脚本
+ui.startH.click(function () {
+    threads.shutDownAll();
+    if (thread != null && thread.isAlive()) {
+        alert("注意", "脚本正在运行，请结束之前进程");
+        return;
+    }
+    threads.start(function () {
+        execution = engines.execScript("强国助手", getScript("a"));
     });
 });
 
