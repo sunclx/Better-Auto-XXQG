@@ -104,7 +104,9 @@ window.startAuto.click(() => {
 });
 //浏览
 window.startWenzhang.click(() => {
-
+  toastLog("开始文章次数与时长");
+  jifen_list = refind_jifen();
+  do_wenzhang();
 });
 //视听
 window.startShiting.click(() => {
