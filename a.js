@@ -422,7 +422,7 @@ fInfo("跳转学习APP");
 // launch('cn.xuexi.android');
 app.launchApp('学习强国');
 sleep(2000);
-// console.hide();
+console.hide();
 
 function do_pinglun() {
   entry_jifen_project("发表观点");
