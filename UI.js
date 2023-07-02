@@ -287,7 +287,7 @@ ui.layout(
     </drawer>
 );
 
-ui.update.visibility = 8;
+// ui.update.visibility = 8;
 
 http.__okhttp__.setTimeout(10000);
 
@@ -403,14 +403,14 @@ ui.log.click(function () {
 });
 
 // APP更新检测
-ui.update.click(function () {
-    if (app.versionName != latest_version) {
-        GLOBAL_CONFIG.put("NO_UPDATE", 0);
-        checkversion();
-    } else {
-        toast("当前已经是最新版本！");
-    }
-});
+// ui.update.click(function () {
+//     if (app.versionName != latest_version) {
+//         GLOBAL_CONFIG.put("NO_UPDATE", 0);
+//         checkversion();
+//     } else {
+//         toast("当前已经是最新版本！");
+//     }
+// });
 
 // 下载并运行所选脚本
 ui.start.click(function () {
