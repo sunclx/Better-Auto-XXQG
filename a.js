@@ -2,6 +2,50 @@ auto.waitFor(); //mode = "fast"
 var delay_time = 3000;
 device.wakeUpIfNeeded();
 
+// 读取自定义配置
+var TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
+var watchdog = TTXS_PRO_CONFIG.get("watchdog", "1800");
+var slide_verify = TTXS_PRO_CONFIG.get("slide_verify", "300");
+var fast_mode = TTXS_PRO_CONFIG.get("fast_mode", false);
+var ddtong = TTXS_PRO_CONFIG.get("ddtong", false);
+var is_exit = TTXS_PRO_CONFIG.get("is_exit", true);
+var pinglun = TTXS_PRO_CONFIG.get("pinglun", true);
+var shipin = TTXS_PRO_CONFIG.get("shipin", true);
+var wenzhang = TTXS_PRO_CONFIG.get("wenzhang", true);
+var meiri = TTXS_PRO_CONFIG.get("meiri", true);
+var meizhou = TTXS_PRO_CONFIG.get("meizhou", 0);
+var zhuanxiang = TTXS_PRO_CONFIG.get("zhuanxiang", 0);
+var tiaozhan = TTXS_PRO_CONFIG.get("tiaozhan", true);
+var ocr_choice = TTXS_PRO_CONFIG.get("ocr_choice", 0);
+var ocr_maxtime = TTXS_PRO_CONFIG.get("ocr_maxtime", "5000");
+var duizhan_mode = TTXS_PRO_CONFIG.get("duizhan_mode", 0);
+var jisu = TTXS_PRO_CONFIG.get("jisu", "0");
+var guaji = TTXS_PRO_CONFIG.get("guaji", true);
+var siren = TTXS_PRO_CONFIG.get("siren", true);
+var dacuo_num = TTXS_PRO_CONFIG.get("dacuo_num", "2");
+var shuangren = TTXS_PRO_CONFIG.get("shuangren", true);
+var bendi = TTXS_PRO_CONFIG.get("bendi", true);
+var dingyue = TTXS_PRO_CONFIG.get("dingyue", 0);
+var pushplus = TTXS_PRO_CONFIG.get("pushplus", "");
+var yl_on = TTXS_PRO_CONFIG.get("yl_on", true);
+var yinliang = TTXS_PRO_CONFIG.get("yinliang", "0");
+var zhanghao = TTXS_PRO_CONFIG.get("zhanghao", "");
+var comment = TTXS_PRO_CONFIG.get("comment", "全心全意为人民服务|不忘初心，牢记使命|不忘初心，方得始终|永远坚持党的领导|富强、民主、文明、和谐|自由，平等，公正，法治");
+
+/*******************主程序部分*******************/
+/********定义全局变量*********/
+var jifen_list, meizhou_dao, zhuanxiang_dao, dingyue_dao, storage_user, name, jinri, zongfen;
+var jifen_map = {
+  "评论": 6,
+  "视频": 2,
+  "文章": 1,
+  "每日": 3,
+  "趣味答题": 4,
+  "订阅": 5,
+  "本地": 7
+};
+var jifen_flag = "old";
+
 let window = floaty.window(
   <vertical>
     <button id="move" text=" 移动 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
@@ -164,35 +208,7 @@ function startTh(fileStr) {
   }
 }
 
-// 读取自定义配置
-var TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
-var watchdog = TTXS_PRO_CONFIG.get("watchdog", "1800");
-var slide_verify = TTXS_PRO_CONFIG.get("slide_verify", "300");
-var fast_mode = TTXS_PRO_CONFIG.get("fast_mode", false);
-var ddtong = TTXS_PRO_CONFIG.get("ddtong", false);
-var is_exit = TTXS_PRO_CONFIG.get("is_exit", true);
-var pinglun = TTXS_PRO_CONFIG.get("pinglun", true);
-var shipin = TTXS_PRO_CONFIG.get("shipin", true);
-var wenzhang = TTXS_PRO_CONFIG.get("wenzhang", true);
-var meiri = TTXS_PRO_CONFIG.get("meiri", true);
-var meizhou = TTXS_PRO_CONFIG.get("meizhou", 0);
-var zhuanxiang = TTXS_PRO_CONFIG.get("zhuanxiang", 0);
-var tiaozhan = TTXS_PRO_CONFIG.get("tiaozhan", true);
-var ocr_choice = TTXS_PRO_CONFIG.get("ocr_choice", 0);
-var ocr_maxtime = TTXS_PRO_CONFIG.get("ocr_maxtime", "5000");
-var duizhan_mode = TTXS_PRO_CONFIG.get("duizhan_mode", 0);
-var jisu = TTXS_PRO_CONFIG.get("jisu", "0");
-var guaji = TTXS_PRO_CONFIG.get("guaji", true);
-var siren = TTXS_PRO_CONFIG.get("siren", true);
-var dacuo_num = TTXS_PRO_CONFIG.get("dacuo_num", "2");
-var shuangren = TTXS_PRO_CONFIG.get("shuangren", true);
-var bendi = TTXS_PRO_CONFIG.get("bendi", true);
-var dingyue = TTXS_PRO_CONFIG.get("dingyue", 0);
-var pushplus = TTXS_PRO_CONFIG.get("pushplus", "");
-var yl_on = TTXS_PRO_CONFIG.get("yl_on", true);
-var yinliang = TTXS_PRO_CONFIG.get("yinliang", "0");
-var zhanghao = TTXS_PRO_CONFIG.get("zhanghao", "");
-var comment = TTXS_PRO_CONFIG.get("comment", "全心全意为人民服务|不忘初心，牢记使命|不忘初心，方得始终|永远坚持党的领导|富强、民主、文明、和谐|自由，平等，公正，法治");
+
 
 function google_ocr_api(img) {
   console.log('GoogleMLKit文字识别中');
@@ -396,20 +412,6 @@ fInfo("跳转学习APP");
 app.launchApp('学习强国');
 sleep(2000);
 // console.hide();
-// 命令行方式启动，似乎需要root
-// var result_shell = shell("pm disable cn.xuexi.android");
-// log(result_shell.code, result_shell.error);
-/***************不要动****************
- * **********************************
-// 创建一个安卓动作，打开软件，此功能可以跳过开屏页，还在实验中
-// app.startActivity({
-//   action: 'android.intent.action.VIEW',
-//   data: 'dtxuexi://appclient/page/study_feeds',
-//   packageName: 'cn.xuexi.android',
-// });
- * **********************************
-*************************************/
-
 
 function do_pinglun() {
   entry_jifen_project("发表观点");
@@ -2870,16 +2872,3 @@ function main(userinfo) {
   exit();
 }
 
-/*******************主程序部分*******************/
-/********定义全局变量*********/
-var jifen_list, meizhou_dao, zhuanxiang_dao, dingyue_dao, storage_user, name, jinri, zongfen;
-var jifen_map = {
-  "评论": 6,
-  "视频": 2,
-  "文章": 1,
-  "每日": 3,
-  "趣味答题": 4,
-  "订阅": 5,
-  "本地": 7
-},
-  jifen_flag = "old";
