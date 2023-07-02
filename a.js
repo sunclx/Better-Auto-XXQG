@@ -148,10 +148,13 @@ window.startAuto.click(() => {
 });
 //浏览
 window.startWenzhang.click(() => {
-  toastLog("开始文章次数与时长");
-  id("comm_head_xuexi_score").findOne().click();
-  text("登录").waitFor();
-  do_wenzhang();
+  th = threads.start(() => {
+    toastLog("开始文章次数与时长");
+    id("comm_head_xuexi_score").findOne().click();
+    text("登录").waitFor();
+    do_wenzhang();
+  });
+
 });
 //视听
 window.startShiting.click(() => {
