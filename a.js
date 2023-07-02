@@ -181,8 +181,10 @@ window.startSiren.click(() => {
 });
 //专项答题
 window.startZhuanxiang.click(() => {
-  fInfo("开始专项答题");
-  do_zhuanxiang();
+  th = threads.start(() => {
+    fInfo("开始专项答题");
+    do_zhuanxiang();
+  });
 });
 
 //停止
