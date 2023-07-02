@@ -118,33 +118,35 @@ let th = null;
 
 //自动学习
 window.startAuto.click(() => {
-  // 开始执行
-  var noverify_thread = noverify();
-  main();
-  if (noverify_thread.isAlive()) {
-    noverify_thread.interrupt();
-  }
+  th = threads.start(function () {
+    // 开始执行
+    var noverify_thread = noverify();
+    main();
+    if (noverify_thread.isAlive()) {
+      noverify_thread.interrupt();
+    }
 
-  /*****************结束后配置*****************/
-  fInfo("已全部结束");
-  // 调回原始音量
-  if (yl_on) {
-    fInfo("调回初始音量:" + yuan_yl);
-    device.setMusicVolume(yuan_yl);
-  }
+    /*****************结束后配置*****************/
+    fInfo("已全部结束");
+    // 调回原始音量
+    if (yl_on) {
+      fInfo("调回初始音量:" + yuan_yl);
+      device.setMusicVolume(yuan_yl);
+    }
 
-  // 取消屏幕常亮
-  fInfo("取消屏幕常亮");
-  device.cancelKeepingAwake();
+    // 取消屏幕常亮
+    fInfo("取消屏幕常亮");
+    device.cancelKeepingAwake();
 
-  // 震动提示
-  device.vibrate(500);
-  fInfo("十秒后关闭悬浮窗");
-  device.cancelVibration();
-  sleep(10000);
-  console.hide();
-  home();
-  exit();
+    // 震动提示
+    device.vibrate(500);
+    fInfo("十秒后关闭悬浮窗");
+    device.cancelVibration();
+    sleep(10000);
+    console.hide();
+    home();
+    exit();
+  })
 });
 //浏览
 window.startWenzhang.click(() => {
