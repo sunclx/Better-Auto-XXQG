@@ -72,7 +72,7 @@ setInterval(() => {
 
 
 let wx, wy, downTime, windowX, windowY;
-let show = "visible";
+let show = 8;
 // 这个函数是对应悬浮窗的移动
 window.move.setOnTouchListener(function (view, event) {
   switch (event.getAction()) {
@@ -93,10 +93,10 @@ window.move.setOnTouchListener(function (view, event) {
       // 手指弹起时如果偏移很小则判断为点击
       if (Math.abs(event.getRawY() - wy) < 30 && Math.abs(event.getRawX() - wx) < 30) {
         fInfo(" 长按调整位置 ")
-        if (show == "visible") {
-          show = "gone";
+        if (show == 8) {
+          show = 0;
         } else {
-          show = "visible";
+          show = 8;
         }
         window.startAuto.visibility = show;
       }
