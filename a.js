@@ -88,7 +88,7 @@ window.move.setOnTouchListener(function (view, event) {
     case event.ACTION_UP:
       // 手指弹起时如果偏移很小则判断为点击
       if (Math.abs(event.getRawY() - wy) < 30 && Math.abs(event.getRawX() - wx) < 30) {
-        toastLog(" 长按调整位置 ")
+        fInfo(" 长按调整位置 ")
       }
       return true;
   }
@@ -97,7 +97,7 @@ window.move.setOnTouchListener(function (view, event) {
 
 // 这个函数是对应悬浮窗的退出
 window.exit.click(() => {
-  toastLog(" 退出！");
+  fInfo(" 退出！");
   exit();
 });
 
@@ -138,7 +138,7 @@ window.startAuto.click(() => {
 //浏览
 window.startWenzhang.click(() => {
   startTh(() => {
-    toastLog("开始文章次数与时长");
+    fInfo("开始文章次数与时长");
     id("comm_head_xuexi_score").findOne().click();
     text("登录").waitFor();
     do_wenzhang();
@@ -147,7 +147,7 @@ window.startWenzhang.click(() => {
 //视听
 window.startShiting.click(() => {
   startTh(() => {
-    toastLog("开始视听次数");
+    fInfo("开始视听次数");
     id("comm_head_xuexi_score").findOne().click();
     text("登录").waitFor();
     do_shipin();
@@ -156,27 +156,27 @@ window.startShiting.click(() => {
 //挑战答题
 window.startTiaozhan.click(() => {
   startTh(() => {
-    toastLog("挑战答题开始");
+    fInfo("挑战答题开始");
     do_tiaozhan();
   });
 });
 //每日答题
 window.startMeiri.click(() => {
   startTh(() => {
-    toastLog("每日答题开始"), do_meiri(), jifen_list = refind_jifen()
+    fInfo("每日答题开始"), do_meiri(), jifen_list = refind_jifen()
   });
 });
 //双人对战
 window.startShuangren.click(() => {
   startTh(() => {
-    toastLog("双人对战开始");
+    fInfo("双人对战开始");
     do_duizhan1(2);
   });
 });
 //四人对战
 window.startSiren.click(() => {
   startTh(() => {
-    toastLog("四人赛开始");
+    fInfo("四人赛开始");
     do_duizhan1(4);
   });
 });
@@ -191,13 +191,13 @@ window.startZhuanxiang.click(() => {
 //停止
 window.stop.click(() => {
   if (th == null) {
-    toastLog(" 没有进行中的脚本 ");
+    fInfo(" 没有进行中的脚本 ");
   } else {
     if (th.isAlive()) {
       threads.shutDownAll();
-      toastLog(" 停止！");
+      fInfo(" 停止！");
     } else {
-      toastLog(" 没有进行中的脚本 ");
+      fInfo(" 没有进行中的脚本 ");
     }
   }
 });
@@ -205,12 +205,16 @@ window.stop.click(() => {
 function startTh(func) {
   if (th == null) {
     th = threads.start(function () {
-      toastLog(" 开启线程");
+      fInfo(" 开启线程");
       func();
     });
   } else {
     if (th.isAlive()) {
-      toastLog(" 脚本都在运行了你还点！？");
+      fInfo(" 脚本都在运行了你还点！？");
+      threads.shutDownAll();
+      th = threads.start(function () {
+        func();
+      });
     } else {
       th = threads.start(function () {
         func();
@@ -341,13 +345,13 @@ if (ocr_choice == 2) {
 // 自动允许权限进程
 threads.start(function () {
   //在新线程执行的代码
-  toastLog("开始自动获取截图权限");
+  fInfo("开始自动获取截图权限");
   var btn = className("android.widget.Button").textMatches(/允许|立即开始|START NOW/).findOne(5000);
   if (btn) {
     sleep(1000);
     btn.click();
   }
-  toastLog("结束获取截图权限");
+  fInfo("结束获取截图权限");
 });
 fInfo("请求截图权限");
 // 请求截图权限、似乎请求两次会失效
@@ -616,7 +620,7 @@ function do_wenzhang() {
         sleep(random(9000, 10500));
       } else {
         // 第6次停顿刷时间
-        toastLog("正在刷时长程序未停止");
+        fInfo("正在刷时长程序未停止");
         let shichang = random(330, 360);
         fClear();
         fInfo("开始刷时长，总共" + shichang + "秒");
@@ -769,7 +773,7 @@ function do_meizhou() {
     ran_sleep();
     // 如果题做错了重来
     if (text("下一题").exists() || text("完成").exists()) {
-      //toastLog(title + "我无能为力啦，请手动作答吧");
+      //fInfo(title + "我无能为力啦，请手动作答吧");
       fInfo("做错尝试重答");
       text("答案解析").waitFor();
       upload_wrong_exec("（每周）");
@@ -1041,13 +1045,13 @@ function do_duizhan1(renshu) {
     ui.run(function () {
       let title = w.title.getText();
       w.title.setText(title + "(固定)");
-      toastLog("这是废弃模式，没有正确率");
+      fInfo("这是废弃模式，没有正确率");
     });
   } else if (duizhan_mode == 2) {
     ui.run(function () {
       let title = w.title.getText();
       w.title.setText(title + "(手动)");
-      toastLog("请手动点击答案");
+      fInfo("请手动点击答案");
     });
   }
   className("android.widget.ListView").waitFor();
@@ -1122,7 +1126,7 @@ function do_duizhan1(renshu) {
     sleep(100); // 追求极限速度，不知道会不会出错
     let view_d28 = className("android.view.View").depth(28).indexInParent(0).findOne(1000);
     if (!view_d28) {
-      toastLog("找不到view_d28");
+      fInfo("找不到view_d28");
       err_flag = false;
       sleep(200);
       continue;
@@ -1138,7 +1142,7 @@ function do_duizhan1(renshu) {
         que_h = view_d28.child(0).bounds().bottom - view_d28.bounds().top;
       }
     } else {
-      toastLog("找不到框体");
+      fInfo("找不到框体");
       log(view_d28.childCount(), view_d28.bounds());
       err_flag = false;
       sleep(200);
@@ -1488,7 +1492,7 @@ function dacuo(renshu) {
       que_w = view_d28.bounds().width();
       que_h = view_d28.child(0).bounds().bottom - view_d28.bounds().top;
     } else {
-      toastLog("找不到框体内容");
+      fInfo("找不到框体内容");
       //log(view_d28.childCount(), view_d28.bounds());
       err_flag = false;
       sleep(200);
@@ -2620,13 +2624,13 @@ function xxqg() {
   nolocate_thread.isAlive() && (nolocate_thread.interrupt(), fInfo("终止位置权限弹窗检测"));
   noupdate_thread.isAlive() && (noupdate_thread.interrupt(), fInfo("终止更新弹窗检测"));
   nonotice_thread.isAlive() && (nonotice_thread.interrupt(), fInfo("终止消息通知检测"));
-  true == pinglun && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).text().match(/\d+/)[0]) && (toastLog("开始评论"), do_pinglun(), jifen_list = refind_jifen());
-  true == shipin && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), toastLog("开始视听次数"), do_shipin(), jifen_list = refind_jifen());
-  true == meiri && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["每日"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["每日"]).child(4).text()) && (toastLog("每日答题开始"), do_meiri(), jifen_list = refind_jifen());
+  true == pinglun && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).text().match(/\d+/)[0]) && (fInfo("开始评论"), do_pinglun(), jifen_list = refind_jifen());
+  true == shipin && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), fInfo("开始视听次数"), do_shipin(), jifen_list = refind_jifen());
+  true == meiri && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["每日"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["每日"]).child(4).text()) && (fInfo("每日答题开始"), do_meiri(), jifen_list = refind_jifen());
   c = 1;
-  true == bendi && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(4).text()) && (toastLog("本地开始"), do_bendi(), jifen_list = refind_jifen());
+  true == bendi && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(4).text()) && (fInfo("本地开始"), do_bendi(), jifen_list = refind_jifen());
   d = 1;
-  0 != dingyue && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).text().match(/\d+/)[0]) && (toastLog("订阅开始"), d = do_dingyue(), jifen_list = refind_jifen());
+  0 != dingyue && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).text().match(/\d+/)[0]) && (fInfo("订阅开始"), d = do_dingyue(), jifen_list = refind_jifen());
 
   // 趣味答题
   function qwdt() {
@@ -2639,7 +2643,7 @@ function xxqg() {
     if (text("随机匹配").exists() && text("开始对战")) {
       if (ocr_test()) {
         if (true == shuangren) {
-          toastLog("双人对战开始");
+          fInfo("双人对战开始");
           do_duizhan1(2);
           jifen_list = refind_jifen();
         }
@@ -2650,7 +2654,7 @@ function xxqg() {
     if (text("开始比赛").exists()) {
       if (ocr_test()) {
         if (true == shuangren) {
-          toastLog("四人赛开始");
+          fInfo("四人赛开始");
           guaji && do_duizhan1(4);
           jifen_list = refind_jifen();
         }
@@ -2659,7 +2663,7 @@ function xxqg() {
     }
 
     if (true == tiaozhan) {
-      toastLog("挑战答题开始");
+      fInfo("挑战答题开始");
       do_tiaozhan();
       jifen_list = refind_jifen()
       return
@@ -2667,7 +2671,7 @@ function xxqg() {
   }
   qwdt();
 
-  true == wenzhang && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), toastLog("开始文章次数与时长"), do_wenzhang(), jifen_list = refind_jifen());
+  true == wenzhang && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), fInfo("开始文章次数与时长"), do_wenzhang(), jifen_list = refind_jifen());
   if (pushplus || token) {
     fInfo("推送前等待积分刷新5秒");
     sleep(5E3);
@@ -2681,7 +2685,7 @@ function xxqg() {
   back();
   b = 1;
   if (2 != meizhou) {
-    if (toastLog("每周答题开始"), text("我的").findOne().click(), sleep(1000), text("我要答题").findOne(3000)) {
+    if (fInfo("每周答题开始"), text("我的").findOne().click(), sleep(1000), text("我要答题").findOne(3000)) {
       text("我要答题").findOne().parent().click();
       sleep(1000);
       for (b = do_meizhou(); !b;) b = do_meizhou();
