@@ -98,7 +98,7 @@ window.move.setOnTouchListener(function (view, event) {
         } else {
           show = "visible";
         }
-        window.startAuto.visvisibility = show;
+        window.startAuto.visibility = show;
       }
       return true;
   }
