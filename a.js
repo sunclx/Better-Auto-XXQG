@@ -175,7 +175,7 @@ window.startShiting.click(() => {
 window.startTiaozhan.click(() => {
   startTh(() => {
     fInfo("挑战答题开始");
-    do_tiaozhan(100);
+    do_tiaozhan(50);
   });
 });
 //每日答题
@@ -948,12 +948,8 @@ function do_tiaozhan(max) {
     className("android.widget.Image").textStartsWith("chanllenge").waitFor()
   }
   var total = 0;
-  var max_total;
-  if (max) {
-    max_total = max;
-  } else {
-    max = 5;
-  }
+  var max_total = max || 5;
+
   for (ddtong && (max_total += 10); ;) {
     fClear();
     fInfo("第" + (total + 1) + "题");
