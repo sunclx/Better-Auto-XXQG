@@ -1,40 +1,40 @@
 auto.waitFor(); //mode = "fast"
-var delay_time = 3000;
+let delay_time = 3000;
 device.wakeUpIfNeeded();
 
 // 读取自定义配置
-var TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
-var watchdog = TTXS_PRO_CONFIG.get("watchdog", "1800");
-var slide_verify = TTXS_PRO_CONFIG.get("slide_verify", "300");
-var fast_mode = TTXS_PRO_CONFIG.get("fast_mode", false);
-var ddtong = TTXS_PRO_CONFIG.get("ddtong", false);
-var is_exit = TTXS_PRO_CONFIG.get("is_exit", true);
-var pinglun = TTXS_PRO_CONFIG.get("pinglun", true);
-var shipin = TTXS_PRO_CONFIG.get("shipin", true);
-var wenzhang = TTXS_PRO_CONFIG.get("wenzhang", true);
-var meiri = TTXS_PRO_CONFIG.get("meiri", true);
-var meizhou = TTXS_PRO_CONFIG.get("meizhou", 0);
-var zhuanxiang = TTXS_PRO_CONFIG.get("zhuanxiang", 0);
-var tiaozhan = TTXS_PRO_CONFIG.get("tiaozhan", true);
-var ocr_choice = TTXS_PRO_CONFIG.get("ocr_choice", 0);
-var ocr_maxtime = TTXS_PRO_CONFIG.get("ocr_maxtime", "5000");
-var duizhan_mode = TTXS_PRO_CONFIG.get("duizhan_mode", 0);
-var jisu = TTXS_PRO_CONFIG.get("jisu", "0");
-var guaji = TTXS_PRO_CONFIG.get("guaji", true);
-var siren = TTXS_PRO_CONFIG.get("siren", true);
-var shuangren = TTXS_PRO_CONFIG.get("shuangren", true);
-var bendi = TTXS_PRO_CONFIG.get("bendi", true);
-var dingyue = TTXS_PRO_CONFIG.get("dingyue", 0);
-var pushplus = TTXS_PRO_CONFIG.get("pushplus", "");
-var yl_on = TTXS_PRO_CONFIG.get("yl_on", true);
-var yinliang = TTXS_PRO_CONFIG.get("yinliang", "0");
-var zhanghao = TTXS_PRO_CONFIG.get("zhanghao", "");
-var comment = TTXS_PRO_CONFIG.get("comment", "全心全意为人民服务|不忘初心，牢记使命|不忘初心，方得始终|永远坚持党的领导|富强、民主、文明、和谐|自由，平等，公正，法治");
+let TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
+let watchdog = TTXS_PRO_CONFIG.get("watchdog", "1800");
+let slide_verify = TTXS_PRO_CONFIG.get("slide_verify", "300");
+let fast_mode = TTXS_PRO_CONFIG.get("fast_mode", false);
+let ddtong = TTXS_PRO_CONFIG.get("ddtong", false);
+let is_exit = TTXS_PRO_CONFIG.get("is_exit", true);
+let pinglun = TTXS_PRO_CONFIG.get("pinglun", true);
+let shipin = TTXS_PRO_CONFIG.get("shipin", true);
+let wenzhang = TTXS_PRO_CONFIG.get("wenzhang", true);
+let meiri = TTXS_PRO_CONFIG.get("meiri", true);
+let meizhou = TTXS_PRO_CONFIG.get("meizhou", 0);
+let zhuanxiang = TTXS_PRO_CONFIG.get("zhuanxiang", 0);
+let tiaozhan = TTXS_PRO_CONFIG.get("tiaozhan", true);
+let ocr_choice = TTXS_PRO_CONFIG.get("ocr_choice", 0);
+let ocr_maxtime = TTXS_PRO_CONFIG.get("ocr_maxtime", "5000");
+let duizhan_mode = TTXS_PRO_CONFIG.get("duizhan_mode", 0);
+let jisu = TTXS_PRO_CONFIG.get("jisu", "0");
+let guaji = TTXS_PRO_CONFIG.get("guaji", true);
+let siren = TTXS_PRO_CONFIG.get("siren", true);
+let shuangren = TTXS_PRO_CONFIG.get("shuangren", true);
+let bendi = TTXS_PRO_CONFIG.get("bendi", true);
+let dingyue = TTXS_PRO_CONFIG.get("dingyue", 0);
+let pushplus = TTXS_PRO_CONFIG.get("pushplus", "");
+let yl_on = TTXS_PRO_CONFIG.get("yl_on", true);
+let yinliang = TTXS_PRO_CONFIG.get("yinliang", "0");
+let zhanghao = TTXS_PRO_CONFIG.get("zhanghao", "");
+let comment = TTXS_PRO_CONFIG.get("comment", "全心全意为人民服务|不忘初心，牢记使命|不忘初心，方得始终|永远坚持党的领导|富强、民主、文明、和谐|自由，平等，公正，法治");
 
 /*******************主程序部分*******************/
 /********定义全局变量*********/
-var jifen_list, meizhou_dao, zhuanxiang_dao, dingyue_dao, name, jinri, zongfen;
-var jifen_map = {
+let jifen_list, meizhou_dao, zhuanxiang_dao, dingyue_dao, name, jinri, zongfen;
+let jifen_map = {
   "评论": 6,
   "视频": 2,
   "文章": 1,
@@ -43,7 +43,10 @@ var jifen_map = {
   "订阅": 5,
   "本地": 7
 };
-var jifen_flag = "old";
+let jifen_flag = "old";
+let storage = storages.create('songgedodo');
+let w = fInit();
+w.setTouchable(false);
 
 let window = floaty.window(
   <vertical>
@@ -69,6 +72,7 @@ setInterval(() => {
 
 
 let wx, wy, downTime, windowX, windowY;
+let show = "visible";
 // 这个函数是对应悬浮窗的移动
 window.move.setOnTouchListener(function (view, event) {
   switch (event.getAction()) {
@@ -89,6 +93,12 @@ window.move.setOnTouchListener(function (view, event) {
       // 手指弹起时如果偏移很小则判断为点击
       if (Math.abs(event.getRawY() - wy) < 30 && Math.abs(event.getRawX() - wx) < 30) {
         fInfo(" 长按调整位置 ")
+        if (show == "visible") {
+          show = "gone";
+        } else {
+          show = "visible";
+        }
+        window.startAuto.visvisibility = show;
       }
       return true;
   }
@@ -309,10 +319,6 @@ if (fast_mode) {
 }
 events.observeToast();
 sleep(delay_time);
-
-/*****************更新内容弹窗部分*****************/
-var storage = storages.create('songgedodo');
-var w = fInit();
 
 fInfo("脚本初始化");
 // 初始化宽高
@@ -2496,7 +2502,7 @@ function displayProp(obj) {
 /*******************悬浮窗*******************/
 function fInit() {
   // ScrollView下只能有一个子布局
-  var w = floaty.rawWindow(
+  let w = floaty.rawWindow(
     <card cardCornerRadius='8dp' alpha="0.8">
       <vertical>
         <horizontal bg='#FF000000' padding='10 5'>
