@@ -45,7 +45,7 @@ let jifen_map = {
 };
 let jifen_flag = "old";
 let storage = storages.create('songgedodo');
-let w = fInit();
+var w = fInit();
 w.setTouchable(false);
 
 let window = floaty.window(
