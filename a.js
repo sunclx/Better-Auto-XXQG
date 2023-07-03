@@ -33,7 +33,7 @@ var comment = TTXS_PRO_CONFIG.get("comment", "全心全意为人民服务|不忘
 
 /*******************主程序部分*******************/
 /********定义全局变量*********/
-var jifen_list, meizhou_dao, zhuanxiang_dao, dingyue_dao, storage_user, name, jinri, zongfen;
+var jifen_list, meizhou_dao, zhuanxiang_dao, dingyue_dao, name, jinri, zongfen;
 var jifen_map = {
   "评论": 6,
   "视频": 2,
@@ -506,7 +506,7 @@ function do_shipin() {
 
 function do_wenzhang() {
   // 点击进入本地
-  let old_wen = storage_user.get("old_wen_list", []);
+  let old_wen = storage.get("old_wen_list", []);
   entry_jifen_project("本地频道");
   if (ddtong) {
     fSet("title", "文章(dd通)…");
@@ -651,7 +651,7 @@ function do_wenzhang() {
     wen_num += 1;
   }
   // 更新已读文章库
-  storage_user.put("old_wen_list", old_wen);
+  storage.put("old_wen_list", old_wen);
   sleep(3000);
   // 关闭音乐
   close_video();
@@ -838,7 +838,6 @@ function do_zhuanxiang() {
     while (!text("开始答题").exists()) { //开始答题
       // 如果到底则设置倒序为true
       if (dixian_slt.exists()) {
-        //storage_user.put('zhuanxiang_dao', true); 自定义不用读取
         fInfo("专项答题全部已作答。");
         back();
         text("登录").waitFor();
@@ -2574,7 +2573,7 @@ function fRefocus() {
   sleep(500);
 }
 
-function xxqg(userinfo) {
+function xxqg() {
   var sign_list = [];
   fInfo("开始更新弹窗检测");
   var noupdate_thread = threads.start(function () {
@@ -2596,12 +2595,7 @@ function xxqg(userinfo) {
     btn.click();
     fInfo("已取消消息通知");
   });
-  if (userinfo) {
-    var [username, pwd, token] = userinfo;
-    login(username, pwd);
-    storage_user = storages.create('songgedodo:' + username);
-    name = username.substr(0, 3) + "****" + username.substr(-4);
-  } else name = "", storage_user = storage;
+
   fSet("username", name);
   ran_sleep();
   if (meizhou == 1) {
@@ -2717,7 +2711,7 @@ function xxqg(userinfo) {
   return !0
 }
 
-function main(userinfo) {
+function main() {
   var retry_time;
   if (!Number(watchdog)) {
     retry_time = 5400;
@@ -2732,7 +2726,7 @@ function main(userinfo) {
     fInfo("开始第" + (i + 1) + "轮，最长运行时间为" + retry_time + "s");
     let xxqg_begin = new Date();
     var main_thread = threads.start(function () {
-      xxqg(userinfo);
+      xxqg();
     })
     main_thread.join(retry_time * 1000);
     if (main_thread.isAlive()) {
