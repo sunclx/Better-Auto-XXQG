@@ -947,7 +947,13 @@ function do_tiaozhan(max) {
     b.click();
     className("android.widget.Image").textStartsWith("chanllenge").waitFor()
   }
-  var total = 0, max_total = max || 5;
+  var total = 0;
+  var max_total;
+  if (max) {
+    max_total = max;
+  } else {
+    max = 5;
+  }
   for (ddtong && (max_total += 10); ;) {
     fClear();
     fInfo("第" + (total + 1) + "题");
