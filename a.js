@@ -2688,16 +2688,7 @@ function xxqg() {
   qwdt();
 
   true == wenzhang && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), fInfo("开始文章次数与时长"), entry_jifen_project("本地频道"), do_wenzhang(), jifen_list = refind_jifen());
-  if (pushplus || token) {
-    fInfo("推送前等待积分刷新5秒");
-    sleep(5E3);
-    token || (token = pushplus);
-    try {
-      send_pushplus(token, sign_list)
-    } catch (h) {
-      fError(h + ":push+推送失败，请尝试切换流量运行或者设置114DNS")
-    }
-  }
+
   back();
   b = 1;
   if (2 != meizhou) {
