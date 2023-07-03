@@ -45,6 +45,12 @@ let jifen_map = {
 };
 let jifen_flag = "old";
 let storage = storages.create('songgedodo');
+if (fast_mode) {
+  auto.setMode("fast");
+}
+events.observeToast();
+sleep(delay_time);
+
 var w = fInit();
 w.setTouchable(false);
 
@@ -92,13 +98,19 @@ window.move.setOnTouchListener(function (view, event) {
     case event.ACTION_UP:
       // 手指弹起时如果偏移很小则判断为点击
       if (Math.abs(event.getRawY() - wy) < 30 && Math.abs(event.getRawX() - wx) < 30) {
-        fInfo(" 长按调整位置 ")
         if (show == 8) {
           show = 0;
         } else {
           show = 8;
         }
         window.startAuto.visibility = show;
+        window.startWenzhang.visibility = show;
+        window.startShiting.visibility = show;
+        window.startTiaozhan.visibility = show;
+        window.startMeiri.visibility = show;
+        window.startShuangren.visibility = show;
+        window.startSiren.visibility = show;
+        window.startZhuanxiang.visibility = show;
       }
       return true;
   }
@@ -313,12 +325,6 @@ function paddle_ocr_api() {
   list = null;
   return res;
 }
-
-if (fast_mode) {
-  auto.setMode("fast");
-}
-events.observeToast();
-sleep(delay_time);
 
 fInfo("脚本初始化");
 // 初始化宽高
