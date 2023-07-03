@@ -22,7 +22,6 @@ var duizhan_mode = TTXS_PRO_CONFIG.get("duizhan_mode", 0);
 var jisu = TTXS_PRO_CONFIG.get("jisu", "0");
 var guaji = TTXS_PRO_CONFIG.get("guaji", true);
 var siren = TTXS_PRO_CONFIG.get("siren", true);
-var dacuo_num = TTXS_PRO_CONFIG.get("dacuo_num", "2");
 var shuangren = TTXS_PRO_CONFIG.get("shuangren", true);
 var bendi = TTXS_PRO_CONFIG.get("bendi", true);
 var dingyue = TTXS_PRO_CONFIG.get("dingyue", 0);
@@ -48,13 +47,12 @@ var jifen_flag = "old";
 
 let window = floaty.window(
   <vertical>
-    <button id="move" text=" 移动 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
-    <button id="switchXX" text=" 切到强国 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
+    <button id="move" text=" 移动 隐藏 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
     <button id="startAuto" text=" 自动学习 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
     <button id="startWenzhang" text=" 开始浏览 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
     <button id="startShiting" text=" 开始视听 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
     <button id="startTiaozhan" text=" 挑战答题 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
-    <button id="startMeiri" text=" 每日答题等 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
+    <button id="startMeiri" text=" 每日答题 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
     <button id="startShuangren" text=" 双人对战 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
     <button id="startSiren" text=" 四人对战 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
     <button id="startZhuanxiang" text=" 专项答题 " w="90" h="35" bg="#77ffffff" textSize="10sp" />
@@ -97,17 +95,6 @@ window.move.setOnTouchListener(function (view, event) {
   return true;
 });
 
-window.switchXX.click(() => {
-  toastLog(" 切换到学习强国APP...");
-  if (!launchApp("学习强国"))//启动学习强国app
-  {
-    console.error("找不到学习强国App!");
-    return;
-  }
-});
-
-
-
 // 这个函数是对应悬浮窗的退出
 window.exit.click(() => {
   toastLog(" 退出！");
@@ -119,8 +106,7 @@ let th = null;
 
 //自动学习
 window.startAuto.click(() => {
-  th = threads.start(function () {
-    // 开始执行
+  startTh(() => {
     var noverify_thread = noverify();
     main();
     if (noverify_thread.isAlive()) {
@@ -147,41 +133,56 @@ window.startAuto.click(() => {
     console.hide();
     home();
     exit();
-  })
+  });
 });
 //浏览
 window.startWenzhang.click(() => {
-  th = threads.start(function () {
+  startTh(() => {
     toastLog("开始文章次数与时长");
     id("comm_head_xuexi_score").findOne().click();
     text("登录").waitFor();
     do_wenzhang();
   });
-
 });
 //视听
 window.startShiting.click(() => {
-
+  startTh(() => {
+    toastLog("开始视听次数");
+    id("comm_head_xuexi_score").findOne().click();
+    text("登录").waitFor();
+    do_shipin();
+  });
 });
 //挑战答题
 window.startTiaozhan.click(() => {
-
+  startTh(() => {
+    toastLog("挑战答题开始");
+    do_tiaozhan();
+  });
 });
 //每日答题
 window.startMeiri.click(() => {
-
+  startTh(() => {
+    toastLog("每日答题开始"), do_meiri(), jifen_list = refind_jifen()
+  });
 });
 //双人对战
 window.startShuangren.click(() => {
-
+  startTh(() => {
+    toastLog("双人对战开始");
+    do_duizhan1(2);
+  });
 });
 //四人对战
 window.startSiren.click(() => {
-
+  startTh(() => {
+    toastLog("四人赛开始");
+    do_duizhan1(4);
+  });
 });
 //专项答题
 window.startZhuanxiang.click(() => {
-  th = threads.start(function () {
+  startTh(() => {
     fInfo("开始专项答题");
     do_zhuanxiang();
   });
@@ -201,21 +202,18 @@ window.stop.click(() => {
   }
 });
 
-function startTh(fileStr) {
-  var ss = fileStr;
+function startTh(func) {
   if (th == null) {
     th = threads.start(function () {
       toastLog(" 开启线程");
-      let begin = require(ss);
-      begin();
+      func();
     });
   } else {
     if (th.isAlive()) {
       toastLog(" 脚本都在运行了你还点！？");
     } else {
       th = threads.start(function () {
-        let begin = require(ss);
-        begin();
+        func();
       });
     }
   }
@@ -309,27 +307,15 @@ if (fast_mode) {
 }
 events.observeToast();
 sleep(delay_time);
+
 /*****************更新内容弹窗部分*****************/
 var storage = storages.create('songgedodo');
-// 脚本版本号
-var last_version = "V12.0";
-var engine_version = "V12.3";
-var newest_version = "V12.4";
-if (storage.get(engine_version, true)) {
-  storage.remove(last_version);
-  let gengxin_rows = "脚本有风险，仅供学习交流;更新内容：;1.原脚本会进入“我的”界面获取用户名，区分历史刷过文章，现取消此设定;2.可自定义滑动验证界面震动提醒时间;3.禁止截屏会随机选一个选项;4.自定义评论内容;脚本测试环境：强国V2.45.0;联系方式：tg: t.me/wyqg_ttxs;（点击取消不再提示）".split(";");
-  let is_show = confirm(engine_version + "版更新内容", gengxin_rows.join("\n"));
-  if (!is_show) {
-    storage.put(engine_version, false);
-  }
-}
 var w = fInit();
-// console.setTitle("天天向上");
-// console.show();
-fInfo("天天向上Pro" + newest_version + "脚本初始化");
+
+fInfo("脚本初始化");
 // 初始化宽高
 var [device_w, device_h] = init_wh();
-// log("fina:", device_w, device_h);
+
 // OCR初始化，重写内置OCR module
 if (ocr_choice == 2) {
   fInfo("初始化第三方ocr插件");
@@ -351,11 +337,10 @@ if (ocr_choice == 2) {
     exit();
   }
 }
-// sleep(2000);
+
 // 自动允许权限进程
 threads.start(function () {
   //在新线程执行的代码
-  //sleep(500);
   toastLog("开始自动获取截图权限");
   var btn = className("android.widget.Button").textMatches(/允许|立即开始|START NOW/).findOne(5000);
   if (btn) {
@@ -405,11 +390,7 @@ if (yl_on) {
   device.setMusicVolume(yl);
   fInfo("当前音量：" + device.getMusicVolume());
 }
-if (is_exit) {
-  fInfo("运行前重置学习APP");
-  exit_app("学习强国");
-  sleep(1500);
-}
+
 // 检测地理位置权限代码，出现就点掉
 fInfo("开始位置权限弹窗检测");
 var nolocate_thread = threads.start(function () {
@@ -420,9 +401,7 @@ var nolocate_thread = threads.start(function () {
   text("暂不开启").findOne().click();
   fInfo("已关闭定位");
 });
-fInfo("跳转学习APP");
-// launch('cn.xuexi.android');
-app.launchApp('学习强国');
+
 sleep(2000);
 fClear();
 
@@ -434,9 +413,6 @@ function do_pinglun() {
   swipe(device_w / 2, device_h * 0.7, device_w / 2, device_h * 0.4, 1000);
   id("general_card_title_id").findOne().parent().parent();
   fInfo("尝试点击title:" + id("general_card_title_id").findOne().text());
-  //   //log("文章click:", wen_box.click());
-  //   while (!id("general_card_title_id").findOne().parent().parent().click()) {log("文章click: false");}
-  //   log("文章click: true");
   real_click(id("general_card_title_id").findOne().parent().parent());
   log("等待加载");
   idContains("image-text-content").waitFor();
@@ -464,17 +440,6 @@ function do_pinglun() {
   sleep(1000);
   text("确认").findOne().click();
   sleep(1000);
-  //   // 下面是分享
-  //   for (let i=0; i<2; i++) {
-  //     text_edit.findOne().parent().child(3).click();
-  //     sleep(500);
-  //     textContains("学习强国").findOne().parent().click();
-  //     sleep(500);
-  //     text("创建新的聊天").waitFor();
-  //     sleep(1000);
-  //     back();
-  //     sleep(1000);
-  //   }
   // 回到首页
   back();
   // 返回积分页
@@ -540,7 +505,6 @@ function do_shipin() {
 }
 
 function do_wenzhang() {
-  //   jifen_list = refind_jifen();
   // 点击进入本地
   let old_wen = storage_user.get("old_wen_list", []);
   entry_jifen_project("本地频道");
@@ -563,16 +527,13 @@ function do_wenzhang() {
   log("切换北京");
   text("北京").findOne().parent().parent().click();
   log("查找banner");
-  //let banner = className("android.support.v7.widget.RecyclerView").findOne();
   let banner = classNameContains("RecyclerView").findOne();
   fInfo("查找北京新闻广播");
-  //fRefocus();
   while (banner.findOne(text("北京新闻广播").boundsInside(0, 0, device_w, device_h)) == null) {
     banner.scrollForward();
     sleep(500);
   }
   last_obj = banner.findOne(text("北京新闻广播"));
-  //   fInfo("点击北京新闻广播", text("北京新闻广播").findOne().parent().click());
   fInfo("点击北京新闻广播：" + last_obj.parent().click());
   fInfo("视听广播时长");
   sleep(11500);
@@ -582,7 +543,6 @@ function do_wenzhang() {
   fInfo("开始文章");
   sleep(1500);
   banner = classNameContains("RecyclerView").findOne();
-  //log(banner);
   while (banner.findOne(text("北京学习平台").boundsInside(0, 0, device_w, device_h)) == null) {
     banner.scrollBackward();
     sleep(500);
@@ -590,9 +550,6 @@ function do_wenzhang() {
   sleep(1000);
   fInfo("查找北京学习平台，尝试点击");
   first_obj = banner.findOne(text("北京学习平台"));
-  //   while (!text("北京学习平台").findOne().parent().click()) {log("click: false");}
-  //   log("click: true");
-  //   real_click(text("北京学习平台").findOne().parent());
   real_click(first_obj.parent());
   log("等待加载");
   sleep(1000);
@@ -603,7 +560,6 @@ function do_wenzhang() {
   fRefocus();
   let listview = className("android.widget.ListView").depth(17).findOne();
   // 先判断是否有可刷文章，没有则停止脚本
-  // while (!id("general_card_image_id").findOne(1000)) {listview.scrollForward();}
   for (i = 0; i < 2; i++) {
     listview.scrollForward();
     sleep(500);
@@ -619,10 +575,8 @@ function do_wenzhang() {
     return false;
   });
   log("查找文章");
-  //while (!idContains("general_card_image_id").findOne(500)) {
   while (!wen_box_slt.findOne(500)) {
     listview.scrollForward();
-    //sleep(500);
   }
   log("找到文章");
   // 下面那句会定位到新思想的文章，不能加载过新思想
@@ -648,7 +602,6 @@ function do_wenzhang() {
     fInfo("查找webview");
     let father_view = className("android.webkit.WebView").findOne(9000);
     sleep(1000);
-    //     let father_view = className("android.view.View").depth(16).findOne();
     // 判断是否为专题而不是文章
     if (father_view && father_view.find(idContains("__next")).empty()) {
       fInfo("查找文章内容");
@@ -663,7 +616,6 @@ function do_wenzhang() {
         sleep(random(9000, 10500));
       } else {
         // 第6次停顿刷时间
-        //console.show();   
         toastLog("正在刷时长程序未停止");
         let shichang = random(330, 360);
         fClear();
@@ -677,7 +629,6 @@ function do_wenzhang() {
           } else {
             sleep(1000);
           }
-          //w.info.setText("已观看文章" + wait_time + "秒，总共" + shichang + "秒");
           fSet("info", "已观看文章" + wait_time + "秒，总共" + shichang + "秒");
           wait_time++;
         }
@@ -690,7 +641,6 @@ function do_wenzhang() {
       wen_num -= 1;
     }
     back();
-    //id("general_card_image_id").waitFor();
     className("android.widget.ListView").scrollable().depth(17).waitFor();
     sleep(1000);
     while (!wen_box_slt.exists()) {
@@ -780,8 +730,6 @@ function do_meizhou() {
     var title = clt[clt.length - 1].parent().child(0).text();
     fInfo(title + "开始作答");
     clt[clt.length - 1].parent().click();
-    // 测试用
-    // text("已作答").findOnce(0).click();
   }
   // 下面是正序作答
   else {
@@ -791,7 +739,6 @@ function do_meizhou() {
       log("底线：", w.bounds().top, device_h);
       return w.bounds().top <= device_h - 30;
     });
-    //while (true) { //测试用
     while (!text("未作答").exists()) {
       if (dixian_slt.exists()) return fInfo("每周答题全部已作答。"),
         back(), text("每周答题").waitFor(), sleep(1000), back(), text("我要答题").waitFor(), sleep(1000), back(), text("我的").waitFor(), ran_sleep(), !0;
@@ -931,9 +878,6 @@ function do_zhuanxiang() {
       return (l.text() == "下一题") || (l.text() == "完成");
     });
     next.findOne().click();
-    //     if (!click("下一题")) {
-    //       click("完成");
-    //     }
     ran_sleep();
   }
   // 循环结束完成答题
@@ -947,7 +891,6 @@ function do_zhuanxiang() {
     num = Number(tihao.match(reg)[1]);
     sum = Number(tihao.match(reg)[2]);
     substr = " /" + sum;
-    //log(tihao);
     sleep(1500);
     while (num <= sum) {
       // 等待加载
@@ -988,7 +931,6 @@ function do_tiaozhan() {
     var a = !0,
       b = className("android.widget.Image").textStartsWith("total").findOne().parent();
     ran_sleep();
-    // do b.click(), sleep(500); while (textStartsWith("total").exists());
     b.click();
     className("android.widget.Image").textStartsWith("chanllenge").waitFor()
   }
@@ -1010,10 +952,7 @@ function do_tiaozhan() {
       continue;
     }
     // 获取答案列表，可能找到多个答案
-    // let ans_list = get_ans_by_http(que_txt.replace(/来源：.*|出题单位：.+/, ""));
     let ans_list = get_ans_by_tiku(que_txt.replace(/[^\u4e00-\u9fa5\d]|来源：.+|出题单位：.+/g, ""));
-    //     fInfo(que_txt.replace(/[^\u4e00-\u9fa5\d]|来源：.+|出题单位：.+/g, ""));
-    //log("答案："+ans_list);
     if (total >= max_total) {
       // 题数数够了随便选
       fInfo("已答对" + max_total + "题，全选A");
@@ -1024,10 +963,9 @@ function do_tiaozhan() {
       // 循环对比所有选项和答案，选出相似度最大的
       for (let xuan_box of xuan_list) {
         let xuan_txt = xuan_box.child(0).child(1).text();
-        //log(xuan_txt);
+
         for (let ans of ans_list) {
           let similar = str_similar(ans.slice(2), xuan_txt);
-          //log(xuan_txt, similar);
           if (similar > max_simi) {
             max_simi = similar;
             xuanxiang = xuan_box.child(0);
@@ -1113,11 +1051,9 @@ function do_duizhan1(renshu) {
       toastLog("请手动点击答案");
     });
   }
-  //text("开始").findOne(1000);
   className("android.widget.ListView").waitFor();
   fClear();
-  //   if (renshu == 0) {
-  //   }
+
   let num = 1;
   let err_flag = true;
   while (true) {
@@ -1222,11 +1158,6 @@ function do_duizhan1(renshu) {
       let img = captureScreen();
       // 裁剪题干区域，识别题干
       let que_img = images.clip(img, que_x, que_y, que_w, que_h);
-      //images.save(que_img, '/sdcard/1/que_img' + num + '.png');
-      //       console.time('题目识别1');
-      //       let results = ocr.recognize(que_img).results;
-      //       var que_txt = ocr_rslt_to_txt(results).replace(/[^\u4e00-\u9fa5\d]|^\d{1,2}\.?/g, "");
-      //       console.timeEnd('题目识别1');
       // 为了适配OCR插件改为下面这句
       console.time('题目识别');
 
@@ -1349,21 +1280,16 @@ function do_duizhan1(renshu) {
     let allx_txt = "";
     if (ocr_choice == 0) {
       // 排序顺序
-      //     console.time('选项识别1');
       let x_results = JSON.parse(JSON.stringify(gmlkit.ocr(img, "zh").toArray(3)));
       allx_txt = ocr_rslt_to_txt(x_results).replace(/\s+/g, "");
-      //     console.timeEnd('选项识别1');
     } else if (ocr_choice == 1) {
       let x_results = JSON.parse(JSON.stringify(paddle.ocr(img)));
       allx_txt = ocr_rslt_to_txt(x_results).replace(/\s+/g, "");
     } else {
       //     // 直接识别
-      //     console.time('选项识别2');
       allx_txt = ocr.recognizeText(img);
-      //     console.timeEnd('选项识别2');
     }
     console.timeEnd("选项识别");
-    // log(allx_txt);
     if (!allx_txt) {
       log("识别不出选项文本，可能被禁止截图");
       err_flag = false;
@@ -1396,7 +1322,6 @@ function do_duizhan1(renshu) {
         allx_txt = allx_txt.replace(reg, replace_d[r]);
       }
     }
-    // allx_txt.replace(/令媛/g, "令嫒");
     // 获取选项列表
     xuan_txt_list = allx_txt.match(/[a-d][^a-z\u4e00-\u9fa5\d]?\s*.*?(?=[a-d][^a-z\u4e00-\u9fa5\d]?|$)/gi);
     if (!xuan_txt_list) {
@@ -1496,8 +1421,7 @@ function dacuo(renshu) {
     let start_click = text("开始比赛").findOne().click();
     log("点击：" + start_click);
   }
-  //fInfo("等待开始过渡");
-  //text("开始").findOne(1000);
+
   className("android.widget.ListView").waitFor();
   let num = 1;
   let err_flag = true;
@@ -1543,8 +1467,7 @@ function dacuo(renshu) {
         return true;
       }
     }
-    //log("开始第"+num+"题，等待listview");
-    //className("android.widget.ListView").waitFor();
+
     let listview = className("android.widget.ListView").findOne(1000);
     if (!listview) {
       //log("找不到listview");
@@ -1553,13 +1476,9 @@ function dacuo(renshu) {
       continue;
     }
     sleep(100); // 追求极限速度，不知道会不会出错
-    //log("find view_d28");
-    // listview父框体
+
     let view_d28 = className("android.view.View").depth(28).indexInParent(0).findOne(1000);
     if (!view_d28) {
-      //log("找不到view_d28");
-      //log('far:', listview.parent());
-      //log('garfa', listview.parent().parent());
       err_flag = false;
       sleep(200);
       continue;
@@ -1585,12 +1504,10 @@ function dacuo(renshu) {
     try { //防止别人先答完出错
       while (className("android.widget.ListView").findOne(1000).indexInParent() == 0) { }
       sleep(random(2000, 3000));
-      //log("选项显现");
       className("android.widget.RadioButton").findOnce(random(0, 3)).parent().click();
       num++;
       continue;
     } catch (e) {
-      //log("error1:", e);
       err_flag = false;
       sleep(200);
       continue;
@@ -1635,12 +1552,9 @@ function do_dingyue() {
       let you_clt = className("android.view.View").depth(14).findOnce(1);
       let last_desc = "";
       while (you_clt) {
-        //let img = captureScreen();
         // 订阅按钮集合
-        //fInfo("查找订阅集合");
         let dingyue_clt = className("android.widget.ImageView").indexInParent(2).untilFind();
         try {
-          //fInfo(dingyue_clt[dingyue_clt.length-1].parent().child(1).desc().slice(0,4)+" 旧:"+last_desc.slice(0,4));
           if (dingyue_clt[dingyue_clt.length - 1].parent().child(1).desc() == last_desc) {
             fClear();
             fInfo("到底了");
@@ -1664,15 +1578,12 @@ function do_dingyue() {
             console.error(dingyue.bounds());
             console.error(dingyue.parent().child(1).desc());
           }
-          //if (pot && dingyue.bounds().bottom < device_h) {
           if (pot) {
             fInfo("找到一个订阅");
             sleep(1000);
             let is_click = dingyue.click();
             fInfo("点击：" + is_click);
-            //click(dingyue.bounds().centerX(), dingyue.bounds().centerY());
             sleep(1000);
-            //click(pot.x, pot.y+5);
             total_click += 1;
           }
           if (total_click >= 2) {
@@ -1683,18 +1594,14 @@ function do_dingyue() {
             return true;
           }
         }
-        //img.recycle();
         let scr_result = you_clt.scrollForward();
         sleep(500);
-        //         swipe(device_w*0.6, device_h*0.8, device_w*0.6, device_h*0.3, 800);
-        //         while (desc("加载中").exists()) { sleep(1000); }
       }
       if (dingyue_dao) {
         fInfo("只检查年度上新");
         break;
       }
     }
-    //sleep(1000);
   }
   fInfo("无可订阅项目");
   back();
@@ -1712,7 +1619,6 @@ function do_bendi() {
   if (text("立即切换").exists()) {
     text("取消").findOne(3000).click();
   }
-  //let banner = className("android.support.v7.widget.RecyclerView").findOne();
   let banner = classNameContains("RecyclerView").findOne();
   let txt = banner.child(0).child(1).text();
   banner.child(0).click();
@@ -1732,7 +1638,6 @@ function do_bendi() {
 function do_exec(type) {
   // 等待加载
   let tishi = text("查看提示").findOne();
-  //log(tishi);
   // 点击查看提示按钮
   tishi.click();
   // 随机延迟、等待提示
@@ -1744,7 +1649,6 @@ function do_exec(type) {
   /******************单选题*******************/
   if (textStartsWith("单选题").exists()) {
     // 获取题目
-    //let que_txt = className("android.view.View").depth(23).findOnce(1).text();
     // 上面被专项答题影响了22、23层的元素数，只能通过其他层定位
     let que_txt = className("android.view.View").depth(24).findOnce(1).parent().parent().child(1).text();
     // log(que_txt);
@@ -1753,7 +1657,6 @@ function do_exec(type) {
       // 定位选项并点击
       depth(26).text(ans).findOnce().parent().click();
     }
-    //else if (ans = get_ans_by_http_dati(que_txt)) {
     else {
       if (type) {
         ans = get_ans_by_dati_tiku(que_txt, type);
@@ -1798,7 +1701,6 @@ function do_exec(type) {
           } else {
             className("android.widget.RadioButton").findOne().parent().click();
           }
-          //log(xuanxiang.find().size());
         }
       }
     }
@@ -1806,7 +1708,6 @@ function do_exec(type) {
   /******************填空题*******************/
   else if (textStartsWith("填空题").exists()) {
     // 填空题题干会被空格分割
-    //let que = className("android.view.View").depth(23).findOnce(1).children();
     // 上面被专项答题影响了22、23层的元素数，只能通过其他层定位
     let que = className("android.view.View").depth(24).findOnce(1).parent().parent().child(1).children();
     // 第一个编辑框的父元素
@@ -1825,8 +1726,6 @@ function do_exec(type) {
         que_txt = que_txt + "    ";
       }
     }
-    // log(que_txt);
-    // log("kong_num:", kong_num);
     // 判断是否只有一个空，re只能得出第一空答案
     if (kong_num <= 1) {
       //一个空时，先正则匹配，再题库匹配，以防题库出错，最后OCR
@@ -1877,7 +1776,6 @@ function do_exec(type) {
   /******************多选题*******************/
   else if (textStartsWith("多选题").exists()) {
     // 获取题目
-    // let que_txt = className("android.view.View").depth(23).findOnce(1).text();
     // 上面被专项答题影响了22、23层的元素数，只能通过其他层定位
     let que_txt = className("android.view.View").depth(24).findOnce(1).parent().parent().child(1).text();
     // log(que_txt);
@@ -1895,7 +1793,6 @@ function do_exec(type) {
         n.parent().click();
       }
     }
-    //else if (ans = get_ans_by_http_dati(que_txt)) {
     else {
       if (type) {
         ans = get_ans_by_dati_tiku(que_txt, type);
@@ -2616,7 +2513,7 @@ function fInit() {
   );
   ui.run(function () {
     //w.title.setFocusable(true);
-    w.version.setText("天天向上+" + newest_version);
+    w.version.setText("天天向上 自定义");
   });
   w.setSize(720, -2);
   w.setPosition(10, 10);
@@ -2731,7 +2628,6 @@ function xxqg(userinfo) {
   nonotice_thread.isAlive() && (nonotice_thread.interrupt(), fInfo("终止消息通知检测"));
   true == pinglun && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).text().match(/\d+/)[0]) && (toastLog("开始评论"), do_pinglun(), jifen_list = refind_jifen());
   true == shipin && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), toastLog("开始视听次数"), do_shipin(), jifen_list = refind_jifen());
-  true == wenzhang && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), toastLog("开始文章次数与时长"), do_wenzhang(), jifen_list = refind_jifen());
   true == meiri && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["每日"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["每日"]).child(4).text()) && (toastLog("每日答题开始"), do_meiri(), jifen_list = refind_jifen());
   c = 1;
   true == bendi && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(4).text()) && (toastLog("本地开始"), do_bendi(), jifen_list = refind_jifen());
@@ -2774,31 +2670,10 @@ function xxqg(userinfo) {
       jifen_list = refind_jifen()
       return
     }
-
-    // if (ocr_test()) {
-    //   if (true == siren) {
-    //     toastLog("四人赛开始");
-    //     guaji && do_duizhan1(0);
-    //     do_duizhan1(4);
-    //     do_duizhan1(4);
-    //     if (d = Number(dacuo_num))
-    //       for (fSet("title", "平衡胜率…"), fClear(), console.info("开始平衡胜率，答错次数：" + d), i = 0; i < d; i++) fInfo("答错第" + (i + 1) + "轮"), dacuo(4), fClear();
-    //     jifen_list = refind_jifen()
-    //   }
-    //   if (true == shuangren) {
-    //     toastLog("双人对战开始");
-    //     do_duizhan1(2)
-    //     jifen_list = refind_jifen()
-    //   }
-    // } else true == siren && true == shuangren && sign_list.push("ocr_false");
   }
-
   qwdt();
 
-
-
-
-
+  true == wenzhang && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), toastLog("开始文章次数与时长"), do_wenzhang(), jifen_list = refind_jifen());
   if (pushplus || token) {
     fInfo("推送前等待积分刷新5秒");
     sleep(5E3);
