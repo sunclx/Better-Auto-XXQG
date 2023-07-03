@@ -85,14 +85,17 @@ function toggleShow() {
   } else {
     show = 8;
   }
-  window.startAuto.visibility = show;
-  window.startWenzhang.visibility = show;
-  window.startShiting.visibility = show;
-  window.startTiaozhan.visibility = show;
-  window.startMeiri.visibility = show;
-  window.startShuangren.visibility = show;
-  window.startSiren.visibility = show;
-  window.startZhuanxiang.visibility = show;
+  ui.run(() => {
+    window.startAuto.visibility = show;
+    window.startWenzhang.visibility = show;
+    window.startShiting.visibility = show;
+    window.startTiaozhan.visibility = show;
+    window.startMeiri.visibility = show;
+    window.startShuangren.visibility = show;
+    window.startSiren.visibility = show;
+    window.startZhuanxiang.visibility = show;
+  });
+
 }
 // 这个函数是对应悬浮窗的移动
 window.move.setOnTouchListener(function (view, event) {
