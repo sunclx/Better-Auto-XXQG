@@ -177,9 +177,9 @@ window.startShiting.click(() => {
 });
 //挑战答题
 window.startTiaozhan.click(() => {
+  toggleShow();
   startTh(() => {
     fInfo("挑战答题开始");
-    toggleShow();
     do_tiaozhan(50);
   });
 });
@@ -2617,7 +2617,6 @@ function xxqg() {
     fInfo("已取消消息通知");
   });
 
-  fSet("username", name);
   ran_sleep();
   if (meizhou == 1) {
     meizhou_dao = false;
