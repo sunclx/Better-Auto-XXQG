@@ -453,7 +453,7 @@ function do_pinglun() {
 /********时长部分*********/
 function do_shipin() {
   //entry_jifen_project("视听学习");
-  jifen_list.child(jifen_map["视频"]).child(3).click();
+  //jifen_list.child(jifen_map["视频"]).child(3).click();
   if (ddtong) {
     fSet("title", "视听(dd通)…");
   } else {
@@ -2623,7 +2623,7 @@ function xxqg() {
   noupdate_thread.isAlive() && (noupdate_thread.interrupt(), fInfo("终止更新弹窗检测"));
   nonotice_thread.isAlive() && (nonotice_thread.interrupt(), fInfo("终止消息通知检测"));
   true == pinglun && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).text().match(/\d+/)[0]) && (fInfo("开始评论"), do_pinglun(), jifen_list = refind_jifen());
-  true == shipin && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), fInfo("开始视听次数"), entry_jifen_project("视听学习"), do_shipin(), jifen_list = refind_jifen());
+  true == shipin && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), fInfo("开始视听次数"), entry_jifen_project("视听学习"), jifen_list.child(jifen_map["视频"]).child(3).click(), do_shipin(), jifen_list = refind_jifen());
   true == meiri && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["每日"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["每日"]).child(4).text()) && (fInfo("每日答题开始"), entry_jifen_project("每日答题"), do_meiri(), jifen_list = refind_jifen());
   c = 1;
   true == bendi && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(4).text()) && (fInfo("本地开始"), do_bendi(), jifen_list = refind_jifen());
