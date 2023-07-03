@@ -79,6 +79,21 @@ setInterval(() => {
 
 let wx, wy, downTime, windowX, windowY;
 let show = 8;
+function toggleShow() {
+  if (show == 8) {
+    show = 0;
+  } else {
+    show = 8;
+  }
+  window.startAuto.visibility = show;
+  window.startWenzhang.visibility = show;
+  window.startShiting.visibility = show;
+  window.startTiaozhan.visibility = show;
+  window.startMeiri.visibility = show;
+  window.startShuangren.visibility = show;
+  window.startSiren.visibility = show;
+  window.startZhuanxiang.visibility = show;
+}
 // 这个函数是对应悬浮窗的移动
 window.move.setOnTouchListener(function (view, event) {
   switch (event.getAction()) {
@@ -98,19 +113,7 @@ window.move.setOnTouchListener(function (view, event) {
     case event.ACTION_UP:
       // 手指弹起时如果偏移很小则判断为点击
       if (Math.abs(event.getRawY() - wy) < 30 && Math.abs(event.getRawX() - wx) < 30) {
-        if (show == 8) {
-          show = 0;
-        } else {
-          show = 8;
-        }
-        window.startAuto.visibility = show;
-        window.startWenzhang.visibility = show;
-        window.startShiting.visibility = show;
-        window.startTiaozhan.visibility = show;
-        window.startMeiri.visibility = show;
-        window.startShuangren.visibility = show;
-        window.startSiren.visibility = show;
-        window.startZhuanxiang.visibility = show;
+        toggleShow();
       }
       return true;
   }
@@ -128,6 +131,7 @@ let th = null;
 
 //自动学习
 window.startAuto.click(() => {
+  toggleShow();
   startTh(() => {
     var noverify_thread = noverify();
     main();
@@ -175,6 +179,7 @@ window.startShiting.click(() => {
 window.startTiaozhan.click(() => {
   startTh(() => {
     fInfo("挑战答题开始");
+    toggleShow();
     do_tiaozhan(50);
   });
 });
