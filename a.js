@@ -175,7 +175,7 @@ window.startShiting.click(() => {
 window.startTiaozhan.click(() => {
   startTh(() => {
     fInfo("挑战答题开始");
-    do_tiaozhan();
+    do_tiaozhan(100);
   });
 });
 //每日答题
@@ -931,7 +931,7 @@ function do_zhuanxiang() {
 }
 
 /********挑战答题*********/
-function do_tiaozhan() {
+function do_tiaozhan(max) {
   if (ddtong) {
     fSet("title", "挑战(dd通)…");
   } else {
@@ -947,7 +947,7 @@ function do_tiaozhan() {
     b.click();
     className("android.widget.Image").textStartsWith("chanllenge").waitFor()
   }
-  var total = 0, max_total = 5;
+  var total = 0, max_total = max || 5;
   for (ddtong && (max_total += 10); ;) {
     fClear();
     fInfo("第" + (total + 1) + "题");
