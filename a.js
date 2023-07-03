@@ -2332,66 +2332,6 @@ function ocr_test() {
   }
 }
 
-// pushplus推送
-function send_pushplus(token, sign_list) {
-  zongfen = "old" == jifen_flag ? text("成长总积分").findOne().parent().child(3).text() : text("成长总积分").findOne().parent().child(1).text();
-  jinri = jifen_list.parent().child(1).text().replace(" ", "").replace("累积", "累积:");
-  let style_str = '<style>.item{height:1.5em;line-height:1.5em;}.item span{display:inline-block;padding-left:0.4em;}\
-.item .bar{width:100px;height:10px;background-color:#ddd;border-radius:5px;display:inline-block;}\
-.item .bar div{height:10px;background-color:#ed4e45;border-radius:5px;}</style>';
-  let content_str = "<h6>" + jinri + " 总积分:" + zongfen + "</h6><div>";
-  jinri.match(/\d+/g) || (content_str += "由于网络原因，未识别出总分，请自行查看");
-  for (let sign of sign_list) {
-    if (sign == "ocr_false") {
-      content_str = '由于ocr过慢，已跳过多人对战' + content_str;
-    }
-  }
-  for (let option of jifen_list.children()) {
-    if ("old" == jifen_flag)
-      var title = option.child(0).child(0).text(),
-        score = option.child(2).text().match(/\d+/g)[0],
-        total = option.child(2).text().match(/\d+/g)[1];
-    else
-      "new1" == jifen_flag ? ((title = option.child(0).text()), (score = option.child(3).child(0).text()), (total = option.child(3).child(2).text().match(/\d+/g)[0])) :
-        "new2" == jifen_flag && (title = option.child(0).text(), score = option.child(3).text().match(/\d+/g)[0], total = option.child(3).text().match(/\d+/g)[1]);
-    "专项答题" == title && (total = 10);
-    let percent = (Number(score) / Number(total) * 100).toFixed() + '%';
-    let detail = title + ": " + score + "/" + total;
-    content_str += '<div class="item"><div class="bar"><div style="width: ' + percent + ';"></div></div><span>' + detail + '</span></div>';
-  }
-  content_str += '</div>' + style_str;
-  let r = http.postJson("http://www.pushplus.plus/send", {
-    token: token,
-    title: "天天向上：" + name,
-    content: content_str + "</div><style>.item{height:1.5em;line-height:1.5em;}.item span{display:inline-block;padding-left:0.4em;}.item .bar{width:100px;height:10px;background-color:#ddd;border-radius:5px;display:inline-block;}.item .bar div{height:10px;background-color:#ed4e45;border-radius:5px;}</style>",
-    template: "markdown",
-  });
-  if (r.body.json()["code"] == 200) {
-    fInfo("推送成功");
-  } else {
-    log(r.body.json());
-  }
-}
-
-// 发送email通知
-function send_email(email) {
-  let reg = /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/;
-  let e_addr = email.match(reg);
-  if (!e_addr) {
-    fError("请配置正确的邮件格式");
-    return false;
-  }
-  let zongfen = jifen_list.parent().child(1).text();
-  let content = "用户" + name + "已完成：" + zongfen;
-  var data = app.intent({
-    action: "SENDTO"
-  });
-  data.setData(app.parseUri("mailto:" + e_addr));
-  data.putExtra(Intent.EXTRA_SUBJECT, "天天向上：" + name);
-  data.putExtra(Intent.EXTRA_TEXT, content);
-  app.startActivity(data);
-  return true;
-}
 
 // 强行退出应用名称
 function exit_app(name) {
