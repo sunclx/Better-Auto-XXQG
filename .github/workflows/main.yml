@@ -2,31 +2,32 @@ name: sync
 
 on:
   schedule:
-    - cron: '26 22 * * 1-5'
+    - cron: "26 22 * * 1-5"
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        persist-credentials: false
-        fetch-depth: 0
-    - name: Auto Commit Pull
-      run: |
-        rm -rf songge_tiku/
-        git clone https://gitcode.net/m0_64980826/songge_tiku.git
-    - name: Commit files
-      run: |
-        cd songge_tiku/
-        rm -rf .git/
-        git config --local user.email "sunclx@gmail.com"
-        git config --local user.name "sunclx"
-        git add .
-        git commit -a -m "同步 songge_tiku"
-    - name: Push changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-    
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Auto Commit Pull
+        run: |
+          rm -rf songge_tiku/
+          git clone https://gitcode.net/m0_64980826/songge_tiku.git
+      - name: Commit files
+        run: |
+          cd songge_tiku/
+          rm -rf .git/
+          git config --local user.email "sunclx@gmail.com"
+          git config --local user.name "sunclx"
+          if [ -n "$(git status -s)" ];then
+            git add .
+            git commit -a -m "同步 songge_tiku"
+          fi
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
