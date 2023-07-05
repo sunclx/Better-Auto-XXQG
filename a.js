@@ -85,7 +85,7 @@ function toggleShow() {
   } else {
     show = 8;
   }
-  ui.run(() => {
+  ui.run(function () {
     window.startAuto.visibility = show;
     window.startWenzhang.visibility = show;
     window.startShiting.visibility = show;
@@ -1281,7 +1281,7 @@ function do_duizhan1(renshu) {
       continue;
     }
     let xuanxiang_list = className("android.widget.ListView").findOne(1000);
-    let xuanxiang_index = xuanxiang_list.indexInParent();
+    //let xuanxiang_index = xuanxiang_list.indexInParent();
     let xuanxiang_list_x = xuanxiang_list.bounds().left;
     let xuanxiang_list_y = xuanxiang_list.bounds().top;
     let xuanxiang_list_w = xuanxiang_list.bounds().width();
@@ -1518,12 +1518,7 @@ function dacuo(renshu) {
       sleep(200);
       continue;
     }
-    let idx_dict = {
-      "A": 0,
-      "B": 1,
-      "C": 2,
-      "D": 3
-    };
+
     try { //防止别人先答完出错
       while (className("android.widget.ListView").findOne(1000).indexInParent() == 0) { }
       sleep(random(2000, 3000));
@@ -1535,7 +1530,6 @@ function dacuo(renshu) {
       sleep(200);
       continue;
     }
-    num++;
   }
 }
 
@@ -1617,7 +1611,7 @@ function do_dingyue() {
             return true;
           }
         }
-        let scr_result = you_clt.scrollForward();
+        // let scr_result = you_clt.scrollForward();
         sleep(500);
       }
       if (dingyue_dao) {
@@ -2006,7 +2000,7 @@ function get_ans_by_http_dati(que_txt) {
   }
   let rows = resp_json["rows"];
   log(rows[0]);
-  let ans_list = [];
+  // let ans_list = [];
   let ans = rows[0]["answer"];
   if (ans == "None") {
     return false;
