@@ -437,6 +437,7 @@ ui.update.click(function () {
         DB.put("main", main);
         let UI = getScript("UI");
         DB.put("UI", UI);
+        console.log("更新成功");
     });
 });
 // 下载并运行所选脚本
@@ -693,7 +694,7 @@ function getScript(choice) {
             console.log(i, ":" + res.statusCode);
             if (res.statusCode == 200) {
                 var UI = res.body.string();
-                if (UI.indexOf('auto.waitFor();') == 0) break;
+                if (script.indexOf('console.clear();') == 0 || script.indexOf('auto.waitFor();') == 0 || script.indexOf('"ui";') == 0) break;
             } else {
                 toastLog('学习脚本:地址' + i + '下载失败');
             }

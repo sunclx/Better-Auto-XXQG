@@ -2761,9 +2761,10 @@ device.cancelKeepingAwake();
 // }
 // 震动提示
 device.vibrate(500);
-fInfo("十秒后关闭悬浮窗");
+fInfo("一秒后关闭悬浮窗");
 device.cancelVibration();
-sleep(10000);
+sleep(1000);
+exit_app("学习强国");
 console.hide();
 home();
 exit();
