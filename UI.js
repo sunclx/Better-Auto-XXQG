@@ -425,6 +425,7 @@ ui.start.click(function () {
         return;
     }
     threads.start(function () {
+        console.log("点击开始按钮");
         execution = engines.execScript("强国助手", script);
     });
 });

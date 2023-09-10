@@ -1,4 +1,5 @@
 auto.waitFor(); //mode = "fast"
+console.log("开始执行脚本0.js")
 var delay_time = 3000;
 device.wakeUpIfNeeded();
 
