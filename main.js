@@ -6,16 +6,19 @@ var DB = storages.create("MAIN");
 var UI = DB.get("UI");
 var main = DB.get("main");
 if (!main) {
+    console.log("start1....");
     main = getScript("main");
-    DB.put("MAIN", main);
+    DB.put("main", main);
     DB.put("IS_MAIN_RUN", true)
-    engines.execScript("MAIN", main);
+    engines.execScript("main", main);
 } else {
     if (!DB.get("IS_MAIN_RUN")) {
+        console.log("start2....");
         DB.put("IS_MAIN_RUN", true)
         console.log(DB.get("IS_MAIN_RUN"));
-        engines.execScript("MAIN", main);
+        engines.execScript("main", main);
     } else {
+        console.log("start3....");
         runUI();
         DB.put("IS_MAIN_RUN", false);
     }
