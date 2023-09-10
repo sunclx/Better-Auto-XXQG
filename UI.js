@@ -7,8 +7,11 @@ importClass(java.io.FileOutputStream);
 importClass(android.graphics.Color);
 
 var color = "#FF4FB3FF";
+var DB = storages.create("MAIN");
+var script = DB.get("script");
 
 ui.statusBarColor("#FF4FB3FF")
+
 
 ui.layout(
     <drawer id="drawer">
@@ -58,6 +61,7 @@ ui.layout(
                         </vertical>
                         <button h="60" layout_gravity="center" id="log" textSize="18sp" text="查看日志" />
                         <button h="60" layout_gravity="center" id="startH" textSize="18sp" text="手动操作" />
+                        <button h="60" layout_gravity="center" id="update" textSize="18sp" text="更新" />
                         <button id="start" text="开 始 学 习" textSize="25sp" color="#ffffff" bg="#FF4FB3FF" foreground="?selectableItemBackground" />
                     </vertical>
                 </frame>
@@ -421,7 +425,17 @@ ui.start.click(function () {
         return;
     }
     threads.start(function () {
-        execution = engines.execScript("强国助手", getScript(ui.script_chosen.getSelectedItemPosition()));
+        execution = engines.execScript("强国助手", script);
+    });
+});
+ui.update.click(function () {
+    threads.start(function () {
+        script = getScript(ui.script_chosen.getSelectedItemPosition());
+        DB.put("script", script);
+        let main = getScript("main");
+        DB.put("main", main);
+        let UI = getScript("UI");
+        DB.put("UI", UI);
     });
 });
 // 下载并运行所选脚本
@@ -688,3 +702,11 @@ function getScript(choice) {
     }
     return UI;
 }
+
+threads.start(function () {
+    //在新线程执行的代码
+    if (!script) {
+        script = getScript(ui.script_chosen.getSelectedItemPosition());
+        DB.put("script", script);
+    }
+});

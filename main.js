@@ -2,31 +2,58 @@ console.clear();
 
 http.__okhttp__.setTimeout(10000);
 
-var UI_Storage = storages.create("UI");
-var UI = UI_Storage.get("ui");
-if (!UI) {
-    let url = [
-        'https://gh-proxy.com/https://raw.githubusercontent.com/sec-an/Better-Auto-XXQG/main/UI.js',
-        "https://ghproxy.com/https://raw.githubusercontent.com/sec-an/Better-Auto-XXQG/main/UI.js",
-        'https://cdn.jsdelivr.net/gh/sec-an/Better-Auto-XXQG@main/UI.js',
-        'https://raw.githubusercontent.com/sec-an/Better-Auto-XXQG/main/UI.js',
-    ];
+var DB = storages.create("MAIN");
+var UI = DB.get("UI");
+// var main = DB.get("main");
+// if (!main) {
+//     main = getScript("main");
+//     DB.put("MAIN", main);
+//     DB.put("IS_MAIN_RUN", true)
+//     engines.execScript("MAIN", main);
+// } else {
+//     if (!DB.get("IS_MAIN_RUN")) {
+//         DB.put("IS_MAIN_RUN", true)
+//         engines.execScript("MAIN", main);
+//     } else {
+//         runUI();
+//         DB.put("IS_MAIN_RUN", false);
+//     }
+// }
 
-    for (var i = 0; i < url.length; i++) {
+runUI();
+
+
+function runUI() {
+    if (UI) {
+        engines.execScript("UI", UI);
+        return;
+    }
+    UI = getScript("UI");
+    DB.put("UI", UI);
+    engines.execScript("UI", UI);
+}
+
+function getScript(filename) {
+    let url_prefix = [
+        'https://v.sec-an-cf.top/gh/raw/sunclx/XXQG/main/',
+        'https://gh-proxy.com/https://raw.githubusercontent.com/sunclx/XXQG/main/',
+        "https://ghproxy.com/https://raw.githubusercontent.com/sunclx/XXQG/main/",
+        'https://cdn.jsdelivr.net/gh/sunclx/XXQG@main/',
+        'https://raw.githubusercontent.com/sunclx/XXQG/main/',
+    ];
+    for (var i = 0; i < url_prefix.length; i++) {
         try {
-            let res = http.get(url[i]);
-            console.log(i + ":" + res.statusCode);
+            let res = http.get(url_prefix[i] + filename + ".js");
+            console.log(i, ":" + res.statusCode);
             if (res.statusCode == 200) {
-                UI = res.body.string();
-                if (UI.indexOf('"ui";') == 0) break;
+                var script = res.body.string();
+                if (script.indexOf('console.clear();') == 0 || script.indexOf('auto.waitFor();') == 0 || script.indexOf('"ui";') == 0) break;
             } else {
-                toastLog('UI脚本:地址' + i + '下载失败');
+                toastLog('学习脚本:地址' + i + '下载失败');
             }
         } catch (error) {
             console.log(error);
         }
     }
-    UI_Storage.put("ui", UI)
+    return script;
 }
-
-engines.execScript("UI", UI);
