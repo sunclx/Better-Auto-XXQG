@@ -694,7 +694,7 @@ function getScript(choice) {
             console.log(i, ":" + res.statusCode);
             if (res.statusCode == 200) {
                 var UI = res.body.string();
-                if (script.indexOf('console.clear();') == 0 || script.indexOf('auto.waitFor();') == 0 || script.indexOf('"ui";') == 0) break;
+                if (UI.indexOf('console.clear();') == 0 || UI.indexOf('auto.waitFor();') == 0 || UI.indexOf('"ui";') == 0) break;
             } else {
                 toastLog('学习脚本:地址' + i + '下载失败');
             }
