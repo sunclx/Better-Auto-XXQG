@@ -4,23 +4,22 @@ http.__okhttp__.setTimeout(10000);
 
 var DB = storages.create("MAIN");
 var UI = DB.get("UI");
-// var main = DB.get("main");
-// if (!main) {
-//     main = getScript("main");
-//     DB.put("MAIN", main);
-//     DB.put("IS_MAIN_RUN", true)
-//     engines.execScript("MAIN", main);
-// } else {
-//     if (!DB.get("IS_MAIN_RUN")) {
-//         DB.put("IS_MAIN_RUN", true)
-//         engines.execScript("MAIN", main);
-//     } else {
-//         runUI();
-//         DB.put("IS_MAIN_RUN", false);
-//     }
-// }
+var main = DB.get("main");
+if (!main) {
+    main = getScript("main");
+    DB.put("MAIN", main);
+    DB.put("IS_MAIN_RUN", true)
+    engines.execScript("MAIN", main);
+} else {
+    if (!DB.get("IS_MAIN_RUN")) {
+        DB.put("IS_MAIN_RUN", true)
+        engines.execScript("MAIN", main);
+    } else {
+        runUI();
+        DB.put("IS_MAIN_RUN", false);
+    }
+}
 
-runUI();
 
 
 function runUI() {
