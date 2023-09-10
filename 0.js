@@ -2764,7 +2764,7 @@ device.vibrate(500);
 fInfo("一秒后关闭悬浮窗");
 device.cancelVibration();
 sleep(1000);
-exit_app("学习强国");
 console.hide();
 home();
+exit_app("学习强国");
 exit();
