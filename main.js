@@ -13,6 +13,7 @@ if (!main) {
 } else {
     if (!DB.get("IS_MAIN_RUN")) {
         DB.put("IS_MAIN_RUN", true)
+        console.log(DB.get("IS_MAIN_RUN"));
         engines.execScript("MAIN", main);
     } else {
         runUI();
