@@ -2771,4 +2771,5 @@ sleep(1000);
 console.hide();
 home();
 exit_app("学习强国");
+exit_app("学习");
 exit();
