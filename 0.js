@@ -1072,9 +1072,10 @@ function do_duizhan1(renshu) {
         break
       } else {
         fError("未识别出题目，可能被禁止截图或无障碍失效");
-        que_txt = "未识别出题目，可能被禁止截图或无障碍失效";
+        que_txt = "未识别出题目，可能被禁止截图或无障碍失效";  //截图失败，不再重新识别 sunclx TODO
         img.recycle();
         que_img.recycle();
+        break //截图失败，不再重新识别 sunclx TODO
       }
     }
     if (renshu == 0) {
