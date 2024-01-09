@@ -111,7 +111,9 @@ function paddle_ocr_api() {
     res += list[i]['text'];
   }
   list = null;
+  [OcrResult(confidence = 0.25, text = '12'),];
   return res;
+
 }
 
 if (fast_mode) {
@@ -1070,7 +1072,7 @@ function do_duizhan1(renshu) {
         break
       } else {
         fError("未识别出题目，可能被禁止截图或无障碍失效");
-        que_txt = "识别出题目，可能被禁止截图或无障碍失效";
+        que_txt = "未识别出题目，可能被禁止截图或无障碍失效";
         img.recycle();
         que_img.recycle();
       }
@@ -2568,34 +2570,35 @@ function xxqg(userinfo) {
     }
     entry_jifen_project("趣味答题");
     sleep(1000);
+    for (let index = 0; index < 10; index++) {
+      if (text("随机匹配").exists() && text("开始对战").exists()) {
+        if (ocr_test()) {
+          if (true == shuangren) {
+            toastLog("双人对战开始");
+            do_duizhan1(2);
+            jifen_list = refind_jifen();
+          }
+        } else true == siren && true == shuangren && sign_list.push("ocr_false");
+        return
+      }
 
-    if (text("随机匹配").exists() && text("开始对战")) {
-      if (ocr_test()) {
-        if (true == shuangren) {
-          toastLog("双人对战开始");
-          do_duizhan1(2);
-          jifen_list = refind_jifen();
-        }
-      } else true == siren && true == shuangren && sign_list.push("ocr_false");
-      return
-    }
+      if (text("开始比赛").exists()) {
+        if (ocr_test()) {
+          if (true == shuangren) {
+            toastLog("四人赛开始");
+            guaji && do_duizhan1(4);
+            jifen_list = refind_jifen();
+          }
+        } else true == siren && true == shuangren && sign_list.push("ocr_false");
+        return
+      }
 
-    if (text("开始比赛").exists()) {
-      if (ocr_test()) {
-        if (true == shuangren) {
-          toastLog("四人赛开始");
-          guaji && do_duizhan1(4);
-          jifen_list = refind_jifen();
-        }
-      } else true == siren && true == shuangren && sign_list.push("ocr_false");
-      return
-    }
-
-    if (true == tiaozhan) {
-      toastLog("挑战答题开始");
-      do_tiaozhan();
-      jifen_list = refind_jifen()
-      return
+      if (true == tiaozhan && text("挑战答题").exists()) {
+        toastLog("挑战答题开始");
+        do_tiaozhan();
+        jifen_list = refind_jifen()
+        return
+      }
     }
 
     // if (ocr_test()) {
