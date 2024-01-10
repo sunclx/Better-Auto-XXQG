@@ -1201,7 +1201,7 @@ function do_duizhan1(renshu) {
         fError("未识别出题目，可能被禁止截图或无障碍失效");
         img.recycle();
         que_img.recycle();
-        sleep(300);
+        sleep(3000);
       }
     }
 
