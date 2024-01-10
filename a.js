@@ -1209,7 +1209,7 @@ function do_duizhan1(renshu) {
     //如果que_txt为空，则随机点击一个
     if (que_txt == "") {
       fError("未识别出题目，选择随机答案");
-      className("android.widget.RadioButton").findOnce(random(0, 3)).parent().click();
+      className("android.widget.RadioButton").findOnce(random(0, 2)).parent().click();
       num++;
       fClear();
       sleep(2000);
