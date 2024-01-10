@@ -1203,7 +1203,10 @@ function do_duizhan1(renshu) {
         que_img.recycle();
       }
     }
-    fInfo(que_txt)
+
+    if (que_txt == "") {
+      className("android.widget.RadioButton").findOnce(random(0, 3)).parent().click();
+    }
 
     if (renshu == 0) {
       fInfo("由于第一局匹配对手较强，正在挂机中。");
@@ -1352,10 +1355,7 @@ function do_duizhan1(renshu) {
     xuan_txt_list = allx_txt.match(/[a-d][^a-z\u4e00-\u9fa5\d]?\s*.*?(?=[a-d][^a-z\u4e00-\u9fa5\d]?|$)/gi);
     if (!xuan_txt_list) {
       log("识别不出选项");
-      fError("未识别出选项，随机选择");
-      className("android.widget.RadioButton").findOnce(random(0, radio_num - 1)).parent().click();
       err_flag = false;
-      fClear();
       sleep(200);
       continue;
     }
