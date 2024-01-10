@@ -1078,8 +1078,9 @@ function do_duizhan1(renshu) {
     //如果que_txt为空，则随机点击一个
     if (que_txt == "") {
       className("android.widget.RadioButton").findOnce(random(0, 3)).parent().click();
-      fClear();
+      num++;
       sleep(2000);
+      fClear();
       continue;
     }
 
