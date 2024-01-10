@@ -1355,6 +1355,7 @@ function do_duizhan1(renshu) {
       fError("未识别出选项，随机选择");
       className("android.widget.RadioButton").findOnce(random(0, radio_num - 1)).parent().click();
       err_flag = false;
+      fClear();
       sleep(200);
       continue;
     }
