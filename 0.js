@@ -1070,12 +1070,19 @@ function do_duizhan1(renshu) {
         break
       } else {
         fError("未识别出题目，可能被禁止截图或无障碍失效");
-        que_txt = "未识别出题目，可能被禁止截图或无障碍失效";  //截图失败，不再重新识别 sunclx TODO
         img.recycle();
         que_img.recycle();
-        break //截图失败，不再重新识别 sunclx TODO
       }
     }
+
+    //如果que_txt为空，则随机点击一个
+    if (que_txt == "") {
+      className("android.widget.RadioButton").findOnce(random(0, 3)).parent().click();
+      sleep(2000);
+      continue;
+    }
+
+
     if (renshu == 0) {
       fInfo("由于第一局匹配对手较强，正在挂机中。");
       fInfo("经测试挂机不会扣积分局数，此功能可在配置中关闭");
