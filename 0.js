@@ -111,9 +111,7 @@ function paddle_ocr_api() {
     res += list[i]['text'];
   }
   list = null;
-  [OcrResult(confidence = 0.25, text = '12'),];
   return res;
-
 }
 
 if (fast_mode) {
