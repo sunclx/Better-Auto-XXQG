@@ -72,7 +72,7 @@ let window = floaty.window(
 
 let deviceWidth = device.width;
 let deviceHeight = device.height;
-window.setPosition(deviceWidth * 0.7, deviceHeight * 0.1);
+window.setPosition(deviceWidth * 0.7, deviceHeight * 0.01);
 setInterval(() => {
 }, 1000);
 
