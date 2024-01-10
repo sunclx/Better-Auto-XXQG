@@ -72,7 +72,7 @@ let window = floaty.window(
 
 let deviceWidth = device.width;
 let deviceHeight = device.height;
-window.setPosition(deviceWidth * 0.7, deviceHeight * 0.4);
+window.setPosition(deviceWidth * 0.7, deviceHeight * 0.1);
 setInterval(() => {
 }, 1000);
 
@@ -1208,7 +1208,7 @@ function do_duizhan1(renshu) {
     //如果que_txt为空，则随机点击一个
     if (que_txt == "") {
       fError("未识别出题目，选择随机答案");
-      className("android.widget.RadioButton").findOnce(random(0, 2)).parent().click();
+      className("android.widget.RadioButton").findOnce(random(0, 1)).parent().click();
       num++;
       fClear();
       sleep(200);
