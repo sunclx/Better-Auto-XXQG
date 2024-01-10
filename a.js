@@ -1201,8 +1201,7 @@ function do_duizhan1(renshu) {
         fError("未识别出题目，可能被禁止截图或无障碍失效");
         img.recycle();
         que_img.recycle();
-        sleep(3000);
-        fInfo("暂停3s");
+        sleep(300);
       }
     }
 
@@ -1212,7 +1211,7 @@ function do_duizhan1(renshu) {
       className("android.widget.RadioButton").findOnce(random(0, 2)).parent().click();
       num++;
       fClear();
-      sleep(2000);
+      sleep(200);
       continue;
     }
 
