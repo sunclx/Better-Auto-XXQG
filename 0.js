@@ -3,6 +3,7 @@ console.log("开始执行脚本0.js")
 var delay_time = 3000;
 device.wakeUpIfNeeded();
 
+// 开始
 // 读取自定义配置
 var TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
 var watchdog = TTXS_PRO_CONFIG.get("watchdog", "1800");
@@ -2227,11 +2228,11 @@ function ocr_test() {
     let begin = new Date();
 
     if (ocr_choice == 0) {
-      let test_txt = google_ocr_api(img_test);
+      google_ocr_api(img_test);
     } else if (ocr_choice == 1) {
-      let test_txt = paddle_ocr_api(img_test);
+      paddle_ocr_api(img_test);
     } else {
-      let test_txt = ocr.recognizeText(img_test);
+      ocr.recognizeText(img_test);
     }
     //console.timeEnd("OCR识别结束");
     let end = new Date();
@@ -2575,11 +2576,19 @@ function xxqg(userinfo) {
   true == meiri && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["每日"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["每日"]).child(4).text()) && (toastLog("每日答题开始"), do_meiri(), jifen_list = refind_jifen());
   // 趣味答题
   function qwdt() {
-    if (!("old" == jifen_flag && "0" == jifen_list.child(jifen_map["趣味答题"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["趣味答题"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["趣味答题"]).child(3).text().match(/\d+/)[0])) {
-      return
+    if (
+      ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["趣味答题"]).child(2).text().match(/\d+/)[0]) ||
+      ("new1" == jifen_flag && "0" == jifen_list.child(jifen_map["趣味答题"]).child(3).child(0).text()) ||
+      ("new2" == jifen_flag && "0" == jifen_list.child(jifen_map["趣味答题"]).child(3).text().match(/\d+/)[0])
+    ) {
+      // Your code here
+    } else {
+      return;
     }
+
     entry_jifen_project("趣味答题");
     sleep(1000);
+
     for (let index = 0; index < 10; index++) {
       if (text("随机匹配").exists() && text("开始对战").exists()) {
         if (ocr_test()) {
@@ -2587,9 +2596,10 @@ function xxqg(userinfo) {
             toastLog("双人对战开始");
             do_duizhan1(2);
             jifen_list = refind_jifen();
+            return;
           }
-        } else true == siren && true == shuangren && sign_list.push("ocr_false");
-        return
+        } else true == shuangren && sign_list.push("ocr_false");
+
       }
 
       if (text("开始比赛").exists()) {
@@ -2598,18 +2608,20 @@ function xxqg(userinfo) {
             toastLog("四人赛开始");
             guaji && do_duizhan1(4);
             jifen_list = refind_jifen();
+            return;
           }
-        } else true == siren && true == shuangren && sign_list.push("ocr_false");
-        return
+        } else true == siren && sign_list.push("ocr_false");
+
       }
 
       if (true == tiaozhan && text("挑战答题").exists()) {
         toastLog("挑战答题开始");
         do_tiaozhan();
         jifen_list = refind_jifen()
-        return
+        return;
       }
     }
+
 
     // if (ocr_test()) {
     //   if (true == siren) {
@@ -2629,10 +2641,43 @@ function xxqg(userinfo) {
     // } else true == siren && true == shuangren && sign_list.push("ocr_false");
   }
   qwdt();
-  true == wenzhang && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), toastLog("开始文章次数与时长"), do_wenzhang(), jifen_list = refind_jifen());
-  true == bendi && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(4).text()) && (toastLog("本地开始"), do_bendi(), jifen_list = refind_jifen());
-  0 != dingyue && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).text().match(/\d+/)[0]) && (toastLog("订阅开始"), d = do_dingyue(), jifen_list = refind_jifen());
+  // true == wenzhang && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), toastLog("开始文章次数与时长"), do_wenzhang(), jifen_list = refind_jifen());
 
+  if (true == wenzhang) {
+    if (("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(3).text()) ||
+      ("old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(4).text())) {
+      console.verbose("无障碍服务：" + auto.service);
+      toastLog("开始文章次数与时长");
+      do_wenzhang();
+      jifen_list = refind_jifen();
+    }
+  }
+
+
+  // true == bendi && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(4).text()) && (toastLog("本地开始"), do_bendi(), jifen_list = refind_jifen());
+
+
+  if (true == bendi) {
+    if (("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(3).text()) ||
+      ("old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(4).text())) {
+      toastLog("本地开始");
+      do_bendi();
+      jifen_list = refind_jifen();
+    }
+  }
+
+  // 0 != dingyue && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).text().match(/\d+/)[0]) && (toastLog("订阅开始"), d = do_dingyue(), jifen_list = refind_jifen());
+
+  if (0 != dingyue) {
+    if (("old" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(2).text().match(/\d+/)[0]) ||
+      ("old" != jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).child(0).text()) ||
+      ("new1" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).child(0).text()) ||
+      ("new2" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).text().match(/\d+/)[0])) {
+      toastLog("订阅开始");
+      d = do_dingyue();
+      jifen_list = refind_jifen();
+    }
+  }
 
 
 
