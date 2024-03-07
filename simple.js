@@ -34,87 +34,95 @@ var yinliang = TTXS_PRO_CONFIG.get("yinliang", "0");
 var zhanghao = TTXS_PRO_CONFIG.get("zhanghao", "");
 var comment = TTXS_PRO_CONFIG.get("comment", "全心全意为人民服务|不忘初心，牢记使命|不忘初心，方得始终|永远坚持党的领导|富强、民主、文明、和谐|自由，平等，公正，法治");
 
-// 使用GoogleMLKit进行文字识别
 function google_ocr_api(img) {
     console.log('GoogleMLKit文字识别中');
-
-    // 识别图片中的文字，并得到结果
-    let list = JSON.parse(JSON.stringify(gmlkit.ocr(img, "zh").toArray(3)));
-
-    // 定义坐标误差
-    let eps = 30;
-
-    // 使用选择排序对结果进行上下排序
-    list.sort((a, b) => a.bounds.bottom - b.bounds.bottom);
-
-    // 在上下排序完成后，进行左右排序
-    list.sort((a, b) => {
-        // 由于上下坐标并不绝对，采用误差eps
-        if (Math.abs(a.bounds.bottom - b.bounds.bottom) < eps) {
-            return a.bounds.left - b.bounds.left;
-        }
-        return 0;
-    });
-
-    // 将所有识别的文字拼接成一个字符串
-    let res = list.map(item => item.text).join('');
-
-    // 清空list
-    list = null;
-
-    // 返回识别的文字
-    return res;
-}
-
-/**
- * 使用PaddleOCR进行文字识别，并对识别结果进行排序
- * @param {Object} img 待识别的图片
- * @param {number} eps 坐标误差，默认值为30
- * @return {string} 识别并排序后的文字
- */
-function paddle_ocr_api(img, eps = 30) {
-    console.log('正在使用PaddleOCR进行文字识别');
-    // 使用PaddleOCR识别图片中的文字
-    let list = JSON.parse(JSON.stringify(paddle.ocr(img)));
-
-    // 对识别结果进行排序
-    // 先按照文字的上下位置（即bottom值）进行排序
-    list.sort((a, b) => a.bounds.bottom - b.bounds.bottom);
-
-    // 对上下位置相近（即bottom值差距小于eps）的文字，按照左右位置（即left值）进行排序
-    for (let i = 0; i < list.length - 1; i++) {
-        for (let j = i + 1; j < list.length; j++) {
-            if (Math.abs(list[i].bounds.bottom - list[j].bounds.bottom) < eps &&
-                list[i].bounds.left > list[j].bounds.left) {
-                [list[i], list[j]] = [list[j], list[i]];  // 交换位置
+    let list = JSON.parse(JSON.stringify(gmlkit.ocr(img, "zh").toArray(3))); // 识别文字，并得到results
+    let eps = 30; // 坐标误差
+    for (
+        var i = 0; i < list.length; i++ // 选择排序对上下排序,复杂度O(N²)但一般list的长度较短只需几十次运算
+    ) {
+        for (var j = i + 1; j < list.length; j++) {
+            if (list[i]['bounds']['bottom'] > list[j]['bounds']['bottom']) {
+                var tmp = list[i];
+                list[i] = list[j];
+                list[j] = tmp;
             }
         }
     }
 
-    // 将排序后的文字合并为一个字符串
-    const res = list.map(item => item.text).join('');
-
-    // 清空list，释放内存
-    list.length = 0;
+    for (
+        var i = 0; i < list.length; i++ // 在上下排序完成后，进行左右排序
+    ) {
+        for (var j = i + 1; j < list.length; j++) {
+            // 由于上下坐标并不绝对，采用误差eps
+            if (
+                Math.abs(list[i]['bounds']['bottom'] - list[j]['bounds']['bottom']) <
+                eps &&
+                list[i]['bounds']['left'] > list[j]['bounds']['left']
+            ) {
+                var tmp = list[i];
+                list[i] = list[j];
+                list[j] = tmp;
+            }
+        }
+    }
+    let res = '';
+    for (var i = 0; i < list.length; i++) {
+        res += list[i]['text'];
+    }
+    list = null;
     return res;
 }
 
-// 如果是快速模式，则设置为快速模式
+function paddle_ocr_api() {
+    console.log('PaddleOCR文字识别中');
+    let list = JSON.parse(JSON.stringify(paddle.ocr(arguments[0]))); // 识别文字，并得到results
+    let eps = 30; // 坐标误差
+    if (arguments.length >= 2) eps = arguments[1];
+    for (
+        var i = 0; i < list.length; i++ // 选择排序对上下排序,复杂度O(N²)但一般list的长度较短只需几十次运算
+    ) {
+        for (var j = i + 1; j < list.length; j++) {
+            if (list[i]['bounds']['bottom'] > list[j]['bounds']['bottom']) {
+                var tmp = list[i];
+                list[i] = list[j];
+                list[j] = tmp;
+            }
+        }
+    }
+
+    for (
+        var i = 0; i < list.length; i++ // 在上下排序完成后，进行左右排序
+    ) {
+        for (var j = i + 1; j < list.length; j++) {
+            // 由于上下坐标并不绝对，采用误差eps
+            if (
+                Math.abs(list[i]['bounds']['bottom'] - list[j]['bounds']['bottom']) <
+                eps &&
+                list[i]['bounds']['left'] > list[j]['bounds']['left']
+            ) {
+                var tmp = list[i];
+                list[i] = list[j];
+                list[j] = tmp;
+            }
+        }
+    }
+    let res = '';
+    for (var i = 0; i < list.length; i++) {
+        res += list[i]['text'];
+    }
+    list = null;
+    return res;
+}
+
 if (fast_mode) {
     auto.setMode("fast");
 }
-
-// 监听Toast事件
 events.observeToast();
-
-// 延迟一段时间
 sleep(delay_time);
-
-// 创建存储空间
-const storage = storages.create('songgedodo');
-
+/*****************更新内容弹窗部分*****************/
+var storage = storages.create('songgedodo');
 // 脚本版本号
-// ...
 var last_version = "V12.0";
 var engine_version = "V12.3";
 var newest_version = "V12.4";
@@ -126,8 +134,6 @@ if (storage.get(engine_version, true)) {
         storage.put(engine_version, false);
     }
 }
-
-
 var w = fInit();
 // console.setTitle("天天向上");
 // console.show();
@@ -230,7 +236,9 @@ fInfo("跳转学习APP");
 app.launchApp('学习强国');
 sleep(2000);
 // console.hide();
-
+// 命令行方式启动，似乎需要root
+// var result_shell = shell("pm disable cn.xuexi.android");
+// log(result_shell.code, result_shell.error);
 /***************不要动****************
  * **********************************
 // 创建一个安卓动作，打开软件，此功能可以跳过开屏页，还在实验中
@@ -242,7 +250,7 @@ sleep(2000);
  * **********************************
 *************************************/
 
-///
+
 function do_pinglun() {
     entry_jifen_project("发表观点");
     fSet("title", "评论…");
@@ -2247,6 +2255,66 @@ function ocr_test() {
     }
 }
 
+// pushplus推送
+function send_pushplus(token, sign_list) {
+    zongfen = "old" == jifen_flag ? text("成长总积分").findOne().parent().child(3).text() : text("成长总积分").findOne().parent().child(1).text();
+    jinri = jifen_list.parent().child(1).text().replace(" ", "").replace("累积", "累积:");
+    let style_str = '<style>.item{height:1.5em;line-height:1.5em;}.item span{display:inline-block;padding-left:0.4em;}\
+.item .bar{width:100px;height:10px;background-color:#ddd;border-radius:5px;display:inline-block;}\
+.item .bar div{height:10px;background-color:#ed4e45;border-radius:5px;}</style>';
+    let content_str = "<h6>" + jinri + " 总积分:" + zongfen + "</h6><div>";
+    jinri.match(/\d+/g) || (content_str += "由于网络原因，未识别出总分，请自行查看");
+    for (let sign of sign_list) {
+        if (sign == "ocr_false") {
+            content_str = '由于ocr过慢，已跳过多人对战' + content_str;
+        }
+    }
+    for (let option of jifen_list.children()) {
+        if ("old" == jifen_flag)
+            var title = option.child(0).child(0).text(),
+                score = option.child(2).text().match(/\d+/g)[0],
+                total = option.child(2).text().match(/\d+/g)[1];
+        else
+            "new1" == jifen_flag ? ((title = option.child(0).text()), (score = option.child(3).child(0).text()), (total = option.child(3).child(2).text().match(/\d+/g)[0])) :
+                "new2" == jifen_flag && (title = option.child(0).text(), score = option.child(3).text().match(/\d+/g)[0], total = option.child(3).text().match(/\d+/g)[1]);
+        "专项答题" == title && (total = 10);
+        let percent = (Number(score) / Number(total) * 100).toFixed() + '%';
+        let detail = title + ": " + score + "/" + total;
+        content_str += '<div class="item"><div class="bar"><div style="width: ' + percent + ';"></div></div><span>' + detail + '</span></div>';
+    }
+    content_str += '</div>' + style_str;
+    let r = http.postJson("http://www.pushplus.plus/send", {
+        token: token,
+        title: "天天向上：" + name,
+        content: content_str + "</div><style>.item{height:1.5em;line-height:1.5em;}.item span{display:inline-block;padding-left:0.4em;}.item .bar{width:100px;height:10px;background-color:#ddd;border-radius:5px;display:inline-block;}.item .bar div{height:10px;background-color:#ed4e45;border-radius:5px;}</style>",
+        template: "markdown",
+    });
+    if (r.body.json()["code"] == 200) {
+        fInfo("推送成功");
+    } else {
+        log(r.body.json());
+    }
+}
+
+// 发送email通知
+function send_email(email) {
+    let reg = /[\w!#$%&'*+/=?^_`{|}~-]+(?:\.[\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\w](?:[\w-]*[\w])?\.)+[\w](?:[\w-]*[\w])?/;
+    let e_addr = email.match(reg);
+    if (!e_addr) {
+        fError("请配置正确的邮件格式");
+        return false;
+    }
+    let zongfen = jifen_list.parent().child(1).text();
+    let content = "用户" + name + "已完成：" + zongfen;
+    var data = app.intent({
+        action: "SENDTO"
+    });
+    data.setData(app.parseUri("mailto:" + e_addr));
+    data.putExtra(Intent.EXTRA_SUBJECT, "天天向上：" + name);
+    data.putExtra(Intent.EXTRA_TEXT, content);
+    app.startActivity(data);
+    return true;
+}
 
 // 强行退出应用名称
 function exit_app(name) {
@@ -2450,6 +2518,7 @@ function fRefocus() {
 }
 
 function xxqg(userinfo) {
+    var sign_list = [];
     fInfo("开始更新弹窗检测");
     var noupdate_thread = threads.start(function () {
         //在新线程执行的代码
@@ -2503,6 +2572,7 @@ function xxqg(userinfo) {
     nonotice_thread.isAlive() && (nonotice_thread.interrupt(), fInfo("终止消息通知检测"));
 
     // 开始评论
+    // true == pinglun && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).text().match(/\d+/)[0]) && (toastLog("开始评论"), do_pinglun(), jifen_list = refind_jifen());
     if (
         true == pinglun &&
         ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(2).text().match(/\d+/)[0]) ||
@@ -2516,6 +2586,7 @@ function xxqg(userinfo) {
 
 
     // 开始视听
+    // true == shipin && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), toastLog("开始视听次数"), do_shipin(), jifen_list = refind_jifen());
     if (true == shipin &&
         ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(3).text()) ||
         ("old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(4).text())) {
@@ -2543,21 +2614,27 @@ function xxqg(userinfo) {
 
         for (let index = 0; index < 10; index++) {
             if (text("随机匹配").exists() && text("开始对战").exists()) {
-                if (true == shuangren) {
-                    toastLog("双人对战开始");
-                    do_duizhan1(2);
-                    jifen_list = refind_jifen();
-                    return;
-                }
+                if (ocr_test()) {
+                    if (true == shuangren) {
+                        toastLog("双人对战开始");
+                        do_duizhan1(2);
+                        jifen_list = refind_jifen();
+                        return;
+                    }
+                } else true == shuangren && sign_list.push("ocr_false");
+
             }
 
             if (text("开始比赛").exists()) {
-                if (true == shuangren) {
-                    toastLog("四人赛开始");
-                    guaji && do_duizhan1(4);
-                    jifen_list = refind_jifen();
-                    return;
-                }
+                if (ocr_test()) {
+                    if (true == shuangren) {
+                        toastLog("四人赛开始");
+                        guaji && do_duizhan1(4);
+                        jifen_list = refind_jifen();
+                        return;
+                    }
+                } else true == siren && sign_list.push("ocr_false");
+
             }
 
             if (true == tiaozhan && text("挑战答题").exists()) {
@@ -2567,8 +2644,27 @@ function xxqg(userinfo) {
                 return;
             }
         }
+
+
+        // if (ocr_test()) {
+        //   if (true == siren) {
+        //     toastLog("四人赛开始");
+        //     guaji && do_duizhan1(0);
+        //     do_duizhan1(4);
+        //     do_duizhan1(4);
+        //     if (d = Number(dacuo_num))
+        //       for (fSet("title", "平衡胜率…"), fClear(), console.info("开始平衡胜率，答错次数：" + d), i = 0; i < d; i++) fInfo("答错第" + (i + 1) + "轮"), dacuo(4), fClear();
+        //     jifen_list = refind_jifen()
+        //   }
+        //   if (true == shuangren) {
+        //     toastLog("双人对战开始");
+        //     do_duizhan1(2)
+        //     jifen_list = refind_jifen()
+        //   }
+        // } else true == siren && true == shuangren && sign_list.push("ocr_false");
     }
     qwdt();
+    // true == wenzhang && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), toastLog("开始文章次数与时长"), do_wenzhang(), jifen_list = refind_jifen());
 
     if (true == wenzhang) {
         if (("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["文章"]).child(3).text()) ||
@@ -2581,6 +2677,9 @@ function xxqg(userinfo) {
     }
 
 
+    // true == bendi && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(4).text()) && (toastLog("本地开始"), do_bendi(), jifen_list = refind_jifen());
+
+
     if (true == bendi) {
         if (("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(3).text()) ||
             ("old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["本地"]).child(4).text())) {
@@ -2589,6 +2688,8 @@ function xxqg(userinfo) {
             jifen_list = refind_jifen();
         }
     }
+
+    // 0 != dingyue && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(3).text().match(/\d+/)[0]) && (toastLog("订阅开始"), d = do_dingyue(), jifen_list = refind_jifen());
 
     if (0 != dingyue) {
         if (("old" == jifen_flag && "0" == jifen_list.child(jifen_map["订阅"]).child(2).text().match(/\d+/)[0]) ||
@@ -2601,6 +2702,21 @@ function xxqg(userinfo) {
         }
     }
 
+
+
+
+
+
+    if (pushplus || token) {
+        fInfo("推送前等待积分刷新5秒");
+        sleep(5E3);
+        token || (token = pushplus);
+        try {
+            send_pushplus(token, sign_list)
+        } catch (h) {
+            fError(h + ":push+推送失败，请尝试切换流量运行或者设置114DNS")
+        }
+    }
     back();
     b = 1;
     if (2 != meizhou) {

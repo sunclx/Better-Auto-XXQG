@@ -2611,30 +2611,26 @@ function xxqg(userinfo) {
 
     entry_jifen_project("趣味答题");
     sleep(1000);
-
+    toastLog("开始趣味答题");
     for (let index = 0; index < 10; index++) {
       if (text("随机匹配").exists() && text("开始对战").exists()) {
-        if (ocr_test()) {
-          if (true == shuangren) {
-            toastLog("双人对战开始");
-            do_duizhan1(2);
-            jifen_list = refind_jifen();
-            return;
-          }
-        } else true == shuangren && sign_list.push("ocr_false");
-
+        if (true == shuangren) {
+          toastLog("双人对战开始");
+          do_duizhan1(2);
+          jifen_list = refind_jifen();
+          return;
+        }
       }
 
       if (text("开始比赛").exists()) {
-        if (ocr_test()) {
-          if (true == shuangren) {
-            toastLog("四人赛开始");
-            guaji && do_duizhan1(4);
-            jifen_list = refind_jifen();
-            return;
-          }
-        } else true == siren && sign_list.push("ocr_false");
-
+        if (true == shuangren) {
+          toastLog("四人赛开始");
+          guaji && do_duizhan1(0);
+          do_duizhan1(4);
+          do_duizhan1(4);
+          jifen_list = refind_jifen();
+          return;
+        }
       }
 
       if (true == tiaozhan && text("挑战答题").exists()) {
@@ -2643,6 +2639,7 @@ function xxqg(userinfo) {
         jifen_list = refind_jifen()
         return;
       }
+      toastLog("趣味答题失败");
     }
 
 
