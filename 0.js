@@ -1092,17 +1092,17 @@ function do_duizhan1(renshu) {
         fError("未识别出题目，可能被禁止截图或无障碍失效");
         img.recycle();
         que_img.recycle();
-        sleep(3000);
+        // sleep(200);
       }
     }
 
     //如果que_txt为空，则随机点击一个
     if (que_txt == "") {
+      sleep(1000);
       fInfo("未识别出题目，随机点击一个");
       fInfo("关闭对战OCR");
       className("android.widget.RadioButton").findOnce(random(0, radio_num - 1)).parent().click();
       num++;
-      sleep(200);
       fClear();
       orc_flag = false
       continue;
