@@ -1060,25 +1060,30 @@ function do_duizhan1(renshu) {
     let start_click = text("开始比赛").findOne().click();
     fInfo("点击：" + start_click);
   }
+
   let delay = Number(jisu);
   if (delay > 0 && duizhan_mode == 1) {
     ui.run(function () {
       let title = w.title.getText();
       w.title.setText(title + "(固定)");
-      fInfo("这是废弃模式，没有正确率");
+      toastLog("这是废弃模式，没有正确率");
     });
   } else if (duizhan_mode == 2) {
     ui.run(function () {
       let title = w.title.getText();
       w.title.setText(title + "(手动)");
-      fInfo("请手动点击答案");
+      toastLog("请手动点击答案");
     });
   }
+
+  //text("开始").findOne(1000);
   className("android.widget.ListView").waitFor();
   fClear();
-
+  //   if (renshu == 0) {
+  //   }
   let num = 1;
   let err_flag = true;
+  let orc_flag = true;
   while (true) {
     // 如果是第一题或者下面出错，则跳过前面等待过渡
     if (num != 1 && err_flag) {
@@ -1136,6 +1141,7 @@ function do_duizhan1(renshu) {
         return true;
       }
     }
+
     let listview = className("android.widget.ListView").findOne(1000);
     if (!listview) {
       log("找不到listview");
@@ -1144,13 +1150,16 @@ function do_duizhan1(renshu) {
       continue;
     }
     sleep(100); // 追求极限速度，不知道会不会出错
+
+    // 找到题目选项区域控件
     let view_d28 = className("android.view.View").depth(28).indexInParent(0).findOne(1000);
     if (!view_d28) {
-      fInfo("找不到view_d28");
+      toastLog("找不到view_depth28");
       err_flag = false;
       sleep(200);
       continue;
     }
+
     // 根据父框的孩子数
     if (view_d28.childCount() > 0) {
       que_x = view_d28.bounds().left;
@@ -1162,12 +1171,13 @@ function do_duizhan1(renshu) {
         que_h = view_d28.child(0).bounds().bottom - view_d28.bounds().top;
       }
     } else {
-      fInfo("找不到框体");
+      toastLog("找不到框体");
       log(view_d28.childCount(), view_d28.bounds());
       err_flag = false;
       sleep(200);
       continue;
     }
+
     // 查找选项个数
     var radio_num = className("android.widget.RadioButton").find().length;
     if (!radio_num) {
@@ -1176,20 +1186,36 @@ function do_duizhan1(renshu) {
       sleep(200);
       continue;
     }
+
+    let que_txt = "";
     //fTips("开始识别题目");
+    if (!orc_flag) {
+      fInfo("OCR已关闭，随机选择。");
+      className("android.widget.RadioButton").findOnce(random(0, radio_num - 1)).parent().click();
+      num++;
+      sleep(200);
+      fClear();
+      continue;
+    }
+
     for (let i = 0; i < 1; i++) {
       let img = captureScreen();
       // 裁剪题干区域，识别题干
       let que_img = images.clip(img, que_x, que_y, que_w, que_h);
+      //images.save(que_img, '/sdcard/1/que_img' + num + '.png');
+      //       console.time('题目识别1');
+      //       let results = ocr.recognize(que_img).results;
+      //       var que_txt = ocr_rslt_to_txt(results).replace(/[^\u4e00-\u9fa5\d]|^\d{1,2}\.?/g, "");
+      //       console.timeEnd('题目识别1');
       // 为了适配OCR插件改为下面这句
       console.time('题目识别');
 
       if (ocr_choice == 0) {
-        var que_txt = google_ocr_api(que_img).replace(/[^\u4e00-\u9fa5\d]|\d{1,2}\./g, "");
+        que_txt = google_ocr_api(que_img).replace(/[^\u4e00-\u9fa5\d]|\d{1,2}\./g, "");
       } else if (ocr_choice == 1) {
-        var que_txt = paddle_ocr_api(que_img).replace(/[^\u4e00-\u9fa5\d]|\d{1,2}\./g, "");
+        que_txt = paddle_ocr_api(que_img).replace(/[^\u4e00-\u9fa5\d]|\d{1,2}\./g, "");
       } else {
-        var que_txt = ocr.recognizeText(que_img).replace(/[^\u4e00-\u9fa5\d]|\d{1,2}\./g, "");
+        que_txt = ocr.recognizeText(que_img).replace(/[^\u4e00-\u9fa5\d]|\d{1,2}\./g, "");
       }
       console.timeEnd('题目识别');
       if (que_txt) {
@@ -1207,11 +1233,13 @@ function do_duizhan1(renshu) {
 
     //如果que_txt为空，则随机点击一个
     if (que_txt == "") {
-      fError("未识别出题目，选择随机答案");
-      className("android.widget.RadioButton").findOnce(random(0, 1)).parent().click();
+      fInfo("未识别出题目，随机点击一个");
+      fInfo("关闭对战OCR");
+      className("android.widget.RadioButton").findOnce(random(0, radio_num - 1)).parent().click();
       num++;
-      fClear();
       sleep(200);
+      fClear();
+      orc_flag = false
       continue;
     }
 
@@ -1223,6 +1251,7 @@ function do_duizhan1(renshu) {
       text("继续挑战").waitFor();
       continue;
     }
+
     // 选项清洗标识
     var replace_sign = "default_ocr_replace";
     let question_reg = new RegExp(update_info["question_reg"], "gi");
@@ -1235,16 +1264,15 @@ function do_duizhan1(renshu) {
     } else if (que_key = include_reg.exec(que_txt)) {
       replace_sign = "include_ocr_replace";
     }
-
     let ans_list = get_ans_by_tiku(que_txt);
-    // log(ans_list);
-    fInfo(ans_list)
+    //log(ans_list);
     let idx_dict = {
       "A": 0,
       "B": 1,
       "C": 2,
       "D": 3
     };
+
     /************以下是因为随机选项顺序后失效的代码*****************/
     try { //防止别人先答完出错
       let idx = 0;
@@ -1294,7 +1322,7 @@ function do_duizhan1(renshu) {
       continue;
     }
     let xuanxiang_list = className("android.widget.ListView").findOne(1000);
-    //let xuanxiang_index = xuanxiang_list.indexInParent();
+    let xuanxiang_index = xuanxiang_list.indexInParent();
     let xuanxiang_list_x = xuanxiang_list.bounds().left;
     let xuanxiang_list_y = xuanxiang_list.bounds().top;
     let xuanxiang_list_w = xuanxiang_list.bounds().width();
@@ -1316,18 +1344,24 @@ function do_duizhan1(renshu) {
     let allx_txt = "";
     if (ocr_choice == 0) {
       // 排序顺序
+      //     console.time('选项识别1');
       let x_results = JSON.parse(JSON.stringify(gmlkit.ocr(img, "zh").toArray(3)));
       allx_txt = ocr_rslt_to_txt(x_results).replace(/\s+/g, "");
+      //     console.timeEnd('选项识别1');
     } else if (ocr_choice == 1) {
       let x_results = JSON.parse(JSON.stringify(paddle.ocr(img)));
       allx_txt = ocr_rslt_to_txt(x_results).replace(/\s+/g, "");
     } else {
       //     // 直接识别
+      //     console.time('选项识别2');
       allx_txt = ocr.recognizeText(img);
+      //     console.timeEnd('选项识别2');
     }
     console.timeEnd("选项识别");
+    // log(allx_txt);
     if (!allx_txt) {
       log("识别不出选项文本，可能被禁止截图");
+      // className("android.widget.RadioButton").findOnce(random(0, radio_num - 1)).parent().click();
       err_flag = false;
       sleep(200);
       continue;
@@ -1358,6 +1392,7 @@ function do_duizhan1(renshu) {
         allx_txt = allx_txt.replace(reg, replace_d[r]);
       }
     }
+    // allx_txt.replace(/令媛/g, "令嫒");
     // 获取选项列表
     xuan_txt_list = allx_txt.match(/[a-d][^a-z\u4e00-\u9fa5\d]?\s*.*?(?=[a-d][^a-z\u4e00-\u9fa5\d]?|$)/gi);
     if (!xuan_txt_list) {
