@@ -1190,10 +1190,10 @@ function do_duizhan1(renshu) {
     let que_txt = "";
     //fTips("开始识别题目");
     if (!orc_flag) {
+      sleep(1000);
       fInfo("OCR已关闭，随机选择。");
       className("android.widget.RadioButton").findOnce(random(0, radio_num - 1)).parent().click();
       num++;
-      sleep(200);
       fClear();
       continue;
     }
