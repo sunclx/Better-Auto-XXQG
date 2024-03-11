@@ -24,7 +24,7 @@ ui.layout(
                 <frame>
                     <vertical>
                         <vertical gravity="center" layout_weight="1">
-                            <card visibility="gone" w="*" h="70" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" foreground="?selectableItemBackground">
+                            <card visibility="visible" w="*" h="70" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" foreground="?selectableItemBackground">
                                 <horizontal gravity="center_vertical">
                                     <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                         <text text="脚本选择" textColor="#222222" textSize="16sp" maxLines="1" />
