@@ -25,7 +25,19 @@ function start() {
     }
 
     console.log("start3....");
-    runUI();
+    try {
+        runUI();
+    } catch (error) {
+        let update = confirm("UI脚本运行失败，是否更新脚本？");
+        if (update) {
+            UI = getScript("UI");
+            DB.put("UI", UI);
+            runUI();
+        } else {
+            exit();
+        }
+    }
+
     DB.put("IS_MAIN_RUN", false);
 }
 

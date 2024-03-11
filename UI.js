@@ -636,11 +636,8 @@ function Initialize() {
 ui.ttxs_pro_district_select.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener({
     onItemSelected: function (parent, view, position, id) {
         // ui.mySpinner.getSelectedItem()
-        log(`parent: ${parent}
-        view: ${view}
-        position: ${position}
-        id: ${id}`)
-        log('选中了第' + id + '项')
+        console.log(`parent: ${parent}\nview: ${view}\nposition: ${position}\nid: ${id}`)
+        console.log('选中了第' + id + '项')
         let dict = {
             "江苏": { district: "江苏", broadcast: "江苏新闻广播", platform: "江苏学习平台", subcolumn: "总书记在江苏" },
             "北京": { district: "北京", broadcast: "北京新闻广播", platform: "北京学习平台", subcolumn: "新思想扎根京华" }
