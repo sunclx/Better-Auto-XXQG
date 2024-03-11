@@ -638,28 +638,28 @@ ui.ttxs_pro_district_select.setOnItemSelectedListener(new android.widget.Adapter
         // ui.mySpinner.getSelectedItem()
         console.log(`parent: ${parent}\nview: ${view}\nposition: ${position}\nid: ${id}`)
         console.log('选中了第' + id + '项')
-        let dict = {
+        const districts = {
             "江苏": { district: "江苏", broadcast: "江苏新闻广播", platform: "江苏学习平台", subcolumn: "总书记在江苏" },
             "北京": { district: "北京", broadcast: "北京新闻广播", platform: "北京学习平台", subcolumn: "新思想扎根京华" }
         }
         switch (id) {
             case 0:
-                ui.ttxs_pro_district.setText(dict["江苏"].district);
-                ui.ttxs_pro_broadcast.setText(dict["江苏"].broadcast);
-                ui.ttxs_pro_platform.setText(dict["江苏"].platform);
-                ui.ttxs_pro_subcolumn.setText(dict["江苏"].subcolumn);
+                ui.ttxs_pro_district.setText(districts["江苏"].district);
+                ui.ttxs_pro_broadcast.setText(districts["江苏"].broadcast);
+                ui.ttxs_pro_platform.setText(districts["江苏"].platform);
+                ui.ttxs_pro_subcolumn.setText(districts["江苏"].subcolumn);
                 break;
             case 1:
-                ui.ttxs_pro_district.setText(dict["北京"].district);
-                ui.ttxs_pro_broadcast.setText(dict["北京"].broadcast);
-                ui.ttxs_pro_platform.setText(dict["北京"].platform);
-                ui.ttxs_pro_subcolumn.setText(dict["北京"].subcolumn);
+                ui.ttxs_pro_district.setText(districts["北京"].district);
+                ui.ttxs_pro_broadcast.setText(districts["北京"].broadcast);
+                ui.ttxs_pro_platform.setText(districts["北京"].platform);
+                ui.ttxs_pro_subcolumn.setText(districts["北京"].subcolumn);
                 break;
             default:
-                ui.ttxs_pro_district.setText(dict["江苏"].district);
-                ui.ttxs_pro_broadcast.setText(dict["江苏"].broadcast);
-                ui.ttxs_pro_platform.setText(dict["江苏"].platform);
-                ui.ttxs_pro_subcolumn.setText(dict["江苏"].subcolumn);
+                ui.ttxs_pro_district.setText(districts["江苏"].district);
+                ui.ttxs_pro_broadcast.setText(districts["江苏"].broadcast);
+                ui.ttxs_pro_platform.setText(districts["江苏"].platform);
+                ui.ttxs_pro_subcolumn.setText(districts["江苏"].subcolumn);
         }
 
 
