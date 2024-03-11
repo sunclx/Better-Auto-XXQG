@@ -354,8 +354,8 @@ const latest_version = "2.2.0";
 // }
 
 const url_prefix = [
-    "https://raw.kkgithub.com/sunclx/XXQG/main/",
     "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sunclx/XXQG/main/",
+    "https://raw.kkgithub.com/sunclx/XXQG/main/",
     "https://ghproxy.net/https://raw.githubusercontent.com/sunclx/XXQG/main/",
     "https://fastly.jsdelivr.net/gh/sunclx/XXQG@main/",
     "https://fastraw.ixnic.net/sunclx/XXQG/main/",
