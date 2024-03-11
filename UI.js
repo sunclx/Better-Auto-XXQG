@@ -1,7 +1,5 @@
 "ui";
 
-const { log } = require("winjs");
-
 importClass(java.net.HttpURLConnection);
 importClass(java.net.URL);
 importClass(java.io.File);
