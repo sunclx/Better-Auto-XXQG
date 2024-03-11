@@ -33,6 +33,10 @@ var yl_on = TTXS_PRO_CONFIG.get("yl_on", true);
 var yinliang = TTXS_PRO_CONFIG.get("yinliang", "0");
 var zhanghao = TTXS_PRO_CONFIG.get("zhanghao", "");
 var comment = TTXS_PRO_CONFIG.get("comment", "全心全意为人民服务|不忘初心，牢记使命|不忘初心，方得始终|永远坚持党的领导|富强、民主、文明、和谐|自由，平等，公正，法治");
+let district = TTXS_PRO_CONFIG.get("district", "江苏");
+let broadcast = TTXS_PRO_CONFIG.get("broadcast", "江苏新闻广播");
+let platform = TTXS_PRO_CONFIG.get("platform", "江苏学习平台");
+let subcolumn = TTXS_PRO_CONFIG.get("subcolumn", "总书记在江苏");
 
 function google_ocr_api(img) {
   console.log('GoogleMLKit文字识别中');
@@ -367,6 +371,10 @@ function do_shipin() {
 function do_wenzhang() {
   //   jifen_list = refind_jifen();
   // 点击进入本地
+  let district = "江苏"
+  let broadcast = "江苏新闻广播"
+  let platform = "江苏学习平台"
+  let subcolumn = "总书记在江苏"
   let old_wen = storage_user.get("old_wen_list", []);
   entry_jifen_project("本地频道");
   if (ddtong) {
@@ -375,30 +383,30 @@ function do_wenzhang() {
     fSet("title", "选读文章…");
   }
   fClear();
-  fInfo("切换地区为北京");
+  fInfo(`切换地区为${district}`);
   text("切换地区").findOne(3000);
   if (text("立即切换").exists()) {
     text("取消").findOne(3000).click();
   }
   log("切换地区");
   text("切换地区").findOne().click();
-  log("查找北京");
-  text("北京").waitFor();
+  log(`查找地区${district}`);
+  text(`${district}`).waitFor();
   sleep(500);
-  log("切换北京");
-  text("北京").findOne().parent().parent().click();
+  log(`切换地区${district}`);
+  text(`${district}`).findOne().parent().parent().click();
   log("查找banner");
   //let banner = className("android.support.v7.widget.RecyclerView").findOne();
   let banner = classNameContains("RecyclerView").findOne();
-  fInfo("查找北京新闻广播");
+  fInfo(`查找新闻广播${broadcast}`);
   //fRefocus();
-  while (banner.findOne(text("北京新闻广播").boundsInside(0, 0, device_w, device_h)) == null) {
+  while (banner.findOne(text(`${broadcast}`).boundsInside(0, 0, device_w, device_h)) == null) {
     banner.scrollForward();
     sleep(500);
   }
-  last_obj = banner.findOne(text("北京新闻广播"));
+  last_obj = banner.findOne(text(`${broadcast}`));
   //   fInfo("点击北京新闻广播", text("北京新闻广播").findOne().parent().click());
-  fInfo("点击北京新闻广播：" + last_obj.parent().click());
+  fInfo(`点击新闻广播${broadcast}：` + last_obj.parent().click());
   fInfo("视听广播时长");
   sleep(11500);
   back();
@@ -408,22 +416,22 @@ function do_wenzhang() {
   sleep(1500);
   banner = classNameContains("RecyclerView").findOne();
   //log(banner);
-  while (banner.findOne(text("北京学习平台").boundsInside(0, 0, device_w, device_h)) == null) {
+  while (banner.findOne(text(`${platform}`).boundsInside(0, 0, device_w, device_h)) == null) {
     banner.scrollBackward();
     sleep(500);
   }
   sleep(1000);
-  fInfo("查找北京学习平台，尝试点击");
-  first_obj = banner.findOne(text("北京学习平台"));
+  fInfo(`查找学习平台${platform}，尝试点击`);
+  first_obj = banner.findOne(text(`${platform}`));
   //   while (!text("北京学习平台").findOne().parent().click()) {log("click: false");}
   //   log("click: true");
   //   real_click(text("北京学习平台").findOne().parent());
   real_click(first_obj.parent());
   log("等待加载");
   sleep(1000);
-  text("新思想扎根京华").waitFor();
+  text(`${subcolumn}`).waitFor();
   sleep(1000);
-  let swipe_y = text("新思想扎根京华").findOne().parent().parent().bounds().bottom;
+  let swipe_y = text(`${subcolumn}`).findOne().parent().parent().bounds().bottom;
   log("识别出顶部：", swipe_y);
   fRefocus();
   let listview = className("android.widget.ListView").depth(17).findOne();
@@ -925,7 +933,6 @@ function do_duizhan1(renshu) {
     let start_click = text("开始比赛").findOne().click();
     fInfo("点击：" + start_click);
   }
-
   let delay = Number(jisu);
   if (delay > 0 && duizhan_mode == 1) {
     ui.run(function () {
@@ -940,7 +947,6 @@ function do_duizhan1(renshu) {
       toastLog("请手动点击答案");
     });
   }
-
   //text("开始").findOne(1000);
   className("android.widget.ListView").waitFor();
   fClear();
@@ -948,7 +954,6 @@ function do_duizhan1(renshu) {
   //   }
   let num = 1;
   let err_flag = true;
-  let orc_flag = true;
   while (true) {
     // 如果是第一题或者下面出错，则跳过前面等待过渡
     if (num != 1 && err_flag) {
@@ -1006,7 +1011,6 @@ function do_duizhan1(renshu) {
         return true;
       }
     }
-
     let listview = className("android.widget.ListView").findOne(1000);
     if (!listview) {
       log("找不到listview");
@@ -1015,16 +1019,13 @@ function do_duizhan1(renshu) {
       continue;
     }
     sleep(100); // 追求极限速度，不知道会不会出错
-
-    // 找到题目选项区域控件
     let view_d28 = className("android.view.View").depth(28).indexInParent(0).findOne(1000);
     if (!view_d28) {
-      toastLog("找不到view_depth28");
+      toastLog("找不到view_d28");
       err_flag = false;
       sleep(200);
       continue;
     }
-
     // 根据父框的孩子数
     if (view_d28.childCount() > 0) {
       que_x = view_d28.bounds().left;
@@ -1042,7 +1043,6 @@ function do_duizhan1(renshu) {
       sleep(200);
       continue;
     }
-
     // 查找选项个数
     var radio_num = className("android.widget.RadioButton").find().length;
     if (!radio_num) {
@@ -1051,18 +1051,7 @@ function do_duizhan1(renshu) {
       sleep(200);
       continue;
     }
-
-    let que_txt = "";
     //fTips("开始识别题目");
-    if (!orc_flag) {
-      sleep(1000);
-      fInfo("OCR已关闭，随机选择。");
-      className("android.widget.RadioButton").findOnce(random(0, radio_num - 1)).parent().click();
-      num++;
-      fClear();
-      continue;
-    }
-
     for (let i = 0; i < 1; i++) {
       let img = captureScreen();
       // 裁剪题干区域，识别题干
@@ -1076,11 +1065,11 @@ function do_duizhan1(renshu) {
       console.time('题目识别');
 
       if (ocr_choice == 0) {
-        que_txt = google_ocr_api(que_img).replace(/[^\u4e00-\u9fa5\d]|\d{1,2}\./g, "");
+        var que_txt = google_ocr_api(que_img).replace(/[^\u4e00-\u9fa5\d]|\d{1,2}\./g, "");
       } else if (ocr_choice == 1) {
-        que_txt = paddle_ocr_api(que_img).replace(/[^\u4e00-\u9fa5\d]|\d{1,2}\./g, "");
+        var que_txt = paddle_ocr_api(que_img).replace(/[^\u4e00-\u9fa5\d]|\d{1,2}\./g, "");
       } else {
-        que_txt = ocr.recognizeText(que_img).replace(/[^\u4e00-\u9fa5\d]|\d{1,2}\./g, "");
+        var que_txt = ocr.recognizeText(que_img).replace(/[^\u4e00-\u9fa5\d]|\d{1,2}\./g, "");
       }
       console.timeEnd('题目识别');
       if (que_txt) {
@@ -1092,21 +1081,20 @@ function do_duizhan1(renshu) {
         fError("未识别出题目，可能被禁止截图或无障碍失效");
         img.recycle();
         que_img.recycle();
-        // sleep(200);
+        sleep(3000);
       }
     }
 
     //如果que_txt为空，则随机点击一个
     if (que_txt == "") {
-      sleep(1000);
       fInfo("未识别出题目，随机点击一个");
-      fInfo("关闭对战OCR");
-      className("android.widget.RadioButton").findOnce(random(0, radio_num - 1)).parent().click();
+      className("android.widget.RadioButton").findOnce(random(0, 1)).parent().click();
       num++;
+      sleep(200);
       fClear();
-      orc_flag = false
       continue;
     }
+
 
     if (renshu == 0) {
       fInfo("由于第一局匹配对手较强，正在挂机中。");
@@ -1116,7 +1104,6 @@ function do_duizhan1(renshu) {
       text("继续挑战").waitFor();
       continue;
     }
-
     // 选项清洗标识
     var replace_sign = "default_ocr_replace";
     let question_reg = new RegExp(update_info["question_reg"], "gi");
@@ -1129,6 +1116,7 @@ function do_duizhan1(renshu) {
     } else if (que_key = include_reg.exec(que_txt)) {
       replace_sign = "include_ocr_replace";
     }
+
     let ans_list = get_ans_by_tiku(que_txt);
     //log(ans_list);
     let idx_dict = {
@@ -1137,7 +1125,6 @@ function do_duizhan1(renshu) {
       "C": 2,
       "D": 3
     };
-
     /************以下是因为随机选项顺序后失效的代码*****************/
     try { //防止别人先答完出错
       let idx = 0;
@@ -1226,7 +1213,7 @@ function do_duizhan1(renshu) {
     // log(allx_txt);
     if (!allx_txt) {
       log("识别不出选项文本，可能被禁止截图");
-      // className("android.widget.RadioButton").findOnce(random(0, radio_num - 1)).parent().click();
+      className("android.widget.RadioButton").findOnce(random(0, radio_num - 1)).parent().click();
       err_flag = false;
       sleep(200);
       continue;
@@ -2719,6 +2706,11 @@ function xxqg(userinfo) {
     }
   }
 
+
+
+
+
+
   if (pushplus || token) {
     fInfo("推送前等待积分刷新5秒");
     sleep(5E3);
@@ -2861,5 +2853,4 @@ console.hide();
 home();
 exit_app("学习强国");
 exit_app("学习");
-home();
 exit();

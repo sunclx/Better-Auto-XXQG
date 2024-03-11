@@ -1,5 +1,7 @@
 "ui";
 
+const { log } = require("winjs");
+
 importClass(java.net.HttpURLConnection);
 importClass(java.net.URL);
 importClass(java.io.File);
@@ -24,7 +26,7 @@ ui.layout(
                 <frame>
                     <vertical>
                         <vertical gravity="center" layout_weight="1">
-                            <card w="*" h="70" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" foreground="?selectableItemBackground">
+                            <card visibility="gone" w="*" h="70" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" foreground="?selectableItemBackground">
                                 <horizontal gravity="center_vertical">
                                     <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                         <text text="脚本选择" textColor="#222222" textSize="16sp" maxLines="1" />
@@ -286,6 +288,38 @@ ui.layout(
                         </vertical>
                     </frame>
                 </ScrollView>
+                <ScrollView>
+                    <frame>
+                        <vertical gravity="center">
+                            <horizontal gravity="center_vertical" padding="5 5" >
+                                <View bg="#00BFFF" h="*" w="10"  ></View>
+                                <vertical padding="10 8" h="auto" w="0" layout_weight="1">
+                                    <text w="auto" textColor="#222222" textSize="15sp" text="文章地区设置" />
+                                    <text w="auto" textColor="#999999" textSize="12sp" text="默认为江苏" />
+                                    <text w="auto" textColor="#999999" textSize="12sp" text="不清楚请勿改动，填写错误将无法运行" />
+                                    <text w="auto" textColor="#222222" textSize="15sp" text="选择地区" />
+                                    <spinner id="ttxs_pro_district_select" marginLeft="4" marginRight="6" entries="江苏|北京" />
+                                    <text w="auto" textColor="#222222" textSize="15sp" text="自定义地区" />
+                                    <text w="auto" textColor="#222222" textSize="15sp" text="地区" />
+                                    <input id="ttxs_pro_district" marginLeft="4" marginRight="6" text="" textSize="13sp" inputType="textMultiLine" />
+                                    <text w="auto" textColor="#222222" textSize="15sp" text="广播频道" />
+                                    <input id="ttxs_pro_broadcast" marginLeft="4" marginRight="6" text="" textSize="13sp" inputType="textMultiLine" />
+                                    <text w="auto" textColor="#222222" textSize="15sp" text="学习平台" />
+                                    <input id="ttxs_pro_platform" marginLeft="4" marginRight="6" text="" textSize="13sp" inputType="textMultiLine" />
+                                    <text w="auto" textColor="#222222" textSize="15sp" text="子栏目" />
+                                    <input id="ttxs_pro_subcolumn" marginLeft="4" marginRight="6" text="" textSize="13sp" inputType="textMultiLine" />
+                                </vertical>
+                            </horizontal>
+
+                            <horizontal>
+                                <button style="Widget.AppCompat.Button.Colored" id="ttxs_pro_save2" text="保存配置" padding="12dp" w="*" />
+                            </horizontal>
+                            <horizontal>
+                                <button style="Widget.AppCompat.Button.Colored" id="ttxs_pro_reset2" text="恢复默认" padding="12dp" w="*" />
+                            </horizontal>
+                        </vertical>
+                    </frame>
+                </ScrollView>
             </viewpager>
         </vertical>
     </drawer>
@@ -344,7 +378,7 @@ ui.emitter.on("options_item_selected", (e, item) => {
 activity.setSupportActionBar(ui.toolbar);
 
 // 设置滑动页面的标题
-ui.viewpager.setTitles(["首页", "脚本配置"]);
+ui.viewpager.setTitles(["首页", "脚本配置", "详细设置"]);
 // 让滑动页面和标签栏联动
 ui.tabs.setupWithViewPager(ui.viewpager);
 
@@ -453,7 +487,7 @@ ui.startH.click(function () {
 });
 
 // 保存天天向上pro脚本设置
-ui.ttxs_pro_save.click(function () {
+function saveSettings() {
     TTXS_PRO_CONFIG.put("watchdog", ui.ttxs_pro_watchdog.getText() + "");
     TTXS_PRO_CONFIG.put("slide_verify", ui.ttxs_pro_slide_verify.getText() + "");
     TTXS_PRO_CONFIG.put("fast_mode", ui.ttxs_pro_fast_mode.isChecked());
@@ -481,12 +515,19 @@ ui.ttxs_pro_save.click(function () {
     TTXS_PRO_CONFIG.put("yl_on", ui.ttxs_pro_yl_on.isChecked());
     TTXS_PRO_CONFIG.put("yinliang", ui.ttxs_pro_yinliang.getText() + "");
     TTXS_PRO_CONFIG.put("zhanghao", ui.ttxs_pro_zhanghao.getText() + "");
+    TTXS_PRO_CONFIG.put("district", ui.ttxs_pro_district.getText() + "");
+    TTXS_PRO_CONFIG.put("broadcast", ui.ttxs_pro_broadcast.getText() + "");
+    TTXS_PRO_CONFIG.put("platform", ui.ttxs_pro_platform.getText() + "");
+    TTXS_PRO_CONFIG.put("subcolumn", ui.ttxs_pro_subcolumn.getText() + "");
 
     toastLog("天天向上pro配置保存成功！");
-});
+}
+
+ui.ttxs_pro_save.click(saveSettings);
+ui.ttxs_pro_save2.click(saveSettings);
 
 // 重置天天向上pro脚本设置
-ui.ttxs_pro_reset.click(function () {
+function resetSettings() {
     TTXS_PRO_CONFIG.put("watchdog", "1800");
     ui.ttxs_pro_watchdog.setText(TTXS_PRO_CONFIG.get("watchdog"));
     TTXS_PRO_CONFIG.put("slide_verify", "300");
@@ -541,9 +582,20 @@ ui.ttxs_pro_reset.click(function () {
     ui.ttxs_pro_yinliang.setText(TTXS_PRO_CONFIG.get("yinliang"));
     TTXS_PRO_CONFIG.put("zhanghao", "");
     ui.ttxs_pro_zhanghao.setText(TTXS_PRO_CONFIG.get("zhanghao"));
+    TTXS_PRO_CONFIG.put("district", "江苏");
+    ui.ttxs_pro_district.setText(TTXS_PRO_CONFIG.get("district"));
+    TTXS_PRO_CONFIG.put("broadcast", "江苏新闻广播");
+    ui.ttxs_pro_broadcast.setText(TTXS_PRO_CONFIG.get("broadcast"));
+    TTXS_PRO_CONFIG.put("platform", "江苏学习平台");
+    ui.ttxs_pro_platform.setText(TTXS_PRO_CONFIG.get("platform"));
+    TTXS_PRO_CONFIG.put("subcolumn", "总书记在江苏");
+    ui.ttxs_pro_subcolumn.setText(TTXS_PRO_CONFIG.get("subcolumn"));
 
     toastLog("天天向上pro配置恢复默认！");
-});
+}
+
+ui.ttxs_pro_reset.click(resetSettings);
+ui.ttxs_pro_reset2.click(resetSettings);
 
 // 读取脚本设置
 function Initialize() {
@@ -576,7 +628,49 @@ function Initialize() {
     ui.ttxs_pro_yl_on.setChecked(TTXS_PRO_CONFIG.get("yl_on", true));
     ui.ttxs_pro_yinliang.setText(TTXS_PRO_CONFIG.get("yinliang", "0"));
     ui.ttxs_pro_zhanghao.setText(TTXS_PRO_CONFIG.get("zhanghao", ""));
+    ui.ttxs_pro_district.setText(TTXS_PRO_CONFIG.get("district", "江苏"));
+    ui.ttxs_pro_broadcast.setText(TTXS_PRO_CONFIG.get("broadcast", "江苏新闻广播"));
+    ui.ttxs_pro_platform.setText(TTXS_PRO_CONFIG.get("platform", "江苏学习平台"));
+    ui.ttxs_pro_subcolumn.setText(TTXS_PRO_CONFIG.get("subcolumn", "总书记在江苏"));
+
 }
+
+ui.ttxs_pro_district_select.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener({
+    onItemSelected: function (parent, view, position, id) {
+        // ui.mySpinner.getSelectedItem()
+        log(`parent: ${parent}
+        view: ${view}
+        position: ${position}
+        id: ${id}`)
+        log('选中了第' + id + '项')
+        let dict = {
+            "江苏": { district: "江苏", broadcast: "江苏新闻广播", platform: "江苏学习平台", subcolumn: "总书记在江苏" },
+            "北京": { district: "北京", broadcast: "北京新闻广播", platform: "北京学习平台", subcolumn: "新思想扎根京华" }
+        }
+        switch (id) {
+            case 0:
+                ui.ttxs_pro_district.setText(dict["江苏"].district);
+                ui.ttxs_pro_broadcast.setText(dict["江苏"].broadcast);
+                ui.ttxs_pro_platform.setText(dict["江苏"].platform);
+                ui.ttxs_pro_subcolumn.setText(dict["江苏"].subcolumn);
+                break;
+            case 1:
+                ui.ttxs_pro_district.setText(dict["北京"].district);
+                ui.ttxs_pro_broadcast.setText(dict["北京"].broadcast);
+                ui.ttxs_pro_platform.setText(dict["北京"].platform);
+                ui.ttxs_pro_subcolumn.setText(dict["北京"].subcolumn);
+                break;
+            default:
+                ui.ttxs_pro_district.setText(dict["江苏"].district);
+                ui.ttxs_pro_broadcast.setText(dict["江苏"].broadcast);
+                ui.ttxs_pro_platform.setText(dict["江苏"].platform);
+                ui.ttxs_pro_subcolumn.setText(dict["江苏"].subcolumn);
+        }
+
+
+
+    }
+}))
 
 // 检查百度API
 function check_baidu_api() {
