@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 "ui";
 
 importClass(java.net.HttpURLConnection);
