@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 "ui";
 
 importClass(java.net.HttpURLConnection);
@@ -6,12 +7,11 @@ importClass(java.io.File);
 importClass(java.io.FileOutputStream);
 importClass(android.graphics.Color);
 
-var color = "#FF4FB3FF";
-var DB = storages.create("MAIN");
-var script = DB.get("script");
+// var color = '#FF4FB3FF';
+const DB = storages.create("MAIN");
+let script = DB.get("script");
 
-ui.statusBarColor("#FF4FB3FF")
-
+ui.statusBarColor("#FF4FB3FF");
 
 ui.layout(
     <drawer id="drawer">
@@ -24,7 +24,7 @@ ui.layout(
                 <frame>
                     <vertical>
                         <vertical gravity="center" layout_weight="1">
-                            <card visibility="visible" w="*" h="70" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" foreground="?selectableItemBackground">
+                            <card visibility="gone" w="*" h="70" margin="10 5" cardCornerRadius="2dp" cardElevation="1dp" foreground="?selectableItemBackground">
                                 <horizontal gravity="center_vertical">
                                     <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                                         <text text="脚本选择" textColor="#222222" textSize="16sp" maxLines="1" />
@@ -292,20 +292,30 @@ ui.layout(
                             <horizontal gravity="center_vertical" padding="5 5" >
                                 <View bg="#00BFFF" h="*" w="10"  ></View>
                                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
-                                    <text w="auto" textColor="#222222" textSize="15sp" text="文章地区设置" />
+                                    <text w="auto" textColor="#222222" textSize="16sp" text="文章地区设置" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="默认为江苏" />
                                     <text w="auto" textColor="#999999" textSize="12sp" text="不清楚请勿改动，填写错误将无法运行" />
                                     <text w="auto" textColor="#222222" textSize="15sp" text="选择地区" />
-                                    <spinner id="ttxs_pro_district_select" marginLeft="4" marginRight="6" entries="江苏|北京" />
-                                    <text w="auto" textColor="#222222" textSize="15sp" text="自定义地区" />
-                                    <text w="auto" textColor="#222222" textSize="15sp" text="地区" />
-                                    <input id="ttxs_pro_district" marginLeft="4" marginRight="6" text="" textSize="13sp" inputType="textMultiLine" />
-                                    <text w="auto" textColor="#222222" textSize="15sp" text="广播频道" />
-                                    <input id="ttxs_pro_broadcast" marginLeft="4" marginRight="6" text="" textSize="13sp" inputType="textMultiLine" />
-                                    <text w="auto" textColor="#222222" textSize="15sp" text="学习平台" />
-                                    <input id="ttxs_pro_platform" marginLeft="4" marginRight="6" text="" textSize="13sp" inputType="textMultiLine" />
-                                    <text w="auto" textColor="#222222" textSize="15sp" text="子栏目" />
-                                    <input id="ttxs_pro_subcolumn" marginLeft="4" marginRight="6" text="" textSize="13sp" inputType="textMultiLine" />
+                                    <spinner id="ttxs_pro_district_select" marginLeft="4" marginRight="6" entries="江苏|北京|自定义" />
+                                    <vertical id="ttxs_pro_district_edit" visibility="gone">
+                                        <text w="auto" textColor="#222222" textSize="15sp" text="自定义地区" />
+                                        <horizontal>
+                                            <text w="auto" textColor="#222222" textSize="15sp" text="地区" />
+                                            <input id="ttxs_pro_district" marginLeft="4" marginRight="6" text="" w="*" textSize="15sp" inputType="text" />
+                                        </horizontal>
+                                        <horizontal>
+                                            <text w="auto" textColor="#222222" textSize="15sp" text="广播频道" />
+                                            <input id="ttxs_pro_broadcast" marginLeft="4" marginRight="6" text="" w="*" textSize="15sp" inputType="text" />
+                                        </horizontal>
+                                        <horizontal>
+                                            <text w="auto" textColor="#222222" textSize="15sp" text="学习平台" />
+                                            <input id="ttxs_pro_platform" marginLeft="4" marginRight="6" text="" w="*" textSize="15sp" inputType="text" />
+                                        </horizontal>
+                                        <horizontal>
+                                            <text w="auto" textColor="#222222" textSize="15sp" text="子栏目" />
+                                            <input id="ttxs_pro_subcolumn" marginLeft="4" marginRight="6" text="" w="*" textSize="15sp" inputType="text" />
+                                        </horizontal>
+                                    </vertical>
                                 </vertical>
                             </horizontal>
 
@@ -323,36 +333,46 @@ ui.layout(
     </drawer>
 );
 
-
-// ui.update.visibility = 8;
+// Ui.update.visibility = 8;
 
 http.__okhttp__.setTimeout(10000);
 
-
-var GLOBAL_CONFIG = storages.create("GLOBAL_CONFIG");
-var TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
-var BAIDUAPI = storages.create("BAIDUAPI");
-var execution = "";
-var thread = null;
+const GLOBAL_CONFIG = storages.create("GLOBAL_CONFIG");
+const TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
+// const BAIDUAPI = storages.create('BAIDUAPI');
+// var execution = '';
+const thread = null;
 Initialize();
 
 // 版本更新检查
 // var apkurl = "https://gh-proxy.com/https://github.com/sec-an/Better-Auto-XXQG/releases/download/v2.2.0/v2.2.0.apk";
-var latest_version = "2.2.0";
-// if (GLOBAL_CONFIG.get("NO_UPDATE", 0) && (app.versionName != latest_version)) {
+const latest_version = "2.2.0";
+// If (GLOBAL_CONFIG.get("NO_UPDATE", 0) && (app.versionName != latest_version)) {
 //     ui.update.visibility = 0;
 //     ui.update.setText("点击更新至最新版v" + latest_version);
 // } else if (app.versionName != latest_version) {
 //     checkversion();
 // }
 
+const url_prefix = [
+    "https://raw.kkgithub.com/sunclx/XXQG/main/",
+    "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sunclx/XXQG/main/",
+    "https://ghproxy.net/https://raw.githubusercontent.com/sunclx/XXQG/main/",
+    "https://fastly.jsdelivr.net/gh/sunclx/XXQG@main/",
+    "https://fastraw.ixnic.net/sunclx/XXQG/main/",
+    "https://cdn.jsdelivr.us/gh/sunclx/XXQG@main/",
+    "https://jsdelivr.b-cdn.net/gh/sunclx/XXQG@main/",
+    "https://github.moeyy.xyz/https://raw.githubusercontent.com/sunclx/XXQG/main/",
+    "https://raw.cachefly.998111.xyz/sunclx/XXQG/main/",
+    "https://raw.githubusercontent.com/sunclx/XXQG/main/",
+];
 
 // 创建选项菜单(右上角)
-ui.emitter.on("create_options_menu", menu => {
+ui.emitter.on("create_options_menu", (menu) => {
     menu.add("日志");
     menu.add("关于");
     menu.add("Github");
-    // menu.add("V2.33.0下载");
+    // Menu.add("V2.33.0下载");
 });
 
 // 监听选项菜单点击
@@ -367,7 +387,7 @@ ui.emitter.on("options_item_selected", (e, item) => {
         case "Github":
             app.openUrl("https://github.com/sec-an/Better-Auto-XXQG");
             break;
-        // case "V2.33.0下载":
+        // Case "V2.33.0下载":
         //     app.openUrl("https://android-apps.pp.cn/fs08/2021/12/28/3/110_f37c420b0944cb7b9f60a2ad9b5518d2.apk?yingid=web_space&packageid=500730793&md5=664bb7bdcae57be189fc86100f4371c4&minSDK=21&size=191654161&shortMd5=1fee0bd160d08108a9d9e5f4773ce741&crc32=3879122865&did=ad484a175e19d0928044435e24bf03cb");
         //     break;
     }
@@ -381,34 +401,38 @@ ui.viewpager.setTitles(["首页", "脚本配置", "详细设置"]);
 ui.tabs.setupWithViewPager(ui.viewpager);
 
 // 脚本选择监听
-var script_chosen_Listener = new android.widget.AdapterView.OnItemSelectedListener({
-    onItemSelected: function (parent, view, position, id) {
-        toastLog('选择脚本：' + ui.script_chosen.getSelectedItem());
-        ui.ttxs_pro.visibility = 0;
-        // if (ui.script_chosen.getSelectedItemPosition() == 0) {
-        //     ui.ttxs.visibility = 8;
-        //     ui.study.visibility = 8;
-        //     ui.ttxs_pro.visibility = 0;
-        // } else if (ui.script_chosen.getSelectedItemPosition() == 1) {
-        //     ui.ttxs_pro.visibility = 8;
-        //     ui.study.visibility = 8;
-        //     ui.ttxs.visibility = 0;
-        // } else if (ui.script_chosen.getSelectedItemPosition() == 2) {
-        //     ui.ttxs_pro.visibility = 8;
-        //     ui.ttxs.visibility = 8;
-        //     ui.study.visibility = 0;
-        // }
-        GLOBAL_CONFIG.put("script_chosen", ui.script_chosen.getSelectedItemPosition());
-    }
-})
+const script_chosen_Listener = new android.widget.AdapterView
+    .OnItemSelectedListener({
+        onItemSelected: function (_parent, _view, _position, _id) {
+            toastLog("选择脚本：" + ui.script_chosen.getSelectedItem());
+            ui.ttxs_pro.visibility = 0;
+            // If (ui.script_chosen.getSelectedItemPosition() == 0) {
+            //     ui.ttxs.visibility = 8;
+            //     ui.study.visibility = 8;
+            //     ui.ttxs_pro.visibility = 0;
+            // } else if (ui.script_chosen.getSelectedItemPosition() == 1) {
+            //     ui.ttxs_pro.visibility = 8;
+            //     ui.study.visibility = 8;
+            //     ui.ttxs.visibility = 0;
+            // } else if (ui.script_chosen.getSelectedItemPosition() == 2) {
+            //     ui.ttxs_pro.visibility = 8;
+            //     ui.ttxs.visibility = 8;
+            //     ui.study.visibility = 0;
+            // }
+            GLOBAL_CONFIG.put(
+                "script_chosen",
+                ui.script_chosen.getSelectedItemPosition(),
+            );
+        },
+    });
 ui.script_chosen.setOnItemSelectedListener(script_chosen_Listener);
 
-// 用户勾选无障碍服务的选项时，跳转到页面让用户去开启 
+// 用户勾选无障碍服务的选项时，跳转到页面让用户去开启
 // android.permission.SYSTEM_ALERT_WINDOW
 ui.autoService.on("check", function (checked) {
     if (checked && auto.service == null) {
         app.startActivity({
-            action: "android.settings.ACCESSIBILITY_SETTINGS"
+            action: "android.settings.ACCESSIBILITY_SETTINGS",
         });
     }
     if (!checked && auto.service != null) {
@@ -465,13 +489,43 @@ ui.update.click(function () {
     threads.start(function () {
         script = getScript(ui.script_chosen.getSelectedItemPosition());
         DB.put("script", script);
-        let main = getScript("main");
+        const main = getScript("main");
         DB.put("main", main);
-        let UI = getScript("UI");
+        const UI = getScript("UI");
         DB.put("UI", UI);
         console.log("更新成功");
     });
 });
+ui.update.on("long_click", function () {
+    const url_index = dialogs.singleChoice("请选择下载代理", url_prefix, 0)
+    const getScript = function (name) {
+        try {
+            const res = http.get(url_prefix[url_index] + name + ".js");
+            console.log(i, ":" + res.statusCode);
+            if (res.statusCode == 200) {
+                const UI = res.body.string();
+                if (
+                    UI.indexOf("console.clear();") == 0 ||
+                    UI.indexOf("auto.waitFor();") == 0 || UI.indexOf('"ui";') == 0
+                ) return UI
+            } else {
+                toastLog("学习脚本:地址" + i + "下载失败");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    threads.start(function () {
+        script = getScript(ui.script_chosen.getSelectedItemPosition());
+        DB.put("script", script);
+        const main = getScript("main");
+        DB.put("main", main);
+        const UI = getScript("UI");
+        DB.put("UI", UI);
+        console.log("更新成功");
+    });
+});
+
 // 下载并运行所选脚本
 ui.startH.click(function () {
     threads.shutDownAll();
@@ -497,11 +551,20 @@ function saveSettings() {
     TTXS_PRO_CONFIG.put("wenzhang", ui.ttxs_pro_wenzhang.isChecked());
     TTXS_PRO_CONFIG.put("meiri", ui.ttxs_pro_meiri.isChecked());
     TTXS_PRO_CONFIG.put("meizhou", ui.ttxs_pro_meizhou.getSelectedItemPosition());
-    TTXS_PRO_CONFIG.put("zhuanxiang", ui.ttxs_pro_zhuanxiang.getSelectedItemPosition());
+    TTXS_PRO_CONFIG.put(
+        "zhuanxiang",
+        ui.ttxs_pro_zhuanxiang.getSelectedItemPosition(),
+    );
     TTXS_PRO_CONFIG.put("tiaozhan", ui.ttxs_pro_tiaozhan.isChecked());
-    TTXS_PRO_CONFIG.put("ocr_choice", ui.ttxs_pro_ocr_choice.getSelectedItemPosition());
+    TTXS_PRO_CONFIG.put(
+        "ocr_choice",
+        ui.ttxs_pro_ocr_choice.getSelectedItemPosition(),
+    );
     TTXS_PRO_CONFIG.put("ocr_maxtime", ui.ttxs_pro_ocr_maxtime.getText() + "");
-    TTXS_PRO_CONFIG.put("duizhan_mode", ui.ttxs_pro_duizhan_mode.getSelectedItemPosition());
+    TTXS_PRO_CONFIG.put(
+        "duizhan_mode",
+        ui.ttxs_pro_duizhan_mode.getSelectedItemPosition(),
+    );
     TTXS_PRO_CONFIG.put("jisu", ui.ttxs_pro_jisu.getText() + "");
     TTXS_PRO_CONFIG.put("guaji", ui.ttxs_pro_guaji.isChecked());
     TTXS_PRO_CONFIG.put("siren", ui.ttxs_pro_siren.isChecked());
@@ -513,6 +576,7 @@ function saveSettings() {
     TTXS_PRO_CONFIG.put("yl_on", ui.ttxs_pro_yl_on.isChecked());
     TTXS_PRO_CONFIG.put("yinliang", ui.ttxs_pro_yinliang.getText() + "");
     TTXS_PRO_CONFIG.put("zhanghao", ui.ttxs_pro_zhanghao.getText() + "");
+    TTXS_PRO_CONFIG.put("district_select", ui.ttxs_pro_district_select.getSelectedItemPosition());
     TTXS_PRO_CONFIG.put("district", ui.ttxs_pro_district.getText() + "");
     TTXS_PRO_CONFIG.put("broadcast", ui.ttxs_pro_broadcast.getText() + "");
     TTXS_PRO_CONFIG.put("platform", ui.ttxs_pro_platform.getText() + "");
@@ -538,7 +602,10 @@ function resetSettings() {
     ui.ttxs_pro_is_exit.setChecked(TTXS_PRO_CONFIG.get("is_exit"));
     TTXS_PRO_CONFIG.put("pinglun", true);
     ui.ttxs_pro_pinglun.setChecked(TTXS_PRO_CONFIG.get("pinglun"));
-    TTXS_PRO_CONFIG.put("comment", "全心全意为人民服务|不忘初心，牢记使命|不忘初心，方得始终|永远坚持党的领导|富强、民主、文明、和谐|自由，平等，公正，法治");
+    TTXS_PRO_CONFIG.put(
+        "comment",
+        "全心全意为人民服务|不忘初心，牢记使命|不忘初心，方得始终|永远坚持党的领导|富强、民主、文明、和谐|自由，平等，公正，法治",
+    );
     ui.ttxs_pro_comment.setText(TTXS_PRO_CONFIG.get("comment"));
     TTXS_PRO_CONFIG.put("shipin", true);
     ui.ttxs_pro_shipin.setChecked(TTXS_PRO_CONFIG.get("shipin"));
@@ -580,6 +647,8 @@ function resetSettings() {
     ui.ttxs_pro_yinliang.setText(TTXS_PRO_CONFIG.get("yinliang"));
     TTXS_PRO_CONFIG.put("zhanghao", "");
     ui.ttxs_pro_zhanghao.setText(TTXS_PRO_CONFIG.get("zhanghao"));
+    TTXS_PRO_CONFIG.put("district_select", 0);
+    ui.ttxs_pro_district_select.setSelection(TTXS_PRO_CONFIG.get("district_select"));
     TTXS_PRO_CONFIG.put("district", "江苏");
     ui.ttxs_pro_district.setText(TTXS_PRO_CONFIG.get("district"));
     TTXS_PRO_CONFIG.put("broadcast", "江苏新闻广播");
@@ -605,7 +674,12 @@ function Initialize() {
     ui.ttxs_pro_ddtong.setChecked(TTXS_PRO_CONFIG.get("ddtong", false));
     ui.ttxs_pro_is_exit.setChecked(TTXS_PRO_CONFIG.get("is_exit", true));
     ui.ttxs_pro_pinglun.setChecked(TTXS_PRO_CONFIG.get("pinglun", true));
-    ui.ttxs_pro_comment.setText(TTXS_PRO_CONFIG.get("comment", "全心全意为人民服务|不忘初心，牢记使命|不忘初心，方得始终|永远坚持党的领导|富强、民主、文明、和谐|自由，平等，公正，法治"));
+    ui.ttxs_pro_comment.setText(
+        TTXS_PRO_CONFIG.get(
+            "comment",
+            "全心全意为人民服务|不忘初心，牢记使命|不忘初心，方得始终|永远坚持党的领导|富强、民主、文明、和谐|自由，平等，公正，法治",
+        ),
+    );
     ui.ttxs_pro_shipin.setChecked(TTXS_PRO_CONFIG.get("shipin", true));
     ui.ttxs_pro_wenzhang.setChecked(TTXS_PRO_CONFIG.get("wenzhang", true));
     ui.ttxs_pro_meiri.setChecked(TTXS_PRO_CONFIG.get("meiri", true));
@@ -626,166 +700,187 @@ function Initialize() {
     ui.ttxs_pro_yl_on.setChecked(TTXS_PRO_CONFIG.get("yl_on", true));
     ui.ttxs_pro_yinliang.setText(TTXS_PRO_CONFIG.get("yinliang", "0"));
     ui.ttxs_pro_zhanghao.setText(TTXS_PRO_CONFIG.get("zhanghao", ""));
+    ui.ttxs_pro_district_select.setSelection(TTXS_PRO_CONFIG.get("district_select", 0));
     ui.ttxs_pro_district.setText(TTXS_PRO_CONFIG.get("district", "江苏"));
-    ui.ttxs_pro_broadcast.setText(TTXS_PRO_CONFIG.get("broadcast", "江苏新闻广播"));
+    ui.ttxs_pro_broadcast.setText(
+        TTXS_PRO_CONFIG.get("broadcast", "江苏新闻广播"),
+    );
     ui.ttxs_pro_platform.setText(TTXS_PRO_CONFIG.get("platform", "江苏学习平台"));
-    ui.ttxs_pro_subcolumn.setText(TTXS_PRO_CONFIG.get("subcolumn", "总书记在江苏"));
-
+    ui.ttxs_pro_subcolumn.setText(
+        TTXS_PRO_CONFIG.get("subcolumn", "总书记在江苏"),
+    );
 }
 
-ui.ttxs_pro_district_select.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener({
-    onItemSelected: function (parent, view, position, id) {
-        // ui.mySpinner.getSelectedItem()
-        console.log(`parent: ${parent}\nview: ${view}\nposition: ${position}\nid: ${id}`)
-        console.log('选中了第' + id + '项')
-        const districts = {
-            "江苏": { district: "江苏", broadcast: "江苏新闻广播", platform: "江苏学习平台", subcolumn: "总书记在江苏" },
-            "北京": { district: "北京", broadcast: "北京新闻广播", platform: "北京学习平台", subcolumn: "新思想扎根京华" }
-        }
-        switch (id) {
-            case 0:
-                ui.ttxs_pro_district.setText(districts["江苏"].district);
-                ui.ttxs_pro_broadcast.setText(districts["江苏"].broadcast);
-                ui.ttxs_pro_platform.setText(districts["江苏"].platform);
-                ui.ttxs_pro_subcolumn.setText(districts["江苏"].subcolumn);
-                break;
-            case 1:
-                ui.ttxs_pro_district.setText(districts["北京"].district);
-                ui.ttxs_pro_broadcast.setText(districts["北京"].broadcast);
-                ui.ttxs_pro_platform.setText(districts["北京"].platform);
-                ui.ttxs_pro_subcolumn.setText(districts["北京"].subcolumn);
-                break;
-            default:
-                ui.ttxs_pro_district.setText(districts["江苏"].district);
-                ui.ttxs_pro_broadcast.setText(districts["江苏"].broadcast);
-                ui.ttxs_pro_platform.setText(districts["江苏"].platform);
-                ui.ttxs_pro_subcolumn.setText(districts["江苏"].subcolumn);
-        }
-
-
-
-    }
-}))
+ui.ttxs_pro_district_select.setOnItemSelectedListener(
+    new android.widget.AdapterView.OnItemSelectedListener({
+        onItemSelected: function (_parent, _view, _position, id) {
+            // Ui.mySpinner.getSelectedItem()
+            // console.log(
+            //     `parent: ${parent}\nview: ${view}\nposition: ${position}\nid: ${id}`,
+            // );
+            // console.log("选中了第" + id + "项");
+            const districts = {
+                "江苏": {
+                    district: "江苏",
+                    broadcast: "江苏新闻广播",
+                    platform: "江苏学习平台",
+                    subcolumn: "总书记在江苏",
+                },
+                "北京": {
+                    district: "北京",
+                    broadcast: "北京新闻广播",
+                    platform: "北京学习平台",
+                    subcolumn: "新思想扎根京华",
+                },
+            };
+            switch (id) {
+                case 0:
+                    ui.ttxs_pro_district.setText(districts["江苏"].district);
+                    ui.ttxs_pro_broadcast.setText(districts["江苏"].broadcast);
+                    ui.ttxs_pro_platform.setText(districts["江苏"].platform);
+                    ui.ttxs_pro_subcolumn.setText(districts["江苏"].subcolumn);
+                    ui.ttxs_pro_district_edit.visibility = 8;
+                    // console.log("选中了第" + id + "项");
+                    break;
+                case 1:
+                    ui.ttxs_pro_district.setText(districts["北京"].district);
+                    ui.ttxs_pro_broadcast.setText(districts["北京"].broadcast);
+                    ui.ttxs_pro_platform.setText(districts["北京"].platform);
+                    ui.ttxs_pro_subcolumn.setText(districts["北京"].subcolumn);
+                    ui.ttxs_pro_district_edit.visibility = 8;
+                    // console.log("选中了第" + id + "项");
+                    break;
+                case 2:
+                    ui.ttxs_pro_district_edit.visibility = 0;
+                    // console.log("选中了第" + id + "项");
+                    break;
+                default:
+                    ui.ttxs_pro_district.setText(districts["江苏"].district);
+                    ui.ttxs_pro_broadcast.setText(districts["江苏"].broadcast);
+                    ui.ttxs_pro_platform.setText(districts["江苏"].platform);
+                    ui.ttxs_pro_subcolumn.setText(districts["江苏"].subcolumn);
+            }
+        },
+    }),
+);
 
 // 检查百度API
-function check_baidu_api() {
-    thread = threads.start(function () {
-        let AK = String(ui.study_AK.getText());
-        let SK = String(ui.study_SK.getText());
-        var res = http.post(
-            'https://aip.baidubce.com/oauth/2.0/token', {
-            grant_type: 'client_credentials',
-            client_id: AK,
-            client_secret: SK
-        }
-        ).body.json();
-        if ("error" in res) {
-            toastLog("API Key或Secret Key存在错误");
-            console.log(AK);
-            console.log(SK);
-            ui.study_AK.setText(BAIDUAPI.get("AK", ""));
-            ui.study_SK.setText(BAIDUAPI.get("SK", ""));
-            BAIDUAPI.put("AK", "");
-            BAIDUAPI.put("SK", "");
-        } else {
-            toastLog("API Key、Secret Key正确，且已缓存");
-            BAIDUAPI.put("AK", AK);
-            BAIDUAPI.put("SK", SK);
-        }
-    });
-}
+// function check_baidu_api() {
+//     thread = threads.start(function () {
+//         let AK = String(ui.study_AK.getText());
+//         let SK = String(ui.study_SK.getText());
+//         var res = http.post(
+//             'https://aip.baidubce.com/oauth/2.0/token', {
+//             grant_type: 'client_credentials',
+//             client_id: AK,
+//             client_secret: SK
+//         }
+//         ).body.json();
+//         if ('error' in res) {
+//             toastLog('API Key或Secret Key存在错误');
+//             console.log(AK);
+//             console.log(SK);
+//             ui.study_AK.setText(BAIDUAPI.get('AK', ''));
+//             ui.study_SK.setText(BAIDUAPI.get('SK', ''));
+//             BAIDUAPI.put('AK', '');
+//             BAIDUAPI.put('SK', '');
+//         } else {
+//             toastLog('API Key、Secret Key正确，且已缓存');
+//             BAIDUAPI.put('AK', AK);
+//             BAIDUAPI.put('SK', SK);
+//         }
+//     });
+// }
 
 // APP更新提示
-function checkversion() {
-    var releaseNotes = "版本 v" + latest_version + "\n" +
-        "更新日志:\n" +
-        "* 1.基于AutoX v6.3.4重新打包\n" +
-        "* 2.调整默认OCR为Google ML kIT OCR"
-    dialogs.build({
-        title: "发现新版本",
-        content: releaseNotes,
-        positive: "立即下载",
-        negative: "取消",
-        neutral: "浏览器下载",
-        checkBoxPrompt: "不再提示",
-        cancelable: false
-    })
-        .on("positive", () => {
-            download(apkurl);
-        })
-        .on("neutral", () => {
-            app.openUrl(apkurl);
-        })
-        .on("check", (checked) => {
-            GLOBAL_CONFIG.put("NO_UPDATE", 1);
-        }).show();
-}
+// function checkversion() {
+//     var releaseNotes = '版本 v' + latest_version + '\n' +
+//         '更新日志:\n' +
+//         '* 1.基于AutoX v6.3.4重新打包\n' +
+//         '* 2.调整默认OCR为Google ML kIT OCR';
+//     dialogs.build({
+//         title: '发现新版本',
+//         content: releaseNotes,
+//         positive: '立即下载',
+//         negative: '取消',
+//         neutral: '浏览器下载',
+//         checkBoxPrompt: '不再提示',
+//         cancelable: false
+//     })
+//         .on('positive', () => {
+//             download(apkurl);
+//         })
+//         .on('neutral', () => {
+//             app.openUrl(apkurl);
+//         })
+//         .on('check', (checked) => {
+//             GLOBAL_CONFIG.put('NO_UPDATE', 1);
+//         }).show();
+// }
 
 // 打开下载进度面板
-function download(url) {
-    downloadDialog = dialogs.build({
-        title: "正在下载...",
-        progress: {
-            max: 100,
-            showMinMax: true
-        },
-        autoDismiss: false,
-        cancelable: false
-    }).show();
-    startDownload(url);
-}
+// function download(url) {
+//     downloadDialog = dialogs.build({
+//         title: '正在下载...',
+//         progress: {
+//             max: 100,
+//             showMinMax: true
+//         },
+//         autoDismiss: false,
+//         cancelable: false
+//     }).show();
+//     startDownload(url);
+// }
 
 // 下载apk的主方法体
-function startDownload(url) {
-    threads.start(function () {
-        var path = files.cwd() + "/new.apk";
-        let apkFile = new File(path);
-        var conn = new URL(url).openConnection();
-        conn.connect();
-        let is = conn.getInputStream();
-        let length = conn.getContentLength();
-        let fos = new FileOutputStream(apkFile);
-        let count = 0;
-        let buffer = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 1024);
-        while (true) {
-            var p = ((count / length) * 100);
-            let numread = is.read(buffer);
-            count += numread;
-            // 下载完成
-            if (numread < 0) {
-                toast("下载完成");
-                downloadDialog.dismiss();
-                downloadDialog = null;
-                break;
-            }
-            // 更新进度条
-            downloadDialog.setProgress(p);
-            fos.write(buffer, 0, numread);
-        }
-        fos.close();
-        is.close();
-        //自动打开进行安装
-        app.viewFile(path);
-    })
-}
+// function startDownload(url) {
+//     threads.start(function () {
+//         var path = files.cwd() + '/new.apk';
+//         let apkFile = new File(path);
+//         var conn = new URL(url).openConnection();
+//         conn.connect();
+//         let is = conn.getInputStream();
+//         let length = conn.getContentLength();
+//         let fos = new FileOutputStream(apkFile);
+//         let count = 0;
+//         let buffer = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 1024);
+//         while (true) {
+//             var p = ((count / length) * 100);
+//             let numread = is.read(buffer);
+//             count += numread;
+//             // 下载完成
+//             if (numread < 0) {
+//                 toast('下载完成');
+//                 downloadDialog.dismiss();
+//                 downloadDialog = null;
+//                 break;
+//             }
+//             // 更新进度条
+//             downloadDialog.setProgress(p);
+//             fos.write(buffer, 0, numread);
+//         }
+//         fos.close();
+//         is.close();
+//         //自动打开进行安装
+//         app.viewFile(path);
+//     });
+// }
 
 function getScript(choice) {
-    let url_prefix = [
-        'https://v.sec-an-cf.top/gh/raw/sunclx/XXQG/main/',
-        'https://gh-proxy.com/https://raw.githubusercontent.com/sunclx/XXQG/main/',
-        "https://ghproxy.com/https://raw.githubusercontent.com/sunclx/XXQG/main/",
-        'https://cdn.jsdelivr.net/gh/sunclx/XXQG@main/',
-        'https://raw.githubusercontent.com/sunclx/XXQG/main/',
-    ];
-    for (var i = 0; i < url_prefix.length; i++) {
+
+    let UI = "";
+    for (let i = 0; i < url_prefix.length; i++) {
         try {
-            let res = http.get(url_prefix[i] + choice + ".js");
+            const res = http.get(url_prefix[i] + choice + ".js");
             console.log(i, ":" + res.statusCode);
             if (res.statusCode == 200) {
-                var UI = res.body.string();
-                if (UI.indexOf('console.clear();') == 0 || UI.indexOf('auto.waitFor();') == 0 || UI.indexOf('"ui";') == 0) break;
+                UI = res.body.string();
+                if (
+                    UI.indexOf("console.clear();") == 0 ||
+                    UI.indexOf("auto.waitFor();") == 0 || UI.indexOf('"ui";') == 0
+                ) break;
             } else {
-                toastLog('学习脚本:地址' + i + '下载失败');
+                toastLog("学习脚本:地址" + i + "下载失败");
             }
         } catch (error) {
             console.log(error);

@@ -2,9 +2,9 @@ console.clear();
 
 http.__okhttp__.setTimeout(10000);
 
-var DB = storages.create("MAIN");
-var UI = DB.get("UI");
-var main = DB.get("main");
+const DB = storages.create("MAIN");
+let UI = DB.get("UI");
+let main = DB.get("main");
 start();
 function start() {
     if (!main) {
@@ -27,8 +27,8 @@ function start() {
     console.log("start3....");
     try {
         runUI();
-    } catch (error) {
-        let update = confirm("UI脚本运行失败，是否更新脚本？");
+    } catch (_error) {
+        const update = confirm("UI脚本运行失败，是否更新脚本？");
         if (update) {
             UI = getScript("UI");
             DB.put("UI", UI);
@@ -53,19 +53,25 @@ function runUI() {
 }
 
 function getScript(filename) {
-    let url_prefix = [
-        'https://v.sec-an-cf.top/gh/raw/sunclx/XXQG/main/',
-        'https://gh-proxy.com/https://raw.githubusercontent.com/sunclx/XXQG/main/',
-        "https://ghproxy.com/https://raw.githubusercontent.com/sunclx/XXQG/main/",
-        'https://cdn.jsdelivr.net/gh/sunclx/XXQG@main/',
-        'https://raw.githubusercontent.com/sunclx/XXQG/main/',
+    const url_prefix = [
+        "https://raw.kkgithub.com/sunclx/XXQG/main/",
+        "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sunclx/XXQG/main/",
+        "https://ghproxy.net/https://raw.githubusercontent.com/sunclx/XXQG/main/",
+        "https://fastly.jsdelivr.net/gh/sunclx/XXQG@main/",
+        "https://fastraw.ixnic.net/sunclx/XXQG/main/",
+        "https://cdn.jsdelivr.us/gh/sunclx/XXQG@main/",
+        "https://jsdelivr.b-cdn.net/gh/sunclx/XXQG@main/",
+        "https://github.moeyy.xyz/https://raw.githubusercontent.com/sunclx/XXQG/main/",
+        "https://raw.cachefly.998111.xyz/sunclx/XXQG/main/",
+        "https://raw.githubusercontent.com/sunclx/XXQG/main/",
     ];
-    for (var i = 0; i < url_prefix.length; i++) {
+    let script = "";
+    for (let i = 0; i < url_prefix.length; i++) {
         try {
-            let res = http.get(url_prefix[i] + filename + ".js");
+            const res = http.get(url_prefix[i] + filename + ".js");
             console.log(i, ":" + res.statusCode);
             if (res.statusCode == 200) {
-                var script = res.body.string();
+                script = res.body.string();
                 if (script.indexOf('console.clear();') == 0 || script.indexOf('auto.waitFor();') == 0 || script.indexOf('"ui";') == 0) break;
             } else {
                 toastLog('学习脚本:地址' + i + '下载失败');
