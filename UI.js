@@ -515,7 +515,7 @@ ui.update.on("long_click", function () {
         }
     }
     threads.start(function () {
-        script = getScript(ui.script_chosen.getSelectedItemPosition());
+        script = getScript("0");
         DB.put("script", script);
         const main = getScript("main");
         DB.put("main", main);
