@@ -1080,26 +1080,24 @@ ui.update.click(function () {
     console.log("更新成功");
   });
 });
-ui.update.on("long_click", function () {
-  const url_index = dialogs.singleChoice("请选择下载代理", url_prefix, 0);
-  const getScript = function (name) {
-    try {
-      const res = http.get(url_prefix[url_index] + name + ".js");
-      console.log(i, ":" + res.statusCode);
-      if (res.statusCode == 200) {
-        const UI = res.body.string();
-        if (
-          UI.indexOf("console.clear();") == 0 ||
-          UI.indexOf("auto.waitFor();") == 0 || UI.indexOf('"ui";') == 0
-        ) return UI;
-      } else {
-        toastLog("学习脚本:地址" + i + "下载失败");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+ui.update.on("long_click", () => {
   threads.start(function () {
+    const url_index = dialogs.singleChoice("请选择下载代理", url_prefix, 0);
+    const getScript = function (name) {
+      try {
+        const url = url_prefix[url_index] + name + ".js";
+        console.log(url);
+        const res = http.get(url);
+        console.log("statusCode:" + res.statusCode);
+        if (res.statusCode == 200) {
+          return res.body.string();
+        } else {
+          toastLog("学习脚本:地址" + url + "下载失败");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
     script = getScript("0");
     DB.put("script", script);
     const main = getScript("main");
