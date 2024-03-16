@@ -1,38 +1,39 @@
-auto.waitFor(); //mode = "fast"
+auto.waitFor();
+//mode = "fast"
 console.log("开始执行脚本0.js");
-var delay_time = 3000;
+let delay_time = 3000;
 device.wakeUpIfNeeded();
 
 // 开始
 // 读取自定义配置
-var TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
-var watchdog = TTXS_PRO_CONFIG.get("watchdog", "1800");
-var slide_verify = TTXS_PRO_CONFIG.get("slide_verify", "300");
-var fast_mode = TTXS_PRO_CONFIG.get("fast_mode", false);
-var ddtong = TTXS_PRO_CONFIG.get("ddtong", false);
-var is_exit = TTXS_PRO_CONFIG.get("is_exit", true);
-var pinglun = TTXS_PRO_CONFIG.get("pinglun", true);
-var shipin = TTXS_PRO_CONFIG.get("shipin", true);
-var wenzhang = TTXS_PRO_CONFIG.get("wenzhang", true);
-var meiri = TTXS_PRO_CONFIG.get("meiri", true);
-var meizhou = TTXS_PRO_CONFIG.get("meizhou", 0);
-var zhuanxiang = TTXS_PRO_CONFIG.get("zhuanxiang", 0);
-var tiaozhan = TTXS_PRO_CONFIG.get("tiaozhan", true);
-var ocr_choice = TTXS_PRO_CONFIG.get("ocr_choice", 0);
-var ocr_maxtime = TTXS_PRO_CONFIG.get("ocr_maxtime", "5000");
-var duizhan_mode = TTXS_PRO_CONFIG.get("duizhan_mode", 0);
-var jisu = TTXS_PRO_CONFIG.get("jisu", "0");
-var guaji = TTXS_PRO_CONFIG.get("guaji", true);
-// var siren = TTXS_PRO_CONFIG.get("siren", true);
-// var dacuo_num = TTXS_PRO_CONFIG.get("dacuo_num", "2");
-var shuangren = TTXS_PRO_CONFIG.get("shuangren", true);
-var bendi = TTXS_PRO_CONFIG.get("bendi", true);
-var dingyue = TTXS_PRO_CONFIG.get("dingyue", 0);
-var pushplus = TTXS_PRO_CONFIG.get("pushplus", "");
-var yl_on = TTXS_PRO_CONFIG.get("yl_on", true);
-var yinliang = TTXS_PRO_CONFIG.get("yinliang", "0");
-var zhanghao = TTXS_PRO_CONFIG.get("zhanghao", "");
-var comment = TTXS_PRO_CONFIG.get(
+let TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
+let watchdog = TTXS_PRO_CONFIG.get("watchdog", "1800");
+let slide_verify = TTXS_PRO_CONFIG.get("slide_verify", "300");
+let fast_mode = TTXS_PRO_CONFIG.get("fast_mode", false);
+let ddtong = TTXS_PRO_CONFIG.get("ddtong", false);
+let is_exit = TTXS_PRO_CONFIG.get("is_exit", true);
+let pinglun = TTXS_PRO_CONFIG.get("pinglun", true);
+let shipin = TTXS_PRO_CONFIG.get("shipin", true);
+let wenzhang = TTXS_PRO_CONFIG.get("wenzhang", true);
+let meiri = TTXS_PRO_CONFIG.get("meiri", true);
+let meizhou = TTXS_PRO_CONFIG.get("meizhou", 0);
+let zhuanxiang = TTXS_PRO_CONFIG.get("zhuanxiang", 0);
+let tiaozhan = TTXS_PRO_CONFIG.get("tiaozhan", true);
+let ocr_choice = TTXS_PRO_CONFIG.get("ocr_choice", 0);
+// let ocr_maxtime = TTXS_PRO_CONFIG.get("ocr_maxtime", "5000");
+let duizhan_mode = TTXS_PRO_CONFIG.get("duizhan_mode", 0);
+let jisu = TTXS_PRO_CONFIG.get("jisu", "0");
+let guaji = TTXS_PRO_CONFIG.get("guaji", true);
+// let siren = TTXS_PRO_CONFIG.get("siren", true);
+// let dacuo_num = TTXS_PRO_CONFIG.get("dacuo_num", "2");
+let shuangren = TTXS_PRO_CONFIG.get("shuangren", true);
+let bendi = TTXS_PRO_CONFIG.get("bendi", true);
+let dingyue = TTXS_PRO_CONFIG.get("dingyue", 0);
+let pushplus = TTXS_PRO_CONFIG.get("pushplus", "");
+let yl_on = TTXS_PRO_CONFIG.get("yl_on", true);
+let yinliang = TTXS_PRO_CONFIG.get("yinliang", "0");
+let zhanghao = TTXS_PRO_CONFIG.get("zhanghao", "");
+let comment = TTXS_PRO_CONFIG.get(
   "comment",
   "全心全意为人民服务|不忘初心，牢记使命|不忘初心，方得始终|永远坚持党的领导|富强、民主、文明、和谐|自由，平等，公正，法治",
 );
@@ -41,44 +42,36 @@ let broadcast = TTXS_PRO_CONFIG.get("broadcast", "江苏新闻广播");
 let platform = TTXS_PRO_CONFIG.get("platform", "江苏学习平台");
 let subcolumn = TTXS_PRO_CONFIG.get("subcolumn", "总书记在江苏");
 
-function google_ocr_api(img) {
+function google_ocr_api(img: any) {
   console.log("GoogleMLKit文字识别中");
   let list = JSON.parse(JSON.stringify(gmlkit.ocr(img, "zh").toArray(3))); // 识别文字，并得到results
   let eps = 30; // 坐标误差
-  for (
-    var i = 0;
-    i < list.length;
-    i++ // 选择排序对上下排序,复杂度O(N²)但一般list的长度较短只需几十次运算
-  ) {
-    for (var j = i + 1; j < list.length; j++) {
+  for (let i = 0; i < list.length; i++) { // 选择排序对上下排序,复杂度O(N²)但一般list的长度较短只需几十次运算
+    for (let j = i + 1; j < list.length; j++) {
       if (list[i]["bounds"]["bottom"] > list[j]["bounds"]["bottom"]) {
-        var tmp = list[i];
+        let tmp = list[i];
         list[i] = list[j];
         list[j] = tmp;
       }
     }
   }
 
-  for (
-    var i = 0;
-    i < list.length;
-    i++ // 在上下排序完成后，进行左右排序
-  ) {
-    for (var j = i + 1; j < list.length; j++) {
+  for (let i = 0; i < list.length; i++) { // 在上下排序完成后，进行左右排序
+    for (let j = i + 1; j < list.length; j++) {
       // 由于上下坐标并不绝对，采用误差eps
       if (
         Math.abs(list[i]["bounds"]["bottom"] - list[j]["bounds"]["bottom"]) <
-          eps &&
+        eps &&
         list[i]["bounds"]["left"] > list[j]["bounds"]["left"]
       ) {
-        var tmp = list[i];
+        let tmp = list[i];
         list[i] = list[j];
         list[j] = tmp;
       }
     }
   }
   let res = "";
-  for (var i = 0; i < list.length; i++) {
+  for (let i = 0; i < list.length; i++) {
     res += list[i]["text"];
   }
   list = null;
@@ -90,40 +83,32 @@ function paddle_ocr_api() {
   let list = JSON.parse(JSON.stringify(paddle.ocr(arguments[0]))); // 识别文字，并得到results
   let eps = 30; // 坐标误差
   if (arguments.length >= 2) eps = arguments[1];
-  for (
-    var i = 0;
-    i < list.length;
-    i++ // 选择排序对上下排序,复杂度O(N²)但一般list的长度较短只需几十次运算
-  ) {
-    for (var j = i + 1; j < list.length; j++) {
+  for (let i = 0; i < list.length; i++) { // 选择排序对上下排序,复杂度O(N²)但一般list的长度较短只需几十次运算
+    for (let j = i + 1; j < list.length; j++) {
       if (list[i]["bounds"]["bottom"] > list[j]["bounds"]["bottom"]) {
-        var tmp = list[i];
+        let tmp = list[i];
         list[i] = list[j];
         list[j] = tmp;
       }
     }
   }
 
-  for (
-    var i = 0;
-    i < list.length;
-    i++ // 在上下排序完成后，进行左右排序
-  ) {
-    for (var j = i + 1; j < list.length; j++) {
+  for (let i = 0; i < list.length; i++) { // 在上下排序完成后，进行左右排序
+    for (let j = i + 1; j < list.length; j++) {
       // 由于上下坐标并不绝对，采用误差eps
       if (
         Math.abs(list[i]["bounds"]["bottom"] - list[j]["bounds"]["bottom"]) <
-          eps &&
+        eps &&
         list[i]["bounds"]["left"] > list[j]["bounds"]["left"]
       ) {
-        var tmp = list[i];
+        let tmp = list[i];
         list[i] = list[j];
         list[j] = tmp;
       }
     }
   }
   let res = "";
-  for (var i = 0; i < list.length; i++) {
+  for (let i = 0; i < list.length; i++) {
     res += list[i]["text"];
   }
   list = null;
@@ -160,8 +145,8 @@ var [device_w, device_h] = init_wh();
 if (ocr_choice == 2) {
   fInfo("初始化第三方ocr插件");
   try {
-    ocr = plugins.load("com.hraps.ocr");
-    ocr.recognizeText = function (img) {
+    let ocr = plugins.load("com.hraps.ocr");
+    ocr.recognizeText = function (img: any) {
       let results = this.detect(img.getBitmap(), 1);
       let all_txt = "";
       for (let i = 0; i < results.size(); i++) {
@@ -203,12 +188,12 @@ fInfo("设置屏幕常亮");
 device.keepScreenOn(3600 * 1000);
 // 下载题库
 fInfo("检测题库更新");
-const update_info = get_tiku_by_http(
+let update_info = get_tiku_by_http(
   "https://gitcode.net/m0_64980826/songge_tiku/-/raw/master/info.json",
 );
 fInfo("正在加载对战题库......请稍等\n题库版本:" + update_info["tiku_version"]);
 fInfo("如果不动就是正在下载，多等会");
-var tiku = [];
+var tiku: any[] = [];
 try {
   tiku = get_tiku_by_http(update_info["tiku_link"]);
 } catch (e) {
@@ -218,7 +203,7 @@ try {
 fInfo(
   "正在加载专项题库......请稍等\n题库版本:" + update_info["dati_tiku_version"],
 );
-var dati_tiku = [];
+var dati_tiku: any[] = [];
 try {
   dati_tiku = update_dati_tiku();
 } catch (e) {
@@ -428,7 +413,7 @@ function do_wenzhang() {
     banner.scrollForward();
     sleep(500);
   }
-  last_obj = banner.findOne(text(`${broadcast}`));
+  let last_obj = banner.findOne(text(`${broadcast}`));
   //   fInfo("点击北京新闻广播", text("北京新闻广播").findOne().parent().click());
   fInfo(`点击新闻广播${broadcast}：` + last_obj.parent().click());
   fInfo("视听广播时长");
@@ -450,7 +435,7 @@ function do_wenzhang() {
   }
   sleep(1000);
   fInfo(`查找学习平台${platform}，尝试点击`);
-  first_obj = banner.findOne(text(`${platform}`));
+  let first_obj = banner.findOne(text(`${platform}`));
   //   while (!text("北京学习平台").findOne().parent().click()) {log("click: false");}
   //   log("click: true");
   //   real_click(text("北京学习平台").findOne().parent());
@@ -466,13 +451,13 @@ function do_wenzhang() {
   let listview = className("android.widget.ListView").depth(17).findOne();
   // 先判断是否有可刷文章，没有则停止脚本
   // while (!id("general_card_image_id").findOne(1000)) {listview.scrollForward();}
-  for (i = 0; i < 2; i++) {
+  for (let i = 0; i < 2; i++) {
     listview.scrollForward();
     sleep(500);
   }
   // 自定义没有刷过的文章筛选器
   let wen_box_slt = className("android.view.ViewGroup").depth(20).filter(
-    function (l) {
+    function (l: any) {
       let title = l.findOne(idContains("general_card_title_id"));
       let image = l.findOne(idContains("general_card_image_id"));
       let pic_num = l.findOne(idContains("st_feeds_card_mask_pic_num"));
@@ -802,7 +787,7 @@ function do_zhuanxiang() {
         return true;
       }
       // 滚动20次
-      for (i = 0; i < 15; i++) {
+      for (let i = 0; i < 15; i++) {
         scoll.scrollForward();
         // 不加延迟会很卡
         sleep(300);
@@ -898,7 +883,7 @@ function do_tiaozhan() {
     className("android.widget.Image").textStartsWith("chanllenge").waitFor();
   }
   var total = 0, max_total = 5;
-  for (ddtong && (max_total += 10);;) {
+  for (ddtong && (max_total += 10); ;) {
     fClear();
     fInfo("第" + (total + 1) + "题");
     className("android.widget.ListView").waitFor();
@@ -1060,7 +1045,7 @@ function do_duizhan1(renshu) {
         }
       }
       // 直到过渡界面消失，再匹配下一题
-      while (text("第" + num + "题").exists()) {} //sleep(100);
+      while (text("第" + num + "题").exists()) { } //sleep(100);
       //fTips("题号过渡消失");
     } else if (!err_flag) {
       err_flag = true;
@@ -1228,7 +1213,7 @@ function do_duizhan1(renshu) {
             while (
               className("android.widget.ListView").findOne(1000)
                 .indexInParent() == 0
-            ) {}
+            ) { }
           }
           let is_click = className("android.widget.RadioButton").findOnce(idx)
             .parent().click();
@@ -1257,7 +1242,7 @@ function do_duizhan1(renshu) {
     try {
       while (
         className("android.widget.ListView").findOne(1000).indexInParent() == 0
-      ) {}
+      ) { }
       //fTips("选项显现");
     } catch (e) {
       log("error2:", e);
@@ -1283,7 +1268,7 @@ function do_duizhan1(renshu) {
     }
     log("开始截选项");
     console.time("选项识别");
-    img = captureScreen();
+    let img = captureScreen();
     // 裁剪所有选项区域
     img = images.clip(
       img,
@@ -1603,7 +1588,7 @@ function do_dingyue() {
           //fInfo(dingyue_clt[dingyue_clt.length-1].parent().child(1).desc().slice(0,4)+" 旧:"+last_desc.slice(0,4));
           if (
             dingyue_clt[dingyue_clt.length - 1].parent().child(1).desc() ==
-              last_desc
+            last_desc
           ) {
             fClear();
             fInfo("到底了");
@@ -2011,7 +1996,7 @@ function get_ans_by_http(que_txt) {
   // 获取答案html并解析
   let req = http.get(
     "http://www.syiban.com/search/index/init.html?modelid=1&q=" +
-      encodeURI(keyword),
+    encodeURI(keyword),
   );
   let resp_str = req.body.string();
   let resp_list = resp_str.match(/答案：(.*?)<\/span><\/p>/g);
@@ -2459,9 +2444,9 @@ function send_pushplus(token, sign_list) {
           (score = option.child(3).child(0).text()),
           (total = option.child(3).child(2).text().match(/\d+/g)[0]))
         : "new2" == jifen_flag &&
-          (title = option.child(0).text(),
-            score = option.child(3).text().match(/\d+/g)[0],
-            total = option.child(3).text().match(/\d+/g)[1]);
+        (title = option.child(0).text(),
+          score = option.child(3).text().match(/\d+/g)[0],
+          total = option.child(3).text().match(/\d+/g)[1]);
     }
     "专项答题" == title && (total = 10);
     let percent = (Number(score) / Number(total) * 100).toFixed() + "%";
@@ -2589,8 +2574,8 @@ function refind_jifen() {
   21 == a.depth()
     ? (jifen_flag = "old", fInfo("检测为旧版界面"))
     : 23 == a.depth() &&
-      (jifen_flag = 0 < a.child(0).child(3).childCount() ? "new1" : "new2",
-        fInfo("检测为新版界面"));
+    (jifen_flag = 0 < a.child(0).child(3).childCount() ? "new1" : "new2",
+      fInfo("检测为新版界面"));
   return a;
 }
 
@@ -2608,7 +2593,7 @@ function winReshow() {
 
 function noverify() {
   return threads.start(function () {
-    for (;;) {
+    for (; ;) {
       fClear();
       if (Number(slide_verify)) var a = Number(slide_verify);
       else {
@@ -2621,8 +2606,8 @@ function noverify() {
       textContains("刷新").exists()
         ? click("刷新")
         : textContains("网络开小差").exists()
-        ? click("确定")
-        : sleep(1000);
+          ? click("确定")
+          : sleep(1000);
     }
   });
 }
@@ -2825,16 +2810,16 @@ function xxqg(userinfo) {
   // true == pinglun && ("old" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(2).text().match(/\d+/)[0] || "new1" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).child(0).text() || "new2" == jifen_flag && "0" == jifen_list.child(jifen_map["评论"]).child(3).text().match(/\d+/)[0]) && (toastLog("开始评论"), do_pinglun(), jifen_list = refind_jifen());
   if (
     true == pinglun &&
-      ("old" == jifen_flag &&
-        "0" ==
-          jifen_list.child(jifen_map["评论"]).child(2).text().match(
-            /\d+/,
-          )[0]) ||
+    ("old" == jifen_flag &&
+      "0" ==
+      jifen_list.child(jifen_map["评论"]).child(2).text().match(
+        /\d+/,
+      )[0]) ||
     ("new1" == jifen_flag &&
       "0" == jifen_list.child(jifen_map["评论"]).child(3).child(0).text()) ||
     ("new2" == jifen_flag &&
       "0" ==
-        jifen_list.child(jifen_map["评论"]).child(3).text().match(/\d+/)[0])
+      jifen_list.child(jifen_map["评论"]).child(3).text().match(/\d+/)[0])
   ) {
     toastLog("开始评论");
     do_pinglun();
@@ -2845,8 +2830,8 @@ function xxqg(userinfo) {
   // true == shipin && ("old" == jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(3).text() || "old" != jifen_flag && "已完成" != jifen_list.child(jifen_map["视频"]).child(4).text()) && (console.verbose("无障碍服务：" + auto.service), toastLog("开始视听次数"), do_shipin(), jifen_list = refind_jifen());
   if (
     true == shipin &&
-      ("old" == jifen_flag &&
-        "已完成" != jifen_list.child(jifen_map["视频"]).child(3).text()) ||
+    ("old" == jifen_flag &&
+      "已完成" != jifen_list.child(jifen_map["视频"]).child(3).text()) ||
     ("old" != jifen_flag &&
       "已完成" != jifen_list.child(jifen_map["视频"]).child(4).text())
   ) {
@@ -2858,26 +2843,26 @@ function xxqg(userinfo) {
 
   true == meiri &&
     ("old" == jifen_flag &&
-        "已完成" != jifen_list.child(jifen_map["每日"]).child(3).text() ||
+      "已完成" != jifen_list.child(jifen_map["每日"]).child(3).text() ||
       "old" != jifen_flag &&
-        "已完成" != jifen_list.child(jifen_map["每日"]).child(4).text()) &&
+      "已完成" != jifen_list.child(jifen_map["每日"]).child(4).text()) &&
     (toastLog("每日答题开始"), do_meiri(), jifen_list = refind_jifen());
   // 趣味答题
   function qwdt() {
     if (
       ("old" == jifen_flag &&
         "0" ==
-          jifen_list.child(jifen_map["趣味答题"]).child(2).text().match(
-            /\d+/,
-          )[0]) ||
+        jifen_list.child(jifen_map["趣味答题"]).child(2).text().match(
+          /\d+/,
+        )[0]) ||
       ("new1" == jifen_flag &&
         "0" ==
-          jifen_list.child(jifen_map["趣味答题"]).child(3).child(0).text()) ||
+        jifen_list.child(jifen_map["趣味答题"]).child(3).child(0).text()) ||
       ("new2" == jifen_flag &&
         "0" ==
-          jifen_list.child(jifen_map["趣味答题"]).child(3).text().match(
-            /\d+/,
-          )[0])
+        jifen_list.child(jifen_map["趣味答题"]).child(3).text().match(
+          /\d+/,
+        )[0])
     ) {
       // Your code here
     } else {
@@ -2971,16 +2956,16 @@ function xxqg(userinfo) {
     if (
       ("old" == jifen_flag &&
         "0" ==
-          jifen_list.child(jifen_map["订阅"]).child(2).text().match(
-            /\d+/,
-          )[0]) ||
+        jifen_list.child(jifen_map["订阅"]).child(2).text().match(
+          /\d+/,
+        )[0]) ||
       ("old" != jifen_flag &&
         "0" == jifen_list.child(jifen_map["订阅"]).child(3).child(0).text()) ||
       ("new1" == jifen_flag &&
         "0" == jifen_list.child(jifen_map["订阅"]).child(3).child(0).text()) ||
       ("new2" == jifen_flag &&
         "0" ==
-          jifen_list.child(jifen_map["订阅"]).child(3).text().match(/\d+/)[0])
+        jifen_list.child(jifen_map["订阅"]).child(3).text().match(/\d+/)[0])
     ) {
       toastLog("订阅开始");
       d = do_dingyue();
@@ -3003,9 +2988,9 @@ function xxqg(userinfo) {
   if (2 != meizhou) {
     if (
       toastLog("每周答题开始"),
-        text("我的").findOne().click(),
-        sleep(1000),
-        text("我要答题").findOne(3000)
+      text("我的").findOne().click(),
+      sleep(1000),
+      text("我要答题").findOne(3000)
     ) {
       text("我要答题").findOne().parent().click();
       sleep(1000);
@@ -3081,23 +3066,23 @@ function main(userinfo) {
 
 /*******************主程序部分*******************/
 /********定义全局变量*********/
-var jifen_list,
-  meizhou_dao,
-  zhuanxiang_dao,
-  dingyue_dao,
-  storage_user,
-  name,
-  jinri,
-  zongfen;
+var jifen_list: any,
+  meizhou_dao: any,
+  zhuanxiang_dao: any,
+  dingyue_dao: any,
+  storage_user: any,
+  name: any,
+  jinri: any,
+  zongfen: any;
 var jifen_map = {
-    "评论": 6,
-    "视频": 2,
-    "文章": 1,
-    "每日": 3,
-    "趣味答题": 4,
-    "订阅": 5,
-    "本地": 7,
-  },
+  "评论": 6,
+  "视频": 2,
+  "文章": 1,
+  "每日": 3,
+  "趣味答题": 4,
+  "订阅": 5,
+  "本地": 7,
+},
   jifen_flag = "old";
 // 分割账号
 var noverify_thread = noverify();
@@ -3148,5 +3133,5 @@ sleep(1000);
 console.hide();
 home();
 exit_app("学习强国");
-// exit_app("学习");
+exit_app("学习");
 exit();

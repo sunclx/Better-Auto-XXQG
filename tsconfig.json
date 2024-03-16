@@ -4,13 +4,14 @@
     "target": "ES6",
     "strict": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": "./",
     "baseUrl": "./src",
     "paths": {
       "*": ["node_modules/*"]
     },
-    "jsx": "react-native"
+    "jsx": "react-native",
+    "jsxImportSource": "https://esm.sh/preact"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "types/**/*.d.ts"],
   "exclude": ["node_modules", "dist/**/*"]
 }
