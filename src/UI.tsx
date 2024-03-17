@@ -9,7 +9,7 @@ importClass(android.graphics.Color);
 
 // var color = '#FF4FB3FF';
 let DB = storages.create("MAIN");
-let script = DB.get("script");
+let script: string | undefined = DB.get("script");
 
 ui.statusBarColor("#FF4FB3FF");
 
@@ -925,7 +925,7 @@ http.__okhttp__.setTimeout(10000);
 let GLOBAL_CONFIG = storages.create("GLOBAL_CONFIG");
 let TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
 // let BAIDUAPI = storages.create('BAIDUAPI');
-let execution = '';
+let execution = undefined;
 let thread: any = null;
 Initialize();
 
@@ -1067,7 +1067,10 @@ ui.start.click(function () {
   }
   threads.start(function () {
     console.log("点击开始按钮");
-    execution = engines.execScript("强国助手", script);
+    if (script) {
+      execution = engines.execScript("强国助手", script);
+    }
+
   });
 });
 ui.update.click(function () {

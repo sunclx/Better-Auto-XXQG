@@ -4,12 +4,13 @@
     "jsx": "preserve",
     "jsxImportSource": "https://esm.sh/preact"
   },
+  "tasks": { "build": "deno run -A ./scripts/build.ts" },
   "lint": {
     "exclude": ["types/**/*.d.ts"],
     "rules": {
       "exclude": ["prefer-const"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "types/**/*.d.ts"],
   "exclude": ["node_modules", "dist/**/*"]
 }

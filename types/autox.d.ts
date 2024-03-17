@@ -1,10 +1,9 @@
-declare let ui: {
-  /** 界面 */
-  layout: (jsx: any) => void;
-  /** 在 ui 线程上执行代码 */
-  run: (fn: () => void) => void;
-  [x: string]: any;
-};
+/// <reference path="./autox/adbkit.d.ts" />
+/// <reference path="./autox/auto.d.ts" />
+/// <reference path="./autox/autojs.d.ts" />
+/// <reference path="./project/global.d.ts" />
+/// <reference path="./project/module.d.ts" />
+
 declare function require<T = any>(name: string): T;
 
 declare namespace JSX {
@@ -155,7 +154,7 @@ declare let web: any;
 
 declare let android: any;
 
-declare let log: any;
+// declare let log: any;
 
 declare let java: any;
 
@@ -163,25 +162,25 @@ declare let java: any;
 
 // declare let open: any;
 
-declare let rawInput: any;
+// declare let rawInput: any;
 // App
-declare let app: any;
+// declare let app: any;
 
 // 设备 - Device
-declare let device: any;
+// declare let device: any;
 
 // 全局变量与函数
-declare let sleep: any;
-declare let currentPackage: any;
-declare let currentActivity: any;
-declare let setClip: any;
-declare let getClip: any;
-declare let toast: any;
-declare let toastLog: any;
-declare let waitForActivity: any;
-declare let waitForPackage: any;
-declare let exit: any;
-declare let random: any;
+// declare let sleep: any;
+// declare let currentPackage: any;
+// declare let currentActivity: any;
+// declare let setClip: any;
+// declare let getClip: any;
+// declare let toast: any;
+// declare let toastLog: any;
+// declare let waitForActivity: any;
+// declare let waitForPackage: any;
+// declare let exit: any;
+// declare let random: any;
 declare let requiresApi: any;
 declare let requiresAutojsVersion: any;
 declare let runtime: any;
@@ -189,53 +188,53 @@ declare let context: any;
 declare let activity: any;
 
 // 基于控件的操作
-declare let auto: any;
+// declare let auto: any;
 
-declare let click: any;
-declare let longClick: any;
-declare let scrollUp: any;
-declare let scrollDown: any;
-declare let setText: any;
-declare let input: any;
+// declare let click: any;
+// declare let longClick: any;
+// declare let scrollUp: any;
+// declare let scrollDown: any;
+// declare let setText: any;
+// declare let input: any;
 
-declare let text: any;
-declare let textContains: any;
-declare let textStartsWith: any;
-declare let textEndsWith: any;
-declare let textMatches: any;
+// declare let text: any;
+// declare let textContains: any;
+// declare let textStartsWith: any;
+// declare let textEndsWith: any;
+// declare let textMatches: any;
 
-declare let desc: any;
-declare let descContains: any;
-declare let descStartsWith: any;
-declare let descEndsWith: any;
-declare let descMatches: any;
+// declare let desc: any;
+// declare let descContains: any;
+// declare let descStartsWith: any;
+// declare let descEndsWith: any;
+// declare let descMatches: any;
 
-declare let id: any;
-declare let idContains: any;
-declare let idStartsWith: any;
-declare let idEndsWith: any;
-declare let idMatches: any;
+// declare let id: any;
+// declare let idContains: any;
+// declare let idStartsWith: any;
+// declare let idEndsWith: any;
+// declare let idMatches: any;
 
-declare let className: any;
-declare let classNameContains: any;
-declare let classNameStartsWith: any;
-declare let classNameEndsWith: any;
-declare let classNameMatches: any;
-declare let packageName: any;
-declare let packageNameContains: any;
-declare let packageNameStartsWith: any;
-declare let packageNameEndsWith: any;
-declare let packageNameMatches: any;
-declare let bounds: any;
-declare let boundsInside: any;
-declare let boundsContains: any;
-declare function depth(n: number): any;
+// declare let className: any;
+// declare let classNameContains: any;
+// declare let classNameStartsWith: any;
+// declare let classNameEndsWith: any;
+// declare let classNameMatches: any;
+
+// declare let packageName: any;
+// declare let packageNameContains: any;
+// declare let packageNameStartsWith: any;
+// declare let packageNameEndsWith: any;
+// declare let packageNameMatches: any;
+// declare let bounds: any;
+// declare let boundsInside: any;
+// declare let boundsContains: any;
 
 //基于坐标的操作
-declare let setScreenMetrics: any;
-declare let press: any;
-declare let swipe: any;
-declare let gesture: any;
+// declare let setScreenMetrics: any;
+// declare let press: any;
+// declare let swipe: any;
+// declare let gesture: any;
 
 declare class JavaAdapter {
   constructor(...p: any[]);
@@ -249,17 +248,17 @@ declare class JavaAdapter {
   [x: string]: any;
 }
 
-declare let Tap: any;
-declare let Swipe: any;
+// declare let Tap: any;
+// declare let Swipe: any;
 
 // 按键模拟
-declare let back: any;
-declare let home: any;
-declare let powerDialog: any;
-declare let notifications: any;
-declare let quickSettings: any;
-declare let recents: any;
-declare let splitScreen: any;
+// declare let back: any;
+// declare let home: any;
+// declare let powerDialog: any;
+// declare let notifications: any;
+// declare let quickSettings: any;
+// declare let recents: any;
+// declare let splitScreen: any;
 declare let takeScreenshot: any;
 declare let lockScreen: any;
 declare let dismissNotificationShade: any;
@@ -268,27 +267,27 @@ declare let accessibilityShortcut: any;
 declare let accessibilityButtonChooser: any;
 declare let accessibilityButton: any;
 declare let accessibilityAllApps: any;
-declare let Home: any;
-declare let Back: any;
-declare let Power: any;
-declare let Menu: any;
-declare let VolumeUp: any;
-declare let VolumeDown: any;
-declare let Camera: any;
-declare let Up: any;
-declare let Down: any;
-declare let Left: any;
-declare let Right: any;
-declare let OK: any;
+// declare let Home: any;
+// declare let Back: any;
+// declare let Power: any;
+// declare let Menu: any;
+// declare let VolumeUp: any;
+// declare let VolumeDown: any;
+// declare let Camera: any;
+// declare let Up: any;
+// declare let Down: any;
+// declare let Left: any;
+// declare let Right: any;
+// declare let OK: any;
 // declare let Text: any;
-declare let KeyCode: any;
+// declare let KeyCode: any;
 
 // 文件系统 Files
-declare let files: any;
+// declare let files: any;
 
 // HTTP
 
-declare let http: any;
+// declare let http: any;
 
 // webSocket
 
@@ -309,11 +308,13 @@ declare class WebSocketListener {
 }
 
 // 本地存储 Storages
-declare let storages: any;
+// declare let storages: any;
 // declare let Storage: any;
 
 // 控制台 Console
-// declare let console: any;
+// declare namespace console {
+//   function hide(): void;
+// }
 // declare let print: any;
 
 // 定时器 Timers
@@ -325,20 +326,20 @@ declare let setImmediate: any;
 declare let clearImmediate: any;
 
 // 多线程 Threads
-declare let threads: any;
+// declare let threads: any;
 declare let Thread: any;
-declare let sync: any;
+// declare let sync: any;
 // declare let events: any;
 
 // 对话框 Dialogs
-declare let dialogs: any;
+// declare let dialogs: any;
 declare function alert(title: string, message: string): void;
 
 // 悬浮窗 Floaty
-declare let floaty: any;
+// declare let floaty: any;
 
 // 脚本引擎 Engines
-declare let engines: any;
+// declare let engines: any;
 
 // 画布 Canvas
 declare let canvas: any;
@@ -351,8 +352,8 @@ declare class Paint {
 // 模块 Modules (使用 rollup + babel + es module)
 
 // OCR 文字识别
-declare let paddle: any;
-declare let gmlkit: any;
+// declare let paddle: any;
+// declare let gmlkit: any;
 
 declare class TessBaseAPI {
   constructor(...p: any[]);
@@ -363,11 +364,11 @@ declare let requestScreenCapture: any;
 declare let captureScreen: any;
 
 // 图片与颜色 Images
-declare let colors: any;
-declare let images: any;
+// declare let colors: any;
+// declare let images: any;
 
 // 事件与监听 Events
-declare let events: any;
+// declare let events: any;
 
 declare let emitter: any;
 
@@ -392,10 +393,10 @@ declare let zips: any;
 
 // 多媒体 Media
 
-declare let media: any;
+// declare let media: any;
 
 // 传感器 Sensors
-declare let sensors: any;
+// declare let sensors: any;
 
 // 协程 (TODO)
 
