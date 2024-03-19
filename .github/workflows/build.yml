@@ -22,7 +22,7 @@ jobs:
           git config --local user.name "sunclx"
           if [ -n "$(git status -s)" ];then
             git add .
-            git commit -a -m "同步 songge_tiku"
+            git commit -a -m "deno build"
           fi
       - name: Push changes
         uses: ad-m/github-push-action@master
