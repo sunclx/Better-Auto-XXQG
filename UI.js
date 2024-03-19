@@ -1085,7 +1085,7 @@ ui.update.on("long_click", () => {
     const url_index = dialogs.singleChoice("请选择下载代理", url_prefix, 0);
     const getScript = function (name) {
       try {
-        const url = url_prefix[url_index] + name + ".js";
+        const url = url_prefix[url_index] + "dist/" + name + ".js";
         console.log(url);
         const res = http.get(url);
         console.log("statusCode:" + res.statusCode);
@@ -1459,7 +1459,7 @@ function getScript(choice) {
   let UI = "";
   for (let i = 0; i < url_prefix.length; i++) {
     try {
-      const res = http.get(url_prefix[i] +"dist/"+ choice + ".js");
+      const res = http.get(url_prefix[i] + "dist/" + choice + ".js");
       console.log(i, ":" + res.statusCode);
       if (res.statusCode == 200) {
         UI = res.body.string();
