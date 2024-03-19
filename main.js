@@ -20,11 +20,11 @@ const url_prefix = [
 start();
 
 function start() {
-  // runMain();
+  // _runMain();
   runUI();
 }
 
-function runMain() {
+function _runMain() {
   try {
     if (main) {
       engines.execScript("main", main);
@@ -73,7 +73,7 @@ function runUI() {
           console.error(error);
         }
       } else {
-        UI = getScript("UI");
+        UI = getScript("dist/UI");
         DB.put("UI", UI);
         runUI();
       }

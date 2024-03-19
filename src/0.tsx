@@ -68,7 +68,11 @@ let jifen_flag = "old";
 
 function google_ocr_api(img: Image) {
   console.log("GoogleMLKit文字识别中");
-  let list = JSON.parse(JSON.stringify(gmlkit.ocr(img, "zh").toArray(3))); // 识别文字，并得到results
+  let list = JSON.parse(
+    JSON.stringify(
+      (gmlkit.ocr(img, "zh") as { toArray(n: number): object }).toArray(3),
+    ),
+  ); // 识别文字，并得到results
   let eps = 30; // 坐标误差
   for (let i = 0; i < list.length; i++) { // 选择排序对上下排序,复杂度O(N²)但一般list的长度较短只需几十次运算
     for (let j = i + 1; j < list.length; j++) {
@@ -1410,7 +1414,9 @@ function do_duizhan(renshu: number) {
       // 排序顺序
       //     console.time('选项识别1');
       let x_results = JSON.parse(
-        JSON.stringify(gmlkit.ocr(img, "zh").toArray(3)),
+        JSON.stringify(
+          (gmlkit.ocr(img, "zh") as { toArray(n: number): object }).toArray(3),
+        ),
       );
       allx_txt = ocr_rslt_to_txt(x_results).replace(/\s+/g, "");
       //     console.timeEnd('选项识别1');
