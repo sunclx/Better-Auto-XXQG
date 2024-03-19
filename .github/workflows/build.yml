@@ -1,8 +1,7 @@
 name: sync
 
 on:
-  schedule:
-    - push
+  push:
   workflow_dispatch:
 
 jobs:
