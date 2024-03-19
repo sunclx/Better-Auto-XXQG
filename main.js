@@ -2,8 +2,8 @@ console.clear();
 http.__okhttp__.setTimeout(10000);
 
 const DB = storages.create("MAIN");
-let UI = DB.get("UI");
-let main = DB.get("main");
+let UI = DB.get("UI", "");
+let main = DB.get("main", "");
 const url_prefix = [
   "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sunclx/XXQG/main/",
   "https://raw.kkgithub.com/sunclx/XXQG/main/",
@@ -46,6 +46,10 @@ function runUI() {
   try {
     if (UI) {
       engines.execScript("UI", UI);
+    } else {
+      UI = getScript("dist/UI");
+      DB.put("UI", UI);
+      runUI();
     }
   } catch (error) {
     console.error(error);

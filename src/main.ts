@@ -46,6 +46,10 @@ function runUI(): void {
   try {
     if (UI) {
       engines.execScript("UI", UI);
+    } else {
+      UI = getScript("dist/UI");
+      DB.put("UI", UI);
+      runUI();
     }
   } catch (error) {
     console.error(error);
