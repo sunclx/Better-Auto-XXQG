@@ -17,7 +17,7 @@ jobs:
           deno-version: vx.x.x
       - name: Deno Build
         run: |
-          deno task ./scripts/build.ts
+          deno task build
           git config --local user.email "sunclx@gmail.com"
           git config --local user.name "sunclx"
           if [ -n "$(git status -s)" ];then
