@@ -941,7 +941,7 @@ http.__okhttp__.setTimeout(10000);
 let GLOBAL_CONFIG = storages.create("GLOBAL_CONFIG");
 let TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
 // let BAIDUAPI = storages.create('BAIDUAPI');
-let execution = undefined;
+// let execution = undefined;
 let thread: threads.Thread | null = null;
 Initialize();
 
@@ -955,17 +955,20 @@ let latest_version = "2.2.0";
 //     checkversion();
 // }
 
+let username = "sunclx";
+let repo = "XXQG";
+let branch = "main";
 let url_prefix = [
-  "https://mirror.ghproxy.com/https://raw.githubusercontent.com/sunclx/XXQG/main/",
-  "https://raw.kkgithub.com/sunclx/XXQG/main/",
-  "https://ghproxy.net/https://raw.githubusercontent.com/sunclx/XXQG/main/",
-  "https://fastly.jsdelivr.net/gh/sunclx/XXQG@main/",
-  "https://fastraw.ixnic.net/sunclx/XXQG/main/",
-  "https://cdn.jsdelivr.us/gh/sunclx/XXQG@main/",
-  "https://jsdelivr.b-cdn.net/gh/sunclx/XXQG@main/",
-  "https://github.moeyy.xyz/https://raw.githubusercontent.com/sunclx/XXQG/main/",
-  "https://raw.cachefly.998111.xyz/sunclx/XXQG/main/",
-  "https://raw.githubusercontent.com/sunclx/XXQG/main/",
+  `https://mirror.ghproxy.com/https://raw.githubusercontent.com/${username}/${repo}/${branch}/`,
+  `https://raw.kkgithub.com/${username}/${repo}/${branch}/`,
+  `https://ghproxy.net/https://raw.githubusercontent.com/${username}/${repo}/${branch}/`,
+  `https://fastly.jsdelivr.net/gh/${username}/${repo}@${branch}/`,
+  `https://fastraw.ixnic.net/${username}/${repo}/${branch}/`,
+  `https://cdn.jsdelivr.us/gh/${username}/${repo}@${branch}/`,
+  `https://jsdelivr.b-cdn.net/gh/${username}/${repo}@${branch}/`,
+  `https://github.moeyy.xyz/https://raw.githubusercontent.com/${username}/${repo}/${branch}/`,
+  `https://raw.cachefly.998111.xyz/${username}/${repo}/${branch}/`,
+  `https://raw.githubusercontent.com/${username}/${repo}/${branch}/`,
 ];
 
 // 创建选项菜单(右上角)
@@ -1101,17 +1104,17 @@ ui.start.click(function () {
   thread = threads.start(function () {
     console.log("点击开始按钮");
     if (script) {
-      execution = engines.execScript("强国助手", script);
+      engines.execScript("强国助手", script);
     }
   });
 });
 ui.update.click(function () {
   threads.start(function () {
-    script = getScript("dist/" + ui.script_chosen.getSelectedItemPosition());
+    script = getScriptA("dist/0.js");
     DB.put("script", script);
-    let main = getScript("dist/main");
+    let main = getScriptA("dist/main.js");
     DB.put("main", main);
-    let UI = getScript("dist/UI");
+    let UI = getScriptA("dist/UI.js");
     DB.put("UI", UI);
     console.log("更新成功");
   });
@@ -1119,42 +1122,28 @@ ui.update.click(function () {
 ui.update.on("long_click", () => {
   threads.start(function () {
     let url_index = dialogs.singleChoice("请选择下载代理", url_prefix, 0);
-    let getScript = function (name: string) {
-      try {
-        let url = url_prefix[url_index] + "dist/" + name + ".js";
-        console.log(url);
-        let res = http.get(url);
-        console.log("statusCode:" + res.statusCode);
-        if (res.statusCode == 200) {
-          return res.body.string();
-        } else {
-          toastLog("学习脚本:地址" + url + "下载失败");
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    script = getScript("0");
+    let url = url_prefix[url_index] + "dist/";
+    script = getScript(url + "0.js");
     DB.put("script", script);
-    let main = getScript("main");
+    let main = getScript(url + "main.js");
     DB.put("main", main);
-    let UI = getScript("UI");
+    let UI = getScript(url + "UI.js");
     DB.put("UI", UI);
     console.log("更新成功");
   });
 });
 
 // 下载并运行所选脚本
-ui.startH.click(function () {
-  threads.shutDownAll();
-  if (thread != null && thread.isAlive()) {
-    alert("注意", "脚本正在运行，请结束之前进程");
-    return;
-  }
-  thread = threads.start(function () {
-    execution = engines.execScript("强国助手", getScript("a"));
-  });
-});
+// ui.startH.click(function () {
+//   threads.shutDownAll();
+//   if (thread != null && thread.isAlive()) {
+//     alert("注意", "脚本正在运行，请结束之前进程");
+//     return;
+//   }
+//   thread = threads.start(function () {
+//     engines.execScript("强国助手", getScriptA("a"));
+//   });
+// });
 
 // 保存天天向上pro脚本设置
 function saveSettings() {
@@ -1348,11 +1337,6 @@ ui.ttxs_pro_district_select.setOnItemSelectedListener(
       _position: object,
       id: number,
     ) {
-      // Ui.mySpinner.getSelectedItem()
-      // console.log(
-      //     `parent: ${parent}\nview: ${view}\nposition: ${position}\nid: ${id}`,
-      // );
-      // console.log("选中了第" + id + "项");
       let districts = {
         "江苏": {
           district: "江苏",
@@ -1500,33 +1484,39 @@ ui.ttxs_pro_district_select.setOnItemSelectedListener(
 //     });
 // }
 
-function getScript(choice: string | number) {
-  let UI = "";
+function getScriptA(filename: string): string {
+  let script = "";
   for (let i = 0; i < url_prefix.length; i++) {
-    try {
-      let res = http.get(url_prefix[i] + choice + ".js");
-      console.log(i, ":" + res.statusCode);
-      if (res.statusCode == 200) {
-        UI = res.body.string();
-        if (
-          1 ||
-          UI.indexOf("console.clear();") == 0 ||
-          UI.indexOf("auto.waitFor();") == 0 || UI.indexOf('"ui";') == 0
-        ) break;
-      } else {
-        toastLog("学习脚本:地址" + i + "下载失败");
-      }
-    } catch (error) {
-      console.log(error);
+    let url = url_prefix[i] + filename;
+    script = getScript(url);
+    if (script) {
+      return script;
     }
   }
-  return UI;
+  return script;
+}
+
+function getScript(url: string): string {
+  try {
+    console.log("url:" + url);
+    let res = http.get(url);
+    console.log("statusCode:" + res.statusCode);
+    if (res.statusCode == 200) {
+      console.log("学习脚本:地址" + url + "下载成功");
+      return res.body.string();
+    } else {
+      console.log("学习脚本:地址" + url + "下载失败");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+  return "";
 }
 
 thread = threads.start(function () {
   //在新线程执行的代码
   if (!script) {
-    script = getScript("dist/" + ui.script_chosen.getSelectedItemPosition());
+    script = getScriptA("dist/0.js");
     DB.put("script", script);
   }
 });
