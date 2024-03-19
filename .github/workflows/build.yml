@@ -1,0 +1,31 @@
+name: sync
+
+on:
+  schedule:
+    - push
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Deno Build
+        - uses: denoland/setup-deno@v1
+          with:
+            deno-version: vx.x.x
+        run: |
+          deno task -A ./scripts/build.ts
+          git config --local user.email "sunclx@gmail.com"
+          git config --local user.name "sunclx"
+          if [ -n "$(git status -s)" ];then
+            git add .
+            git commit -a -m "同步 songge_tiku"
+          fi
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
