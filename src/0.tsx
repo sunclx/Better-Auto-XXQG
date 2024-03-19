@@ -1447,7 +1447,7 @@ function do_duizhan(renshu: number) {
     if (replace_sign == "include_ocr_replace") {
       let result = true;
       log("que_key:" + que_key);
-      let [words, r, repl] = replace_d[que_key!];
+      let [words, r, repl] = replace_d[que_key! as unknown as string];
       for (let word of words) {
         let reg = new RegExp(word, "gi");
         if (!reg.test(allx_txt)) {
@@ -1462,7 +1462,7 @@ function do_duizhan(renshu: number) {
     } else {
       for (let r of Object.keys(replace_d)) {
         let reg = new RegExp(r, "gi");
-        allx_txt = allx_txt.replace(reg, replace_d[r]);
+        allx_txt = allx_txt.replace(reg, replace_d[r] as string);
       }
     }
     // allx_txt.replace(/令媛/g, "令嫒");
@@ -3229,7 +3229,9 @@ function main(userinfo?: string[]) {
       sleep(2000);
     } else {
       let xxqg_end = new Date();
-      let spent_time = Number(((xxqg_end - xxqg_begin) / 1000).toFixed());
+      let spent_time = Number(
+        ((Number(xxqg_end) - Number(xxqg_begin)) / 1000).toFixed(),
+      );
       fInfo("本轮已结束，花费时间" + spent_time + "s");
       600 > spent_time &&
         fError("时间过短，请检查日志是报错导致脚本结束，正常结束请无视");
