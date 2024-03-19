@@ -13,10 +13,10 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      - name: Deno Build
-        - uses: denoland/setup-deno@v1
+      - uses: denoland/setup-deno@v1
           with:
             deno-version: vx.x.x
+      - name: Deno Build
         run: |
           deno task -A ./scripts/build.ts
           git config --local user.email "sunclx@gmail.com"
