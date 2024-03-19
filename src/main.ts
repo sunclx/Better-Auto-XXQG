@@ -73,7 +73,7 @@ function runUI(): void {
           console.error(error);
         }
       } else {
-        UI = getScript("UI");
+        UI = getScript("dist/UI");
         DB.put("UI", UI);
         runUI();
       }
@@ -92,6 +92,7 @@ function getScript(filename: string): string {
       if (res.statusCode == 200) {
         script = res.body.string();
         if (
+          1 ||
           script.indexOf("console.clear();") == 0 ||
           script.indexOf("auto.waitFor();") == 0 || script.indexOf('"ui";') == 0
         ) break;

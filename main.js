@@ -55,7 +55,7 @@ function runUI() {
       if (select) {
         const url_index = dialogs.singleChoice("请选择下载代理", url_prefix, 0);
         try {
-          const url = url_prefix[url_index] + "UI.js";
+          const url = url_prefix[url_index] + "dist/UI.js";
           console.log(url);
           const res = http.get(url);
           console.log("statusCode:" + res.statusCode);
@@ -92,6 +92,7 @@ function getScript(filename) {
       if (res.statusCode == 200) {
         script = res.body.string();
         if (
+          1 ||
           script.indexOf("console.clear();") == 0 ||
           script.indexOf("auto.waitFor();") == 0 || script.indexOf('"ui";') == 0
         ) break;

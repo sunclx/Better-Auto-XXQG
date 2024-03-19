@@ -3,7 +3,7 @@ import { denoPlugins } from "https://deno.land/x/esbuild_deno_loader@0.9.0/mod.t
 
 const result = await esbuild.build({
   plugins: [...denoPlugins()],
-  entryPoints: ["./src/1.tsx", "./src/UI.tsx", "./src/main.ts"],
+  entryPoints: ["./src/0.tsx", "./src/UI.tsx", "./src/main.ts"],
   outdir: "./dist",
   bundle: true,
   platform: "node",

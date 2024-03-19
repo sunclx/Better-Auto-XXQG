@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "strict": true,
-    "jsx": "preserve",
-    "jsxImportSource": "https://esm.sh/preact"
+    "jsx": "react-jsx"
   },
   "tasks": { "build": "deno run -A ./scripts/build.ts" },
   "lint": {

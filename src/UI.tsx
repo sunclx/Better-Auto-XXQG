@@ -1,6 +1,5 @@
 "ui";
 
-
 importClass(java.net.HttpURLConnection);
 importClass(java.net.URL);
 importClass(java.io.File);
@@ -172,6 +171,23 @@ ui.layout(
         <ScrollView>
           <frame>
             <vertical id="ttxs_pro" gravity="center">
+              <horizontal gravity="center_vertical" padding="5 5">
+                <View bg="#00BFFF" h="*" w="10"></View>
+                <vertical padding="10 8" h="auto" w="0" layout_weight="1">
+                  <text
+                    w="auto"
+                    textColor="#222222"
+                    textSize="15sp"
+                    text="测试"
+                  />
+                </vertical>
+                <checkbox
+                  id="ttxs_pro_test"
+                  marginLeft="4"
+                  marginRight="6"
+                  checked="false"
+                />
+              </horizontal>
               <horizontal gravity="center_vertical" padding="5 5">
                 <View bg="#00BFFF" h="*" w="10"></View>
                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
@@ -926,7 +942,7 @@ let GLOBAL_CONFIG = storages.create("GLOBAL_CONFIG");
 let TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
 // let BAIDUAPI = storages.create('BAIDUAPI');
 let execution = undefined;
-let thread: any = null;
+let thread: threads.Thread | null = null;
 Initialize();
 
 // 版本更新检查
@@ -953,7 +969,11 @@ let url_prefix = [
 ];
 
 // 创建选项菜单(右上角)
-ui.emitter.on("create_options_menu", (menu: any) => {
+interface Menu {
+  add(params: string): void;
+}
+
+ui.emitter.on("create_options_menu", (menu: Menu) => {
   menu.add("日志");
   menu.add("关于");
   menu.add("Github");
@@ -961,7 +981,14 @@ ui.emitter.on("create_options_menu", (menu: any) => {
 });
 
 // 监听选项菜单点击
-ui.emitter.on("options_item_selected", (e: any, item: any) => {
+interface Event {
+  consumed: boolean;
+}
+interface Item {
+  getTitle(): string;
+}
+
+ui.emitter.on("options_item_selected", (e: Event, item: Item) => {
   switch (item.getTitle()) {
     case "日志":
       app.startActivity("console");
@@ -972,9 +999,9 @@ ui.emitter.on("options_item_selected", (e: any, item: any) => {
     case "Github":
       app.openUrl("https://github.com/sec-an/Better-Auto-XXQG");
       break;
-    // Case "V2.33.0下载":
-    //     app.openUrl("https://android-apps.pp.cn/fs08/2021/12/28/3/110_f37c420b0944cb7b9f60a2ad9b5518d2.apk?yingid=web_space&packageid=500730793&md5=664bb7bdcae57be189fc86100f4371c4&minSDK=21&size=191654161&shortMd5=1fee0bd160d08108a9d9e5f4773ce741&crc32=3879122865&did=ad484a175e19d0928044435e24bf03cb");
-    //     break;
+      // Case "V2.33.0下载":
+      //     app.openUrl("https://android-apps.pp.cn/fs08/2021/12/28/3/110_f37c420b0944cb7b9f60a2ad9b5518d2.apk?yingid=web_space&packageid=500730793&md5=664bb7bdcae57be189fc86100f4371c4&minSDK=21&size=191654161&shortMd5=1fee0bd160d08108a9d9e5f4773ce741&crc32=3879122865&did=ad484a175e19d0928044435e24bf03cb");
+      //     break;
   }
   e.consumed = true;
 });
@@ -986,30 +1013,36 @@ ui.viewpager.setTitles(["首页", "脚本配置", "详细设置"]);
 ui.tabs.setupWithViewPager(ui.viewpager);
 
 // 脚本选择监听
+
 let script_chosen_Listener = new android.widget.AdapterView
   .OnItemSelectedListener({
-    onItemSelected: function (_parent: any, _view: any, _position: any, _id: any) {
-      toastLog("选择脚本：" + ui.script_chosen.getSelectedItem());
-      ui.ttxs_pro.visibility = 0;
-      // If (ui.script_chosen.getSelectedItemPosition() == 0) {
-      //     ui.ttxs.visibility = 8;
-      //     ui.study.visibility = 8;
-      //     ui.ttxs_pro.visibility = 0;
-      // } else if (ui.script_chosen.getSelectedItemPosition() == 1) {
-      //     ui.ttxs_pro.visibility = 8;
-      //     ui.study.visibility = 8;
-      //     ui.ttxs.visibility = 0;
-      // } else if (ui.script_chosen.getSelectedItemPosition() == 2) {
-      //     ui.ttxs_pro.visibility = 8;
-      //     ui.ttxs.visibility = 8;
-      //     ui.study.visibility = 0;
-      // }
-      GLOBAL_CONFIG.put(
-        "script_chosen",
-        ui.script_chosen.getSelectedItemPosition(),
-      );
-    },
-  });
+  onItemSelected: function (
+    _parent: object,
+    _view: object,
+    _position: number,
+    _id: number,
+  ) {
+    toastLog("选择脚本：" + ui.script_chosen.getSelectedItem());
+    ui.ttxs_pro.visibility = 0;
+    // If (ui.script_chosen.getSelectedItemPosition() == 0) {
+    //     ui.ttxs.visibility = 8;
+    //     ui.study.visibility = 8;
+    //     ui.ttxs_pro.visibility = 0;
+    // } else if (ui.script_chosen.getSelectedItemPosition() == 1) {
+    //     ui.ttxs_pro.visibility = 8;
+    //     ui.study.visibility = 8;
+    //     ui.ttxs.visibility = 0;
+    // } else if (ui.script_chosen.getSelectedItemPosition() == 2) {
+    //     ui.ttxs_pro.visibility = 8;
+    //     ui.ttxs.visibility = 8;
+    //     ui.study.visibility = 0;
+    // }
+    GLOBAL_CONFIG.put(
+      "script_chosen",
+      ui.script_chosen.getSelectedItemPosition(),
+    );
+  },
+});
 ui.script_chosen.setOnItemSelectedListener(script_chosen_Listener);
 
 // 用户勾选无障碍服务的选项时，跳转到页面让用户去开启
@@ -1065,21 +1098,20 @@ ui.start.click(function () {
     alert("注意", "脚本正在运行，请结束之前进程");
     return;
   }
-  threads.start(function () {
+  thread = threads.start(function () {
     console.log("点击开始按钮");
     if (script) {
       execution = engines.execScript("强国助手", script);
     }
-
   });
 });
 ui.update.click(function () {
   threads.start(function () {
-    script = getScript(ui.script_chosen.getSelectedItemPosition());
+    script = getScript("dist/" + ui.script_chosen.getSelectedItemPosition());
     DB.put("script", script);
-    let main = getScript("main");
+    let main = getScript("dist/main");
     DB.put("main", main);
-    let UI = getScript("UI");
+    let UI = getScript("dist/UI");
     DB.put("UI", UI);
     console.log("更新成功");
   });
@@ -1119,13 +1151,14 @@ ui.startH.click(function () {
     alert("注意", "脚本正在运行，请结束之前进程");
     return;
   }
-  threads.start(function () {
+  thread = threads.start(function () {
     execution = engines.execScript("强国助手", getScript("a"));
   });
 });
 
 // 保存天天向上pro脚本设置
 function saveSettings() {
+  TTXS_PRO_CONFIG.put("test", ui.ttxs_pro_test.isChecked());
   TTXS_PRO_CONFIG.put("watchdog", ui.ttxs_pro_watchdog.getText() + "");
   TTXS_PRO_CONFIG.put("slide_verify", ui.ttxs_pro_slide_verify.getText() + "");
   TTXS_PRO_CONFIG.put("fast_mode", ui.ttxs_pro_fast_mode.isChecked());
@@ -1179,6 +1212,8 @@ ui.ttxs_pro_save2.click(saveSettings);
 
 // 重置天天向上pro脚本设置
 function resetSettings() {
+  TTXS_PRO_CONFIG.put("test", false);
+  ui.ttxs_pro_ddtong.setChecked(TTXS_PRO_CONFIG.get("test"));
   TTXS_PRO_CONFIG.put("watchdog", "1800");
   ui.ttxs_pro_watchdog.setText(TTXS_PRO_CONFIG.get("watchdog"));
   TTXS_PRO_CONFIG.put("slide_verify", "300");
@@ -1259,6 +1294,7 @@ ui.ttxs_pro_reset2.click(resetSettings);
 function Initialize() {
   ui.script_chosen.setSelection(GLOBAL_CONFIG.get("script_chosen", 0));
 
+  ui.ttxs_pro_test.setChecked(TTXS_PRO_CONFIG.get("test", false));
   ui.ttxs_pro_watchdog.setText(TTXS_PRO_CONFIG.get("watchdog", "1800"));
   ui.ttxs_pro_slide_verify.setText(TTXS_PRO_CONFIG.get("slide_verify", "300"));
   ui.ttxs_pro_fast_mode.setChecked(TTXS_PRO_CONFIG.get("fast_mode", false));
@@ -1306,7 +1342,12 @@ function Initialize() {
 
 ui.ttxs_pro_district_select.setOnItemSelectedListener(
   new android.widget.AdapterView.OnItemSelectedListener({
-    onItemSelected: function (_parent: any, _view: any, _position: any, id: number) {
+    onItemSelected: function (
+      _parent: object,
+      _view: object,
+      _position: object,
+      id: number,
+    ) {
       // Ui.mySpinner.getSelectedItem()
       // console.log(
       //     `parent: ${parent}\nview: ${view}\nposition: ${position}\nid: ${id}`,
@@ -1468,6 +1509,7 @@ function getScript(choice: string | number) {
       if (res.statusCode == 200) {
         UI = res.body.string();
         if (
+          1 ||
           UI.indexOf("console.clear();") == 0 ||
           UI.indexOf("auto.waitFor();") == 0 || UI.indexOf('"ui";') == 0
         ) break;
@@ -1481,10 +1523,10 @@ function getScript(choice: string | number) {
   return UI;
 }
 
-threads.start(function () {
+thread = threads.start(function () {
   //在新线程执行的代码
   if (!script) {
-    script = getScript(ui.script_chosen.getSelectedItemPosition());
+    script = getScript("dist/" + ui.script_chosen.getSelectedItemPosition());
     DB.put("script", script);
   }
 });

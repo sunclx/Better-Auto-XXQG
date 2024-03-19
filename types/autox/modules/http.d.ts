@@ -2,10 +2,10 @@
 
 declare namespace http {
   interface HttpRequestOptions {
-    header: { [key: string]: string };
-    method: "GET" | "POST" | "PUT" | "DELET" | "PATCH";
-    contentType: string;
-    body: string | string[] | files.byte[];
+    headers?: { [key: string]: string | number };
+    method?: "GET" | "POST" | "PUT" | "DELET" | "PATCH";
+    contentType?: string;
+    body?: string | string[] | files.byte[];
   }
   interface Request {}
   interface Response {
