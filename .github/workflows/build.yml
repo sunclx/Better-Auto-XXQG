@@ -14,8 +14,8 @@ jobs:
           persist-credentials: false
           fetch-depth: 0
       - uses: denoland/setup-deno@v1
-          with:
-            deno-version: vx.x.x
+        with:
+          eno-version: vx.x.x
       - name: Deno Build
         run: |
           deno task -A ./scripts/build.ts
