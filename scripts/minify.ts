@@ -12,7 +12,7 @@ const result = await esbuild.build({
     ".js": "jsx",
   },
   jsx: "preserve",
-  minify: true,
+  // minify: true,
   target: ["ES6"],
 });
 

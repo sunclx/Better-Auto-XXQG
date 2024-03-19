@@ -1,5 +1,15 @@
 /// <reference path="./global.d.ts" />
 
+declare function findColorInRegion(
+  image: Image,
+  color: string | number,
+  x: number,
+  y: number,
+  width?: number,
+  height?: number,
+  threshold?: number,
+): Point;
+
 interface Image {
   getWidth(): number;
   getHeight(): number;
@@ -18,6 +28,12 @@ declare namespace images {
   function load(url: string): Image;
   function copy(image: Image): Image;
   function grayscale(image: Image): Image;
+
+  function interval(
+    img: Image,
+    color: number | string,
+    interval: number,
+  ): Image;
   interface FindColorOptions {
     region?: [number, number] | [number, number, number, number];
     threshold?: number;

@@ -44,14 +44,14 @@ let platform = TTXS_PRO_CONFIG.get("platform", "江苏学习平台");
 let subcolumn = TTXS_PRO_CONFIG.get("subcolumn", "总书记在江苏");
 
 /********定义全局变量*********/
-let jifen_list: any,
-  meizhou_dao: any,
-  zhuanxiang_dao: any,
-  dingyue_dao: any,
-  storage_user: any,
-  name: any,
-  jinri: any,
-  zongfen: any;
+let jifen_list: UiObject,
+  meizhou_dao: boolean,
+  zhuanxiang_dao: boolean,
+  dingyue_dao: boolean,
+  storage_user: Storage,
+  name: string,
+  jinri: string,
+  zongfen: string;
 let jifen_map = {
   "评论": 6,
   "视频": 2,
@@ -105,14 +105,16 @@ function google_ocr_api(img: Image) {
  * @param {number} eps - 坐标误差，默认为 30。
  * @returns {string} 返回排序后的文字结果。
  */
-function paddle_ocr_api(img: Image, eps: number = 30): string {
+function paddle_ocr_api(img: Image, eps?: number) {
+  eps ||= 30 // 坐标误差
   console.log("PaddleOCR文字识别中");
-  const list = JSON.parse(JSON.stringify(paddle.ocr(img))); // 识别文字，并得到results
-
-  for (let i = 0; i < list.length - 1; i++) { // 使用冒泡排序对上下排序
-    for (let j = 0; j < list.length - 1 - i; j++) {
-      if (list[j]["bounds"]["bottom"] > list[j + 1]["bounds"]["bottom"]) {
-        [list[j], list[j + 1]] = [list[j + 1], list[j]];
+  let list = JSON.parse(JSON.stringify(paddle.ocr(img))); // 识别文字，并得到results
+  for (let i = 0; i < list.length; i++) { // 选择排序对上下排序,复杂度O(N²)但一般list的长度较短只需几十次运算
+    for (let j = i + 1; j < list.length; j++) {
+      if (list[i]["bounds"]["bottom"] > list[j]["bounds"]["bottom"]) {
+        let tmp = list[i];
+        list[i] = list[j];
+        list[j] = tmp;
       }
     }
   }
@@ -125,7 +127,9 @@ function paddle_ocr_api(img: Image, eps: number = 30): string {
         eps &&
         list[i]["bounds"]["left"] > list[j]["bounds"]["left"]
       ) {
-        [list[i], list[j]] = [list[j], list[i]];
+        let tmp = list[i];
+        list[i] = list[j];
+        list[j] = tmp;
       }
     }
   }
@@ -133,7 +137,7 @@ function paddle_ocr_api(img: Image, eps: number = 30): string {
   for (let i = 0; i < list.length; i++) {
     res += list[i]["text"];
   }
-  list.length = 0; // 清空list
+  list = null;
   return res;
 }
 
@@ -143,11 +147,11 @@ if (fast_mode) {
 events.observeToast();
 sleep(delay_time);
 /*****************更新内容弹窗部分*****************/
-var storage = storages.create("songgedodo");
+let storage = storages.create("songgedodo");
 // 脚本版本号
 // var last_version = "V12.0";
 // var engine_version = "V12.3";
-var newest_version = "V12.4";
+let newest_version = "V12.4";
 // if (storage.get(engine_version, true)) {
 //   storage.remove(last_version);
 //   let gengxin_rows = "脚本有风险，仅供学习交流;更新内容：;1.原脚本会进入“我的”界面获取用户名，区分历史刷过文章，现取消此设定;2.可自定义滑动验证界面震动提醒时间;3.禁止截屏会随机选一个选项;4.自定义评论内容;脚本测试环境：强国V2.45.0;联系方式：tg: t.me/wyqg_ttxs;（点击取消不再提示）".split(";");
@@ -156,19 +160,21 @@ var newest_version = "V12.4";
 //     storage.put(engine_version, false);
 //   }
 // }
-var w = fInit();
+let w = fInit();
 // console.setTitle("天天向上");
 // console.show();
 fInfo("天天向上Pro" + newest_version + "脚本初始化");
 // 初始化宽高
-var [device_w, device_h] = init_wh();
+let [device_w, device_h] = init_wh();
 // log("fina:", device_w, device_h);
 // OCR初始化，重写内置OCR module
+// deno-lint-ignore no-explicit-any
 let ocr: any;
 if (ocr_choice == 2) {
   fInfo("初始化第三方ocr插件");
   try {
     ocr = plugins.load("com.hraps.ocr");
+    // deno-lint-ignore no-explicit-any
     ocr.recognizeText = function (img: any) {
       let results = this.detect(img.getBitmap(), 1);
       let all_txt = "";
@@ -191,7 +197,7 @@ threads.start(function () {
   //在新线程执行的代码
   //sleep(500);
   toastLog("开始自动获取截图权限");
-  var btn = className("android.widget.Button").textMatches(
+  let btn = className("android.widget.Button").textMatches(
     /允许|立即开始|START NOW/,
   ).findOne(5000);
   if (btn) {
@@ -213,29 +219,67 @@ fInfo("设置屏幕常亮");
 device.keepScreenOn(3600 * 1000);
 // 下载题库
 fInfo("检测题库更新");
-let update_info: any = get_tiku_by_http(
+
+interface UpdateInfo {
+  // 版本号
+  "dati_tiku_version": string;
+  // 题目链接
+  "dati_tiku_link": string;
+  // 题目链接 2
+  "dati_tiku_link2": string;
+  // 题目版本号
+  "tiku_version": string;
+  // 题目链接
+  "tiku_link": string;
+  // 题目链接 2
+  "tiku_link2": string;
+  // 问题正则表达式
+  "question_reg": string;
+  // 包含正则表达式
+  "include_reg": string;
+  // 默认 OCR 替换规则
+  "default_ocr_replace": { [key: string]: string };
+  // 旧 OCR 替换规则
+  "old_ocr_replace": { [key: string]: string };
+  // 口音 OCR 替换规则
+  "accent_ocr_replace": { [key: string]: string };
+  // 其他 OCR 替换规则
+  "other_ocr_replace": { [key: string]: string };
+  // 包含 OCR 替换规则
+  "include_ocr_replace": { [key: string]: string[] };
+}
+type OcrReplace = "default_ocr_replace" | "old_ocr_replace" | "accent_ocr_replace" | "other_ocr_replace" | "include_ocr_replace";
+
+let update_info: UpdateInfo = get_tiku_by_http(
   "https://gitcode.net/m0_64980826/songge_tiku/-/raw/master/info.json",
-);
+) as UpdateInfo;
 fInfo("正在加载对战题库......请稍等\n题库版本:" + update_info["tiku_version"]);
 fInfo("如果不动就是正在下载，多等会");
-var tiku: any = [];
+type TikuType = [string, string, number]
+interface Tiku {
+  [key: string]: TikuType;
+}
+let tiku: Tiku = {};
 try {
-  tiku = get_tiku_by_http(update_info["tiku_link"]);
+  tiku = get_tiku_by_http(update_info["tiku_link"]) as Tiku;
 } catch (e) {
-  tiku = get_tiku_by_http(update_info["tiku_link2"]);
+  tiku = get_tiku_by_http(update_info["tiku_link2"]) as Tiku;
 }
 // var tiku = get_tiku_by_gitee();
 fInfo(
   "正在加载专项题库......请稍等\n题库版本:" + update_info["dati_tiku_version"],
+
 );
-var dati_tiku: any = [];
+type MyType = [string, string, string | null, string | null, string | null];
+type DatiTiku = Array<MyType>;
+let dati_tiku: DatiTiku = [];
 try {
-  dati_tiku = update_dati_tiku();
+  dati_tiku = update_dati_tiku() as DatiTiku;
 } catch (e) {
   fError("网络原因未获取到在线题库，请尝试切换流量或者更换114DNS");
   dati_tiku = get_tiku_by_ct(
     "https://webapi.ctfile.com/get_file_url.php?uid=35157972&fid=555754562&file_chk=94c3c662ba28f583d2128a1eb9d78af4&app=0&acheck=2&rd=0.14725283060014105",
-  );
+  ) as DatiTiku;
 }
 // 设置资源保存路径
 files.createWithDirs("/sdcard/天天向上/");
@@ -257,7 +301,7 @@ if (is_exit) {
 }
 // 检测地理位置权限代码，出现就点掉
 fInfo("开始位置权限弹窗检测");
-var nolocate_thread = threads.start(function () {
+let nolocate_thread = threads.start(function () {
   //在新线程执行的代码
   id("title_text").textContains("地理位置").waitFor();
   fInfo("检测到位置权限弹窗");
@@ -406,7 +450,7 @@ function do_shipin() {
 function do_wenzhang() {
   //   jifen_list = refind_jifen();
   // 点击进入本地
-  let old_wen = storage_user.get("old_wen_list", []);
+  let old_wen: string[] = storage_user.get("old_wen_list", []);
   entry_jifen_project("本地频道");
   if (ddtong) {
     fSet("title", "文章(dd通)…");
@@ -483,7 +527,7 @@ function do_wenzhang() {
   }
   // 自定义没有刷过的文章筛选器
   let wen_box_slt = className("android.view.ViewGroup").depth(20).filter(
-    function (l: any) {
+    function (l: UiObject) {
       let title = l.findOne(idContains("general_card_title_id"));
       let image = l.findOne(idContains("general_card_image_id"));
       let pic_num = l.findOne(idContains("st_feeds_card_mask_pic_num"));
@@ -603,10 +647,10 @@ function do_meiri() {
   // 等待加载
   text("查看提示").waitFor();
   // 获取右上题号，如1 /5
-  var tihao = className("android.view.View").depth(24).findOnce(1).text();
-  var num = Number(tihao[0]);
-  var sum = Number(tihao[tihao.length - 1]);
-  var substr = tihao.slice(1);
+  let tihao = className("android.view.View").depth(24).findOnce(1).text();
+  let num = Number(tihao[0]);
+  let sum = Number(tihao[tihao.length - 1]);
+  let substr = tihao.slice(1);
   while (num <= sum) {
     fClear();
     fInfo("第" + num + "题");
@@ -826,7 +870,7 @@ function do_zhuanxiang() {
   text("查看提示").waitFor();
   sleep(2000);
   // 获取右上题号，如1 /5
-  var tihao = className("android.view.View").depth(24).findOnce(1).text();
+  let tihao = className("android.view.View").depth(24).findOnce(1).text();
   // 需要加个斜杠转义
   let reg = /(\d+) \/(\d+)/;
   // 获取数字
@@ -910,16 +954,19 @@ function do_tiaozhan() {
   // 等待加载、积分页面也有Image和List，需要用depth筛选
   className("android.widget.Image").textMatches(/total.*|chanllenge.*/)
     .waitFor();
+  let a = !0;
   if (textStartsWith("total").exists()) {
-    var a = !0,
-      b = className("android.widget.Image").textStartsWith("total").findOne()
-        .parent();
+
+    let b = className("android.widget.Image").textStartsWith("total").findOne()
+      .parent();
     ran_sleep();
     // do b.click(), sleep(500); while (textStartsWith("total").exists());
     b.click();
     className("android.widget.Image").textStartsWith("chanllenge").waitFor();
   }
-  var total = 0, max_total = 5;
+  let total = 0, max_total = 5;
+  let xuan_list
+  let que_txt
   for (ddtong && (max_total += 10); ;) {
     fClear();
     fInfo("第" + (total + 1) + "题");
@@ -927,9 +974,9 @@ function do_tiaozhan() {
     ran_sleep();
     try {
       // 等待选项列表
-      var xuan_list = className("android.widget.ListView").findOne().children();
+      xuan_list = className("android.widget.ListView").findOne().children();
       // 获取题目
-      var que_txt = className("android.widget.ListView").findOne().parent()
+      que_txt = className("android.widget.ListView").findOne().parent()
         .child(0).text();
       //log(que_txt);
     } catch (p) {
@@ -1005,7 +1052,7 @@ function do_tiaozhan() {
 }
 
 /********双人、四人赛*********/
-function do_duizhan1(renshu: number) {
+function do_duizhan(renshu: number) {
   //   jifen_list = refind_jifen();
   fClear();
   if (renshu == 2) {
@@ -1082,7 +1129,9 @@ function do_duizhan1(renshu: number) {
         }
       }
       // 直到过渡界面消失，再匹配下一题
-      while (text("第" + num + "题").exists()) { } //sleep(100);
+      while (text("第" + num + "题").exists()) {
+        // no code
+      } //sleep(100);
       //fTips("题号过渡消失");
     } else if (!err_flag) {
       err_flag = true;
@@ -1215,7 +1264,7 @@ function do_duizhan1(renshu: number) {
       continue;
     }
     // 选项清洗标识
-    let replace_sign = "default_ocr_replace";
+    let replace_sign: OcrReplace = "default_ocr_replace";
     let question_reg = new RegExp(update_info["question_reg"], "gi");
     let include_reg = new RegExp(update_info["include_reg"], "gi");
     let que_key = null;
@@ -1229,12 +1278,14 @@ function do_duizhan1(renshu: number) {
 
     let ans_list = get_ans_by_tiku(que_txt);
     //log(ans_list);
-    let idx_dict = {
+
+    let idx_dict: { [key: string]: number } = {
       "A": 0,
       "B": 1,
       "C": 2,
       "D": 3,
     };
+    // type Index = "A" | "B" | "C" | "D";
     /************以下是因为随机选项顺序后失效的代码*****************/
     try { //防止别人先答完出错
       let idx = 0;
@@ -1285,7 +1336,9 @@ function do_duizhan1(renshu: number) {
     try {
       while (
         className("android.widget.ListView").findOne(1000).indexInParent() == 0
-      ) { }
+      ) {
+        // no code
+      }
       //fTips("选项显现");
     } catch (e) {
       log("error2:", e);
@@ -1321,7 +1374,7 @@ function do_duizhan1(renshu: number) {
       xuanxiang_list_h,
     );
     //images.save(allx_img, '/sdcard/1/x_img' + num + '.png');
-    let xuan_txt_list = [];
+    let xuan_txt_list: RegExpMatchArray | null = null;
     let allx_txt = "";
     if (ocr_choice == 0) {
       // 排序顺序
@@ -1358,7 +1411,7 @@ function do_duizhan1(renshu: number) {
     if (replace_sign == "include_ocr_replace") {
       let result = true;
       log("que_key:" + que_key);
-      let [words, r, repl] = replace_d[que_key];
+      let [words, r, repl] = replace_d[que_key!];
       for (let word of words) {
         let reg = new RegExp(word, "gi");
         if (!reg.test(allx_txt)) {
@@ -1392,14 +1445,14 @@ function do_duizhan1(renshu: number) {
         /[a-d][^a-z\u4e00-\u9fa5\d]\s*.*?(?=[a-d][^a-z\u4e00-\u9fa5\d]|$)/gi,
       );
     }
-    log(xuan_txt_list.toString());
+    log(xuan_txt_list?.toString());
 
-    if (xuan_txt_list.length != 0) {
+    if (xuan_txt_list?.length != 0) {
       let max_simi = 0;
       let right_xuan = "";
       let right_xuan2 = "";
       let ans_txt = "";
-      for (let xuan_txt of xuan_txt_list) {
+      for (let xuan_txt of xuan_txt_list!) {
         let txt = xuan_txt.replace(/^[A-Z]\.?/gi, "");
         for (let ans of ans_list) {
           let similar = str_similar(ans.slice(2), txt);
@@ -1649,8 +1702,9 @@ function do_dingyue(): boolean {
           if (dingyue.bounds().bottom >= device_h) {
             continue;
           }
+          let pot
           try {
-            var pot = findColorInRegion(
+            pot = findColorInRegion(
               img,
               "#E42417",
               dingyue.bounds().left,
@@ -1739,6 +1793,7 @@ function do_exec(type?: string) {
 
   // 判断题型
   /******************单选题*******************/
+  let ans: string = "";
   if (textStartsWith("单选题").exists()) {
     // 获取题目
     //let que_txt = className("android.view.View").depth(23).findOnce(1).text();
@@ -1746,7 +1801,7 @@ function do_exec(type?: string) {
     let que_txt = className("android.view.View").depth(24).findOnce(1).parent()
       .parent().child(1).text();
     // log(que_txt);
-    var ans = get_ans_by_re(que_txt);
+    ans = get_ans_by_re(que_txt);
     if (ans && depth(26).text(ans).exists()) {
       // 定位选项并点击
       depth(26).text(ans).findOnce().parent().click();
@@ -1759,8 +1814,9 @@ function do_exec(type?: string) {
       }
       let reg = /[A-F]/;
       if (ans && reg.test(ans) && ans.length == 1) {
-        ans = ans.match(reg)[0];
-        let idx_dict = {
+        let result = ans.match(reg);
+        ans = !result ? "" : result[0];
+        let idx_dict: { [key: string]: number } = {
           "A": 0,
           "B": 1,
           "C": 2,
@@ -1863,7 +1919,7 @@ function do_exec(type?: string) {
       if (!ans) {
         ans = "未识别出文字";
       }
-      edit_clt = className("android.widget.EditText").find();
+      let edit_clt = className("android.widget.EditText").find();
       let ans_txt = ans;
       for (let edit of edit_clt) {
         let n =
@@ -1887,7 +1943,7 @@ function do_exec(type?: string) {
     // 先看挖空数量和选项数量是否一致，判断是否全选
     let collect = className("android.widget.CheckBox").find();
     // 如果全选
-    if (res.length == collect.length) {
+    if (res?.length == collect.length) {
       ans = "全选";
       for (let n of collect) {
         // 直接点击会点不上全部
@@ -1902,8 +1958,9 @@ function do_exec(type?: string) {
       }
       let reg = /[A-F]{1,6}/;
       if (ans && reg.test(ans)) {
-        ans = ans.match(reg)[0];
-        let idx_dict = {
+        let result = ans.match(reg)
+        ans = !result ? "" : result[0];
+        let idx_dict: { [key: string]: number } = {
           "A": 0,
           "B": 1,
           "C": 2,
@@ -2026,7 +2083,7 @@ function get_ans_by_ocr1() {
 }
 
 // 通过http请求匹配答案
-function get_ans_by_http(que_txt) {
+function get_ans_by_http(que_txt: string): string[] {
   // 匹配题空两边汉字、字母及数字
   let reg = /[\u4e00-\u9fa5\d]+/g;
   //let reg = /(\S*)\s{2,}(\S*)/;
@@ -2058,10 +2115,13 @@ function get_ans_by_http(que_txt) {
   if (resp_list != null) {
     for (let a of resp_list) {
       // 查找出来后答案中有不可见的ZERO WIDTH SPACE，需要清洗
-      ans = a.match(/答案：(.*?)<\/span><\/p>/)[1].replace(
-        /[\u200B-\u200D\uFEFF]/g,
-        "",
-      );
+      let result = a.match(/答案：(.*?)<\/span><\/p>/)
+      let ans
+      if (result) {
+        ans = result[1].replace(/[\u200B-\u200D\uFEFF]/g, "",);
+      } else {
+        ans = ""
+      }
       //log(ans);
       ans_list.push(ans);
     }
@@ -2071,12 +2131,12 @@ function get_ans_by_http(que_txt) {
 }
 
 // 通过离线答题题库匹配答案
-function get_ans_by_dati_tiku(que_txt: string, type?: string) {
+function get_ans_by_dati_tiku(que_txt: string, type?: string): string {
   let keyword = que_txt.replace(/\s/g, "");
-  let ans_list = [];
-  let ans = null;
+  let ans_list: string[] = [];
+  let ans: string = "";
   if (dati_tiku.length == 0) {
-    return false;
+    return "";
   }
   //for (let ti of dati_tiku) {
   for (let i = dati_tiku.length - 1; i >= 0; i--) {
@@ -2090,7 +2150,7 @@ function get_ans_by_dati_tiku(que_txt: string, type?: string) {
   }
   //if (!ans || ans == "None") {return false;}
   if (!ans_list) {
-    return false;
+    return "";
   }
   if (type) { // && ans_list.length > 1
     for (let a of ans_list) {
@@ -2129,7 +2189,7 @@ function update_dati_tiku() {
   //   let total_req = http.get("https://tiku.3141314.xyz/tableCount");
   let total = 1;
   let last_dati_tiku_link = storage.get("dati_tiku_link", "");
-  let dati_tiku = storage.get("dati_tiku", []);
+  let dati_tiku: string[][] = storage.get("dati_tiku", []);
   //   if (total_req.statusCode == 200) {
   //     total = total_req.body.json()[0][0];
   //   } else {
@@ -2138,9 +2198,9 @@ function update_dati_tiku() {
     //dati_tiku = get_tiku_by_gitee('https://gitee.com/songgedodo/songge_tiku/raw/master/dati_tiku.txt');
     if (update_info["dati_tiku_link"] != last_dati_tiku_link) {
       try {
-        dati_tiku = get_tiku_by_http(update_info["dati_tiku_link"]);
+        dati_tiku = get_tiku_by_http(update_info["dati_tiku_link"]) as string[][];
       } catch (e) {
-        dati_tiku = get_tiku_by_http(update_info["dati_tiku_link2"]);
+        dati_tiku = get_tiku_by_http(update_info["dati_tiku_link2"]) as string[][];
       }
       storage.put("dati_tiku_link", update_info["dati_tiku_link"]);
       storage.put("dati_tiku", dati_tiku);
@@ -2158,10 +2218,11 @@ function update_dati_tiku() {
   }
   //   } 上面else的}
   //log("update total:", total);
+  dati_tiku = dati_tiku as string[][];
   if (!dati_tiku || dati_tiku.length != total) {
     let req = http.get("https://tiku.3141314.xyz/getAnswer");
     if (req.statusCode == 200) {
-      dati_tiku = req.body.json();
+      dati_tiku = req.body.json() as string[][];
       storage.put("dati_tiku", dati_tiku);
       fInfo("题库已更新");
     } else {
@@ -2203,8 +2264,8 @@ function upload_wrong_exec(endstr?: string) {
 }
 
 // 通过缓存题库获取答案
-function get_ans_by_tiku(que_txt) {
-  let ans_list = [];
+function get_ans_by_tiku(que_txt: string): string[] {
+  let ans_list: string[] = [];
   let max_simi = 0;
   for (let ti of Object.keys(tiku)) {
     //log(ti.replace(/[\s_]/g, "").indexOf(que_txt));
@@ -2231,7 +2292,7 @@ function get_ans_by_tiku(que_txt) {
 }
 
 // 获取直链json
-function get_tiku_by_http(link: string) {
+function get_tiku_by_http(link: string): object {
   // 通过gitee的原始数据保存题库
   if (!link) {
     link =
@@ -2269,7 +2330,7 @@ function get_tiku_by_ct(link: string) {
 }
 
 // 把ocr结果转换为正序的字符串
-function ocr_rslt_to_txt(result) {
+function ocr_rslt_to_txt(result: any) {
   let top = 0;
   let previous_left = 0;
   let txt = "";
@@ -2306,7 +2367,7 @@ function ocr_rslt_to_txt(result) {
 }
 
 // 重启每日、每周
-function restart(restart_flag) {
+function restart(restart_flag: number) {
   // 点击退出
   ran_sleep();
   back();
@@ -2350,7 +2411,7 @@ function ran_sleep() {
 }
 
 // 比较两个字符串相似度
-function str_similar(str1, str2) {
+function str_similar(str1: string, str2: string) {
   str1 = str1.replace(
     /[^\u4e00-\u9fa5\u2460-\u2469\wāáǎàōóǒòēéěèīíǐìūúǔùüǖǘǚǜ]/g,
     "",
@@ -2393,8 +2454,8 @@ function close_video() {
 function init_wh() {
   fInfo("屏幕方向检测");
   log(device.width + "*" + device.height);
-  var device_w = depth(0).findOne().bounds().width();
-  var device_h = depth(0).findOne().bounds().height();
+  let device_w = depth(0).findOne().bounds().width();
+  let device_h = depth(0).findOne().bounds().height();
   log(device_w + "*" + device_h);
   if (device.width == device_h && device.height == device_w) {
     fError(
@@ -2409,7 +2470,7 @@ function init_wh() {
 }
 
 // 尝试成功点击
-function real_click(obj) {
+function real_click(obj: UiObject) {
   for (let i = 1; i <= 3; i++) {
     if (obj.click()) {
       log("real click: true");
@@ -2467,7 +2528,7 @@ function real_click(obj) {
 // }
 
 // pushplus推送
-function send_pushplus(token, sign_list) {
+function send_pushplus(token: string, sign_list: string[]) {
   zongfen = "old" == jifen_flag
     ? text("成长总积分").findOne().parent().child(3).text()
     : text("成长总积分").findOne().parent().child(1).text();
@@ -2488,19 +2549,20 @@ function send_pushplus(token, sign_list) {
     }
   }
   for (let option of jifen_list.children()) {
+    let title, score, total
     if ("old" == jifen_flag) {
-      var title = option.child(0).child(0).text(),
-        score = option.child(2).text().match(/\d+/g)[0],
-        total = option.child(2).text().match(/\d+/g)[1];
+      title = option.child(0).child(0).text();
+      score = option.child(2).text().match(/\d+/g)![0];
+      total = option.child(2).text().match(/\d+/g)![1];
     } else {
       "new1" == jifen_flag
         ? ((title = option.child(0).text()),
           (score = option.child(3).child(0).text()),
-          (total = option.child(3).child(2).text().match(/\d+/g)[0]))
+          (total = option.child(3).child(2).text().match(/\d+/g)![0]))
         : "new2" == jifen_flag &&
         (title = option.child(0).text(),
-          score = option.child(3).text().match(/\d+/g)[0],
-          total = option.child(3).text().match(/\d+/g)[1]);
+          score = option.child(3).text().match(/\d+/g)![0],
+          total = option.child(3).text().match(/\d+/g)![1]);
     }
     "专项答题" == title && (total = 10);
     let percent = (Number(score) / Number(total) * 100).toFixed() + "%";
@@ -2544,10 +2606,10 @@ function send_pushplus(token, sign_list) {
 // }
 
 // 强行退出应用名称
-function exit_app(name) {
+function exit_app(name: string) {
   // fClear();
   fInfo("尝试结束" + name + "APP");
-  var packageName = getPackageName(name);
+  let packageName = getPackageName(name);
   if (!packageName) {
     if (getAppName(name)) {
       packageName = name;
@@ -2557,7 +2619,7 @@ function exit_app(name) {
   }
   log("打开应用设置界面");
   app.openAppSetting(packageName);
-  var appName = app.getAppName(packageName);
+  let appName = app.getAppName(packageName);
   //log(appName);
   log("等待加载界面");
   //textMatches(/应用信息|应用详情/).findOne(5000);
@@ -2596,8 +2658,8 @@ function exit_app(name) {
 }
 
 // 登录
-function login(username, pwd) {
-  var begin_obj = idMatches(/.*comm_head_xuexi_mine|.*btn_next/).findOne();
+function login(username: string, pwd: string) {
+  let begin_obj = idMatches(/.*comm_head_xuexi_mine|.*btn_next/).findOne();
   if (begin_obj.text() == "登录") {
     log("查找ab");
     let a = className("EditText").id("et_phone_input").findOne();
@@ -2620,9 +2682,9 @@ function login(username, pwd) {
   }
 }
 
-function refind_jifen() {
+function refind_jifen(): UiObject {
   className("android.webkit.WebView").scrollable().findOne().scrollForward();
-  var a = className("android.widget.ListView").filter(function (b) {
+  let a = className("android.widget.ListView").filter(function (b) {
     return 8 < b.rowCount();
   }).findOne();
   21 == a.depth()
@@ -2633,8 +2695,8 @@ function refind_jifen() {
   return a;
 }
 
-function entry_jifen_project(a) {
-  var b = "old" == jifen_flag ? 3 : 4;
+function entry_jifen_project(a: string) {
+  let b = "old" == jifen_flag ? 3 : 4;
   jifen_list.findOne(textEndsWith(a)).parent().child(b).click();
 }
 
@@ -2677,7 +2739,7 @@ function noverify() {
 /*******************悬浮窗*******************/
 function fInit() {
   // ScrollView下只能有一个子布局
-  var w = floaty.rawWindow(
+  let w = floaty.rawWindow(
     <card cardCornerRadius="8dp" alpha="0.8">
       <vertical>
         <horizontal bg="#FF000000" padding="10 5">
@@ -2720,13 +2782,13 @@ function fInit() {
   return w;
 }
 
-function fSet(id, txt) {
+function fSet(id: string, txt: string) {
   ui.run(function () {
     w.findView(id).setText(txt);
   });
 }
 
-function fInfo(str) {
+function fInfo(str: string) {
   ui.run(function () {
     let textView = ui.inflate(
       <text
@@ -2804,14 +2866,14 @@ function fRefocus() {
 }
 
 function xxqg(userinfo?: string[]) {
-  let sign_list: any = [];
+  let sign_list: string[] = [];
   fInfo("开始更新弹窗检测");
   let noupdate_thread = threads.start(function () {
     //在新线程执行的代码
     className("android.widget.Button").text("立即升级").waitFor();
     fInfo("检测到升级弹窗");
     sleep(1000);
-    var btn = className("android.widget.Button").text("取消").findOne();
+    let btn = className("android.widget.Button").text("取消").findOne();
     btn.click();
     fInfo("已取消升级");
   });
@@ -2822,7 +2884,7 @@ function xxqg(userinfo?: string[]) {
     className("android.widget.Button").text("去开启").waitFor();
     fInfo("检测到消息通知弹窗");
     sleep(1000);
-    var btn = className("android.widget.Button").text("取消").findOne();
+    let btn = className("android.widget.Button").text("取消").findOne();
     btn.click();
     fInfo("已取消消息通知");
   });
@@ -2873,12 +2935,12 @@ function xxqg(userinfo?: string[]) {
       "0" ==
       jifen_list.child(jifen_map["评论"]).child(2).text().match(
         /\d+/,
-      )[0]) ||
+      )![0]) ||
     ("new1" == jifen_flag &&
       "0" == jifen_list.child(jifen_map["评论"]).child(3).child(0).text()) ||
     ("new2" == jifen_flag &&
       "0" ==
-      jifen_list.child(jifen_map["评论"]).child(3).text().match(/\d+/)[0])
+      jifen_list.child(jifen_map["评论"]).child(3).text().match(/\d+/)![0])
   ) {
     toastLog("开始评论");
     do_pinglun();
@@ -2916,7 +2978,7 @@ function xxqg(userinfo?: string[]) {
         "0" ==
         jifen_list.child(jifen_map["趣味答题"]).child(2).text().match(
           /\d+/,
-        )[0]) ||
+        )![0]) ||
       ("new1" == jifen_flag &&
         "0" ==
         jifen_list.child(jifen_map["趣味答题"]).child(3).child(0).text()) ||
@@ -2924,7 +2986,7 @@ function xxqg(userinfo?: string[]) {
         "0" ==
         jifen_list.child(jifen_map["趣味答题"]).child(3).text().match(
           /\d+/,
-        )[0])
+        )![0])
     ) {
       // Your code here
     } else {
@@ -2938,7 +3000,7 @@ function xxqg(userinfo?: string[]) {
       if (text("随机匹配").exists() && text("开始对战").exists()) {
         if (true == shuangren) {
           toastLog("双人对战开始");
-          do_duizhan1(2);
+          do_duizhan(2);
           jifen_list = refind_jifen();
           return;
         }
@@ -2947,8 +3009,8 @@ function xxqg(userinfo?: string[]) {
       if (text("开始比赛").exists()) {
         if (true == shuangren) {
           toastLog("四人赛开始");
-          guaji && do_duizhan1(0);
-          do_duizhan1(4);
+          guaji && do_duizhan(0);
+          do_duizhan(4);
           jifen_list = refind_jifen();
           return;
         }
@@ -3020,14 +3082,14 @@ function xxqg(userinfo?: string[]) {
         "0" ==
         jifen_list.child(jifen_map["订阅"]).child(2).text().match(
           /\d+/,
-        )[0]) ||
+        )![0]) ||
       ("old" != jifen_flag &&
         "0" == jifen_list.child(jifen_map["订阅"]).child(3).child(0).text()) ||
       ("new1" == jifen_flag &&
         "0" == jifen_list.child(jifen_map["订阅"]).child(3).child(0).text()) ||
       ("new2" == jifen_flag &&
         "0" ==
-        jifen_list.child(jifen_map["订阅"]).child(3).text().match(/\d+/)[0])
+        jifen_list.child(jifen_map["订阅"]).child(3).text().match(/\d+/)![0])
     ) {
       toastLog("订阅开始");
       d = do_dingyue();
@@ -3069,18 +3131,20 @@ function xxqg(userinfo?: string[]) {
   log("mine:", b);
   b.click();
   log("等待设置按钮");
-  let e;
-  if (e = id("my_setting").findOne(3000)) {
+  let e = id("my_setting").findOne(3000);
+  if (e) {
     sleep(1000), log("点击设置按钮"), real_click(e);
   } else {
     swipe(device_w / 2, .8 * device_h, device_w / 2, .1 * device_h, 1000);
     fInfo("minebounds: " + b.bounds());
     sleep(6000);
     let c;
-    do e = random(b.bounds().centerX(), b.bounds().right),
-      c = b.bounds().centerY(),
-      fInfo("点击设置按钮: " + e + "," + c),
-      click(e, c); while (!id("setting_sign_out").findOne(1500));
+    do {
+      let e = random(b.bounds().centerX(), b.bounds().right);
+      c = b.bounds().centerY();
+      fInfo("点击设置按钮: " + e + "," + c);
+      click(e, c);
+    } while (!id("setting_sign_out").findOne(1500));
   }
   log("等待退出登录");
   b = id("setting_sign_out").findOne();
@@ -3133,7 +3197,7 @@ function main(userinfo?: string[]) {
 /*******************主程序部分*******************/
 
 // 分割账号
-var noverify_thread = noverify();
+let noverify_thread = noverify();
 let zhanghao_list = [];
 if (zhanghao) {
 

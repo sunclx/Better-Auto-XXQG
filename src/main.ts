@@ -19,7 +19,7 @@ let url_prefix = [
 
 start();
 
-function start() {
+function start(): void {
   // runMain();
   runUI();
 }
@@ -42,7 +42,7 @@ function start() {
 //   }
 // }
 
-function runUI() {
+function runUI(): void {
   try {
     if (UI) {
       engines.execScript("UI", UI);
@@ -83,7 +83,7 @@ function runUI() {
   }
 }
 
-function getScript(filename: string) {
+function getScript(filename: string): string {
   let script = "";
   for (let i = 0; i < url_prefix.length; i++) {
     try {
