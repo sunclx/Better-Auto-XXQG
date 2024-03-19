@@ -1,8 +1,8 @@
-# Better-Auto-XXQG
+# XXQG
 
-学习强国-强国助手：基于AutoX开发
+基于AutoX开发
 
-## `仅供本人学习Auto.js使用！切勿用于违法用途，否则开发者不承担任何责任。`
+## `仅供本人学习Autox.js使用！切勿用于违法用途，否则开发者不承担任何责任。`
 
 暂时没有精力自己写脚本、更新题库等，一般除非不能用了才会更新……
 
@@ -13,7 +13,3 @@
 1. 在线脚本：每次启动会在线请求最新的UI和脚本，实现热更新
 2. 本地PaddleOCR、Google ML kIT OCR支持
 3. ……
-
-## 在线脚本修改自
-
-[天天向上Pro](https://hamibot.com/marketplace/Qoi5x?invite=FSmgjKaLJKu9W0POm7PQfmvK)
