@@ -55,7 +55,7 @@ function runUI(): void {
       if (select) {
         let url_index = dialogs.singleChoice("请选择下载代理", url_prefix, 0);
         try {
-          let url = url_prefix[url_index] + "UI.js";
+          let url = url_prefix[url_index] + "dist/UI.js";
           console.log(url);
           let res = http.get(url);
           console.log("statusCode:" + res.statusCode);
