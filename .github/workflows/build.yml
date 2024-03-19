@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
       - uses: denoland/setup-deno@v1
         with:
-          eno-version: vx.x.x
+          deno-version: vx.x.x
       - name: Deno Build
         run: |
           deno task -A ./scripts/build.ts
