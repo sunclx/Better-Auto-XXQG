@@ -1459,7 +1459,7 @@ function getScript(choice) {
   let UI = "";
   for (let i = 0; i < url_prefix.length; i++) {
     try {
-      const res = http.get(url_prefix[i] + choice + ".js");
+      const res = http.get(url_prefix[i] +"dist/"+ choice + ".js");
       console.log(i, ":" + res.statusCode);
       if (res.statusCode == 200) {
         UI = res.body.string();
