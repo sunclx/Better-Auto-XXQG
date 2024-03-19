@@ -44,8 +44,6 @@ let broadcast = TTXS_PRO_CONFIG.get("broadcast", "江苏新闻广播");
 let platform = TTXS_PRO_CONFIG.get("platform", "江苏学习平台");
 let subcolumn = TTXS_PRO_CONFIG.get("subcolumn", "总书记在江苏");
 
-test = true;
-
 /********定义全局变量*********/
 let jifen_list: UiObject,
   meizhou_dao: boolean,
