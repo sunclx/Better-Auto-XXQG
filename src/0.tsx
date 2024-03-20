@@ -156,7 +156,7 @@ let storage = storages.create("songgedodo");
 // 脚本版本号
 // var last_version = "V12.0";
 // var engine_version = "V12.3";
-let newest_version = "V12.4";
+// let newest_version = "V12.4";
 // if (storage.get(engine_version, true)) {
 //   storage.remove(last_version);
 //   let gengxin_rows = "脚本有风险，仅供学习交流;更新内容：;1.原脚本会进入“我的”界面获取用户名，区分历史刷过文章，现取消此设定;2.可自定义滑动验证界面震动提醒时间;3.禁止截屏会随机选一个选项;4.自定义评论内容;脚本测试环境：强国V2.45.0;联系方式：tg: t.me/wyqg_ttxs;（点击取消不再提示）".split(";");
@@ -168,7 +168,7 @@ let newest_version = "V12.4";
 let w = fInit();
 // console.setTitle("天天向上");
 // console.show();
-fInfo("天天向上Pro" + newest_version + "脚本初始化");
+fInfo("天天向上Pro" + "脚本初始化");
 // 初始化宽高
 let [device_w, device_h] = init_wh();
 // log("fina:", device_w, device_h);
@@ -197,6 +197,7 @@ if (ocr_choice == 2) {
   }
 }
 // sleep(2000);
+
 // 自动允许权限进程
 threads.start(function () {
   //在新线程执行的代码
@@ -1275,21 +1276,26 @@ function do_duizhan(renshu: number) {
     let replace_sign: OcrReplace = "default_ocr_replace";
     let question_reg = new RegExp(update_info["question_reg"], "gi");
     let include_reg = new RegExp(update_info["include_reg"], "gi");
+    let que_key;
+    let get_key_replace = () => {
+      que_key = question_reg.exec(que_txt);
+      if (que_key) {
+        replace_sign = "other_ocr_replace";
+        return;
+      }
 
-    let que_key = question_reg.exec(que_txt);
-    if (que_key) {
-      replace_sign = "other_ocr_replace";
-    } else {
       que_key = (/读音|词形/g).exec(que_txt);
       if (que_key) {
         replace_sign = "accent_ocr_replace";
-      } else {
-        que_key = include_reg.exec(que_txt);
-        if (que_key) {
-          replace_sign = "include_ocr_replace";
-        }
+        return;
       }
-    }
+
+      que_key = include_reg.exec(que_txt);
+      if (que_key) {
+        replace_sign = "include_ocr_replace";
+      }
+    };
+    get_key_replace();
 
     // que_key = question_reg.exec(que_txt) || (/读音|词形/g).exec(que_txt) || include_reg.exec(que_txt)
 
@@ -1305,8 +1311,8 @@ function do_duizhan(renshu: number) {
     //     replace_sign = "include_ocr_replace";
     //     break;
     // }
-    console.log(que_key);
-    console.log(replace_sign);
+    // console.log(que_key);
+    // console.log(replace_sign);
 
     let ans_list = get_ans_by_tiku(que_txt);
     //log(ans_list);
@@ -1442,7 +1448,7 @@ function do_duizhan(renshu: number) {
     log("replace_sign:" + replace_sign);
     log("清洗前：" + allx_txt);
     let replace_d = update_info[replace_sign];
-    if (replace_sign == "include_ocr_replace") {
+    if (replace_sign == "include_ocr_replace" as OcrReplace) {
       let result = true;
       log("que_key:" + que_key);
       let [words, r, repl] = replace_d[que_key! as unknown as string];
@@ -2816,7 +2822,7 @@ function fInit() {
   );
   ui.run(function () {
     //w.title.setFocusable(true);
-    w.version.setText("天天向上+" + newest_version);
+    w.version.setText("天天向上+");
   });
   w.setSize(720, -2);
   w.setPosition(10, 10);
@@ -2912,7 +2918,7 @@ function xxqg(userinfo?: string[]) {
   fInfo("开始更新弹窗检测");
   let noupdate_thread = threads.start(function () {
     //在新线程执行的代码
-    className("android.widget.Button").text("立即升级").waitFor();
+    className("android.widget.Button").textContains("升级").waitFor();
     fInfo("检测到升级弹窗");
     sleep(1000);
     let btn = className("android.widget.Button").text("取消").findOne();
@@ -3244,25 +3250,26 @@ function main(userinfo?: string[]) {
 
 // 分割账号
 let noverify_thread = noverify();
-let zhanghao_list = [];
-if (zhanghao) {
-  for (let zh of zhanghao.split("\n")) {
-    let userinfo = zh.split(/:|：/);
-    zhanghao_list.push(userinfo);
-  }
-  // if (zhanghao_list.length > 3) {zhanghao_list.length = 3;}
-  //console.verbose(zhanghao_list);
-  for (let userinfo of zhanghao_list) {
-    console.verbose(userinfo);
-    main(userinfo);
-  }
-  fClear();
-  fInfo("登录回账号1");
-  console.verbose(zhanghao_list[0][0], zhanghao_list[0][1]);
-  login(zhanghao_list[0][0], zhanghao_list[0][1]);
-} else {
-  main();
-}
+// let zhanghao_list = [];
+// if (zhanghao) {
+//   for (let zh of zhanghao.split("\n")) {
+//     let userinfo = zh.split(/:|：/);
+//     zhanghao_list.push(userinfo);
+//   }
+//   // if (zhanghao_list.length > 3) {zhanghao_list.length = 3;}
+//   //console.verbose(zhanghao_list);
+//   for (let userinfo of zhanghao_list) {
+//     console.verbose(userinfo);
+//     main(userinfo);
+//   }
+//   fClear();
+//   fInfo("登录回账号1");
+//   console.verbose(zhanghao_list[0][0], zhanghao_list[0][1]);
+//   login(zhanghao_list[0][0], zhanghao_list[0][1]);
+// } else {
+//   main();
+// }
+main();
 if (noverify_thread.isAlive()) {
   noverify_thread.interrupt();
 }

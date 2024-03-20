@@ -6,12 +6,7 @@ importClass(java.io.File);
 importClass(java.io.FileOutputStream);
 importClass(android.graphics.Color);
 
-// var color = '#FF4FB3FF';
-let DB = storages.create("MAIN");
-let script: string | undefined = DB.get("script");
-
 ui.statusBarColor("#FF4FB3FF");
-
 ui.layout(
   <drawer id="drawer">
     <vertical>
@@ -24,7 +19,7 @@ ui.layout(
           <vertical>
             <vertical gravity="center" layout_weight="1">
               <card
-                visibility="gone"
+                // visibility="gone"
                 w="*"
                 h="70"
                 margin="10 5"
@@ -47,12 +42,23 @@ ui.layout(
                       maxLines="1"
                     />
                   </vertical>
-                  <spinner
+                  <input
+                    id="script_chosen"
+                    marginLeft="4"
+                    marginRight="6"
+                    text="dist/0.js"
+                    hint="文件名，带目录"
+                    textSize="13sp"
+                    inputType="text"
+                  />
+                  {
+                    /* <spinner
                     id="script_chosen"
                     marginLeft="4"
                     marginRight="6"
                     entries="天天向上Pro"
-                  />
+                  /> */
+                  }
                 </horizontal>
               </card>
               <card
@@ -937,8 +943,10 @@ ui.layout(
 // Ui.update.visibility = 8;
 
 http.__okhttp__.setTimeout(10000);
-
+// let color = '#FF4FB3FF';
 let GLOBAL_CONFIG = storages.create("GLOBAL_CONFIG");
+let script: string = GLOBAL_CONFIG.get("script");
+//let GLOBAL_CONFIG = storages.create("GLOBAL_CONFIG");
 let TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
 // let BAIDUAPI = storages.create('BAIDUAPI');
 // let execution = undefined;
@@ -947,7 +955,7 @@ Initialize();
 
 // 版本更新检查
 // var apkurl = "https://gh-proxy.com/https://github.com/sec-an/Better-Auto-XXQG/releases/download/v2.2.0/v2.2.0.apk";
-let latest_version = "2.2.0";
+// let latest_version = "2.2.0";
 // If (GLOBAL_CONFIG.get("NO_UPDATE", 0) && (app.versionName != latest_version)) {
 //     ui.update.visibility = 0;
 //     ui.update.setText("点击更新至最新版v" + latest_version);
@@ -970,6 +978,15 @@ let url_prefix = [
   `https://raw.cachefly.998111.xyz/${username}/${repo}/${branch}/`,
   `https://raw.githubusercontent.com/${username}/${repo}/${branch}/`,
 ];
+let comment_list = [
+  "全心全意为人民服务",
+  "不忘初心，牢记使命",
+  "不忘初心，方得始终",
+  "永远坚持党的领导",
+  "富强、民主、文明、和谐",
+  "自由，平等，公正，法治",
+];
+let comments = comment_list.join("|");
 
 // 创建选项菜单(右上角)
 interface Menu {
@@ -979,7 +996,7 @@ interface Menu {
 ui.emitter.on("create_options_menu", (menu: Menu) => {
   menu.add("日志");
   menu.add("关于");
-  menu.add("Github");
+  // menu.add("Github");
   // Menu.add("V2.33.0下载");
 });
 
@@ -997,11 +1014,11 @@ ui.emitter.on("options_item_selected", (e: Event, item: Item) => {
       app.startActivity("console");
       break;
     case "关于":
-      alert("关于", "强国助手 v" + latest_version);
+      alert("关于", "学习助手");
       break;
-    case "Github":
-      app.openUrl("https://github.com/sec-an/Better-Auto-XXQG");
-      break;
+      // case "Github":
+      //   app.openUrl("https://github.com/sec-an/Better-Auto-XXQG");
+      //   break;
       // Case "V2.33.0下载":
       //     app.openUrl("https://android-apps.pp.cn/fs08/2021/12/28/3/110_f37c420b0944cb7b9f60a2ad9b5518d2.apk?yingid=web_space&packageid=500730793&md5=664bb7bdcae57be189fc86100f4371c4&minSDK=21&size=191654161&shortMd5=1fee0bd160d08108a9d9e5f4773ce741&crc32=3879122865&did=ad484a175e19d0928044435e24bf03cb");
       //     break;
@@ -1016,37 +1033,36 @@ ui.viewpager.setTitles(["首页", "脚本配置", "详细设置"]);
 ui.tabs.setupWithViewPager(ui.viewpager);
 
 // 脚本选择监听
-
-let script_chosen_Listener = new android.widget.AdapterView
-  .OnItemSelectedListener({
-  onItemSelected: function (
-    _parent: object,
-    _view: object,
-    _position: number,
-    _id: number,
-  ) {
-    toastLog("选择脚本：" + ui.script_chosen.getSelectedItem());
-    ui.ttxs_pro.visibility = 0;
-    // If (ui.script_chosen.getSelectedItemPosition() == 0) {
-    //     ui.ttxs.visibility = 8;
-    //     ui.study.visibility = 8;
-    //     ui.ttxs_pro.visibility = 0;
-    // } else if (ui.script_chosen.getSelectedItemPosition() == 1) {
-    //     ui.ttxs_pro.visibility = 8;
-    //     ui.study.visibility = 8;
-    //     ui.ttxs.visibility = 0;
-    // } else if (ui.script_chosen.getSelectedItemPosition() == 2) {
-    //     ui.ttxs_pro.visibility = 8;
-    //     ui.ttxs.visibility = 8;
-    //     ui.study.visibility = 0;
-    // }
-    GLOBAL_CONFIG.put(
-      "script_chosen",
-      ui.script_chosen.getSelectedItemPosition(),
-    );
-  },
-});
-ui.script_chosen.setOnItemSelectedListener(script_chosen_Listener);
+// let script_chosen_Listener = new android.widget.AdapterView
+//   .OnItemSelectedListener({
+//   onItemSelected: function (
+//     _parent: object,
+//     _view: object,
+//     _position: number,
+//     _id: number,
+//   ) {
+//     toastLog("选择脚本：" + ui.script_chosen.getSelectedItem());
+//     ui.ttxs_pro.visibility = 0;
+//     // If (ui.script_chosen.getSelectedItemPosition() == 0) {
+//     //     ui.ttxs.visibility = 8;
+//     //     ui.study.visibility = 8;
+//     //     ui.ttxs_pro.visibility = 0;
+//     // } else if (ui.script_chosen.getSelectedItemPosition() == 1) {
+//     //     ui.ttxs_pro.visibility = 8;
+//     //     ui.study.visibility = 8;
+//     //     ui.ttxs.visibility = 0;
+//     // } else if (ui.script_chosen.getSelectedItemPosition() == 2) {
+//     //     ui.ttxs_pro.visibility = 8;
+//     //     ui.ttxs.visibility = 8;
+//     //     ui.study.visibility = 0;
+//     // }
+//     GLOBAL_CONFIG.put(
+//       "script_chosen",
+//       ui.script_chosen.getSelectedItemPosition(),
+//     );
+//   },
+// });
+// ui.script_chosen.setOnItemSelectedListener(script_chosen_Listener);
 
 // 用户勾选无障碍服务的选项时，跳转到页面让用户去开启
 // android.permission.SYSTEM_ALERT_WINDOW
@@ -1103,32 +1119,43 @@ ui.start.click(function () {
   }
   thread = threads.start(function () {
     console.log("点击开始按钮");
-    if (script) {
-      engines.execScript("强国助手", script);
-    }
+    let script_name: string = GLOBAL_CONFIG.get("script_name", "dist/0.js");
+    script = script || getScriptA(script_name);
+    engines.execScript("强国助手", script);
   });
 });
+
 ui.update.click(function () {
   threads.start(function () {
-    script = getScriptA("dist/0.js");
-    DB.put("script", script);
+    let script_name: string = GLOBAL_CONFIG.get("script_name", "dist/0.js");
+    script = getScriptA(script_name);
+    GLOBAL_CONFIG.put("script", script);
     let main = getScriptA("dist/main.js");
-    DB.put("main", main);
+    GLOBAL_CONFIG.put("main", main);
     let UI = getScriptA("dist/UI.js");
-    DB.put("UI", UI);
+    GLOBAL_CONFIG.put("UI", UI);
     console.log("更新成功");
   });
 });
+
 ui.update.on("long_click", () => {
   threads.start(function () {
     let url_index = dialogs.singleChoice("请选择下载代理", url_prefix, 0);
-    let url = url_prefix[url_index] + "dist/";
-    script = getScript(url + "0.js");
-    DB.put("script", script);
-    let main = getScript(url + "main.js");
-    DB.put("main", main);
-    let UI = getScript(url + "UI.js");
-    DB.put("UI", UI);
+    let script_name: string = GLOBAL_CONFIG.get("script_name", "dist/0.js");
+    let url = url_prefix[url_index];
+    let result = getScript(url + script_name);
+    if (!result) throw new Error("update: 脚本更新失败");
+    script = result;
+    GLOBAL_CONFIG.put("script", script);
+
+    let main = getScript(url + "dist/main.js");
+    if (!main) throw new Error("update: 脚本更新失败");
+    GLOBAL_CONFIG.put("main", main);
+
+    let UI = getScript(url + "dist/UI.js");
+    if (!UI) throw new Error("update: 脚本更新失败");
+    GLOBAL_CONFIG.put("UI", UI);
+
     console.log("更新成功");
   });
 });
@@ -1147,6 +1174,7 @@ ui.update.on("long_click", () => {
 
 // 保存天天向上pro脚本设置
 function saveSettings() {
+  GLOBAL_CONFIG.put("script_chosen", ui.script_chosen.getText() + "");
   TTXS_PRO_CONFIG.put("test", ui.ttxs_pro_test.isChecked());
   TTXS_PRO_CONFIG.put("watchdog", ui.ttxs_pro_watchdog.getText() + "");
   TTXS_PRO_CONFIG.put("slide_verify", ui.ttxs_pro_slide_verify.getText() + "");
@@ -1201,6 +1229,9 @@ ui.ttxs_pro_save2.click(saveSettings);
 
 // 重置天天向上pro脚本设置
 function resetSettings() {
+  GLOBAL_CONFIG.put("script_chosen", ui.script_chosen.getText() + "");
+  ui.script_chosen.setText(GLOBAL_CONFIG.get("script_chosen"));
+
   TTXS_PRO_CONFIG.put("test", false);
   ui.ttxs_pro_ddtong.setChecked(TTXS_PRO_CONFIG.get("test"));
   TTXS_PRO_CONFIG.put("watchdog", "1800");
@@ -1215,10 +1246,7 @@ function resetSettings() {
   ui.ttxs_pro_is_exit.setChecked(TTXS_PRO_CONFIG.get("is_exit"));
   TTXS_PRO_CONFIG.put("pinglun", true);
   ui.ttxs_pro_pinglun.setChecked(TTXS_PRO_CONFIG.get("pinglun"));
-  TTXS_PRO_CONFIG.put(
-    "comment",
-    "全心全意为人民服务|不忘初心，牢记使命|不忘初心，方得始终|永远坚持党的领导|富强、民主、文明、和谐|自由，平等，公正，法治",
-  );
+  TTXS_PRO_CONFIG.put("comment", comments);
   ui.ttxs_pro_comment.setText(TTXS_PRO_CONFIG.get("comment"));
   TTXS_PRO_CONFIG.put("shipin", true);
   ui.ttxs_pro_shipin.setChecked(TTXS_PRO_CONFIG.get("shipin"));
@@ -1281,7 +1309,9 @@ ui.ttxs_pro_reset2.click(resetSettings);
 
 // 读取脚本设置
 function Initialize() {
-  ui.script_chosen.setSelection(GLOBAL_CONFIG.get("script_chosen", 0));
+  // ui.script_chosen.setSelection(GLOBAL_CONFIG.get("script_chosen", 0));
+  //GLOBAL_CONFIG.put("script_chosen", ui.script_chosen.getText() + "");
+  ui.script_chosen.setText(GLOBAL_CONFIG.get("script_chosen", "dist/0.js"));
 
   ui.ttxs_pro_test.setChecked(TTXS_PRO_CONFIG.get("test", false));
   ui.ttxs_pro_watchdog.setText(TTXS_PRO_CONFIG.get("watchdog", "1800"));
@@ -1290,12 +1320,7 @@ function Initialize() {
   ui.ttxs_pro_ddtong.setChecked(TTXS_PRO_CONFIG.get("ddtong", false));
   ui.ttxs_pro_is_exit.setChecked(TTXS_PRO_CONFIG.get("is_exit", true));
   ui.ttxs_pro_pinglun.setChecked(TTXS_PRO_CONFIG.get("pinglun", true));
-  ui.ttxs_pro_comment.setText(
-    TTXS_PRO_CONFIG.get(
-      "comment",
-      "全心全意为人民服务|不忘初心，牢记使命|不忘初心，方得始终|永远坚持党的领导|富强、民主、文明、和谐|自由，平等，公正，法治",
-    ),
-  );
+  ui.ttxs_pro_comment.setText(TTXS_PRO_CONFIG.get("comment", comments));
   ui.ttxs_pro_shipin.setChecked(TTXS_PRO_CONFIG.get("shipin", true));
   ui.ttxs_pro_wenzhang.setChecked(TTXS_PRO_CONFIG.get("wenzhang", true));
   ui.ttxs_pro_meiri.setChecked(TTXS_PRO_CONFIG.get("meiri", true));
@@ -1329,6 +1354,20 @@ function Initialize() {
   );
 }
 
+let districts = {
+  "江苏": {
+    district: "江苏",
+    broadcast: "江苏新闻广播",
+    platform: "江苏学习平台",
+    subcolumn: "总书记在江苏",
+  },
+  "北京": {
+    district: "北京",
+    broadcast: "北京新闻广播",
+    platform: "北京学习平台",
+    subcolumn: "新思想扎根京华",
+  },
+};
 ui.ttxs_pro_district_select.setOnItemSelectedListener(
   new android.widget.AdapterView.OnItemSelectedListener({
     onItemSelected: function (
@@ -1337,20 +1376,6 @@ ui.ttxs_pro_district_select.setOnItemSelectedListener(
       _position: object,
       id: number,
     ) {
-      let districts = {
-        "江苏": {
-          district: "江苏",
-          broadcast: "江苏新闻广播",
-          platform: "江苏学习平台",
-          subcolumn: "总书记在江苏",
-        },
-        "北京": {
-          district: "北京",
-          broadcast: "北京新闻广播",
-          platform: "北京学习平台",
-          subcolumn: "新思想扎根京华",
-        },
-      };
       switch (id) {
         case 0:
           ui.ttxs_pro_district.setText(districts["江苏"].district);
@@ -1485,7 +1510,7 @@ ui.ttxs_pro_district_select.setOnItemSelectedListener(
 // }
 
 function getScriptA(filename: string): string {
-  let script = "";
+  let script;
   for (let i = 0; i < url_prefix.length; i++) {
     let url = url_prefix[i] + filename;
     script = getScript(url);
@@ -1493,7 +1518,8 @@ function getScriptA(filename: string): string {
       return script;
     }
   }
-  return script;
+  // console.log("getScriptA: 文件下载失败,script为空", `filename:${filename}`);
+  throw new Error(`getScriptA: 文件下载失败,script为空,filename:${filename}`);
 }
 
 function getScript(url: string): string {
@@ -1513,10 +1539,10 @@ function getScript(url: string): string {
   return "";
 }
 
-thread = threads.start(function () {
-  //在新线程执行的代码
-  if (!script) {
-    script = getScriptA("dist/0.js");
-    DB.put("script", script);
-  }
-});
+// thread = threads.start(function () {
+//   //在新线程执行的代码
+//   if (!script) {
+//     script = getScriptA("dist/0.js");
+//     GLOBAL_CONFIG.put("script", script);
+//   }
+// });

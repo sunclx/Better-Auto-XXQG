@@ -1,8 +1,8 @@
 console.clear();
 http.__okhttp__.setTimeout(10000);
 
-let DB = storages.create("MAIN");
-let UI: string = DB.get("UI");
+let GLOBAL_CONFIG = storages.create("GLOBAL_CONFIG");
+let UI: string = GLOBAL_CONFIG.get("UI");
 // let main: string = DB.get("main");
 let username = "sunclx";
 let repo = "XXQG";
@@ -76,7 +76,7 @@ function runUI(): void {
       engines.execScript("UI", UI);
     } else {
       UI = getScriptA("dist/UI.js");
-      DB.put("UI", UI);
+      GLOBAL_CONFIG.put("UI", UI);
       runUI();
     }
   } catch (error) {
@@ -90,7 +90,7 @@ function runUI(): void {
         let script = getScript(url);
         if (script) {
           UI = script;
-          DB.put("UI", UI);
+          GLOBAL_CONFIG.put("UI", UI);
           runUI();
         } else {
           console.log("重新运行UI脚本");
@@ -100,7 +100,7 @@ function runUI(): void {
         let script = getScriptA("dist/UI.js");
         if (script) {
           UI = script;
-          DB.put("UI", UI);
+          GLOBAL_CONFIG.put("UI", UI);
           runUI();
         } else {
           console.log("重新运行UI脚本");
@@ -114,7 +114,7 @@ function runUI(): void {
 }
 
 function getScriptA(filename: string): string {
-  let script = "";
+  let script;
   for (let i = 0; i < url_prefix.length; i++) {
     let url = url_prefix[i] + filename;
     script = getScript(url);
@@ -122,22 +122,23 @@ function getScriptA(filename: string): string {
       return script;
     }
   }
-  return script;
+  // console.log("getScriptA: 文件下载失败,script为空", `filename:${filename}`);
+  throw new Error(`getScriptA: 文件下载失败,script为空,filename:${filename}`);
 }
 
 function getScript(url: string): string {
   try {
-    console.log("url:" + url);
+    console.log("getScript: url:" + url);
     let res = http.get(url);
-    console.log("statusCode:" + res.statusCode);
+    console.log("getScript: statusCode:" + res.statusCode);
     if (res.statusCode == 200) {
-      console.log("学习脚本:地址" + url + "下载成功");
+      console.log("getScript:学习脚本" + url + "下载成功");
       return res.body.string();
     } else {
-      console.log("学习脚本:地址" + url + "下载失败");
+      console.log("getScript:学习脚本" + url + "下载失败");
     }
   } catch (error) {
-    console.error(error);
+    console.error("getScript: ", error);
   }
   return "";
 }

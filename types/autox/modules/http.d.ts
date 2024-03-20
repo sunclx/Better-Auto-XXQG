@@ -64,5 +64,7 @@ declare namespace http {
   ): void;
 
   //chenlixin
-  let __okhttp__: any;
+  namespace __okhttp__ {
+    function setTimeout(time: number): void;
+  }
 }
