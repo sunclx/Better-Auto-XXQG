@@ -1,4 +1,4 @@
-name: sync
+name: deno-build
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
       - name: Deno Build
         run: |
           deno fmt
-          deno task build
+          deno task minify
           git config --local user.email "sunclx@gmail.com"
           git config --local user.name "sunclx"
           if [ -n "$(git status -s)" ];then

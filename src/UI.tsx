@@ -664,7 +664,11 @@ ui.layout(
                   />
                 </vertical>
               </horizontal>
-              <horizontal gravity="center_vertical" padding="5 5">
+              <horizontal
+                gravity="center_vertical"
+                padding="5 5"
+                visibility="gone"
+              >
                 <View bg="#00BFFF" h="*" w="10"></View>
                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                   <text
@@ -736,7 +740,11 @@ ui.layout(
                   inputType="number"
                 />
               </horizontal>
-              <horizontal gravity="center_vertical" padding="5 5">
+              <horizontal
+                gravity="center_vertical"
+                padding="5 5"
+                visibility="gone"
+              >
                 <View bg="#00BFFF" h="*" w="10"></View>
                 <vertical padding="10 8" h="auto" w="0" layout_weight="1">
                   <text
@@ -913,7 +921,118 @@ ui.layout(
                   </vertical>
                 </vertical>
               </horizontal>
-
+              <horizontal gravity="center_vertical" padding="5 5">
+                <View bg="#00BFFF" h="*" w="10"></View>
+                <vertical layout_weight="1">
+                  <vertical padding="10 8">
+                    <text
+                      w="auto"
+                      textColor="#222222"
+                      textSize="15sp"
+                      text="脚本名称"
+                    />
+                    <text
+                      w="auto"
+                      textColor="#999999"
+                      textSize="12sp"
+                      text="设置脚本名称，包括目录名，不包含'/'前缀"
+                    />
+                  </vertical>
+                  <horizontal gravity="center_vertical">
+                    <vertical padding="10 8" h="auto" w="0" layout_weight="1">
+                      <text
+                        w="auto"
+                        textColor="#222222"
+                        textSize="15sp"
+                        text="main脚本"
+                      />
+                      <text
+                        w="auto"
+                        textColor="#999999"
+                        textSize="12sp"
+                        text="脚本名称"
+                      />
+                      <text
+                        w="auto"
+                        textColor="#999999"
+                        textSize="12sp"
+                        text="包括目录、后缀"
+                      />
+                    </vertical>
+                    <input
+                      id="ttxs_pro_main"
+                      marginLeft="4"
+                      marginRight="6"
+                      text="dist/main.js"
+                      hint="脚本名称"
+                      textSize="13sp"
+                      inputType="text"
+                    />
+                  </horizontal>
+                  <horizontal gravity="center_vertical">
+                    <vertical padding="10 8" h="auto" w="0" layout_weight="1">
+                      <text
+                        w="auto"
+                        textColor="#222222"
+                        textSize="15sp"
+                        text="UI脚本"
+                      />
+                      <text
+                        w="auto"
+                        textColor="#999999"
+                        textSize="12sp"
+                        text="脚本名称"
+                      />
+                      <text
+                        w="auto"
+                        textColor="#999999"
+                        textSize="12sp"
+                        text="包括目录、后缀"
+                      />
+                    </vertical>
+                    <input
+                      id="ttxs_pro_ui"
+                      marginLeft="4"
+                      marginRight="6"
+                      text="dist/ui.js"
+                      hint="脚本名称"
+                      textSize="13sp"
+                      inputType="text"
+                    />
+                  </horizontal>
+                  <horizontal>
+                    <vertical padding="10 8" h="auto" w="0" layout_weight="1">
+                      <text
+                        w="auto"
+                        textColor="#222222"
+                        textSize="15sp"
+                        text="script脚本"
+                      />
+                      <text
+                        w="auto"
+                        textColor="#999999"
+                        textSize="12sp"
+                        text="脚本名称"
+                      />
+                      <text
+                        w="auto"
+                        textColor="#999999"
+                        textSize="12sp"
+                        text="包括目录、后缀"
+                      />
+                    </vertical>
+                    <input
+                      id="ttxs_pro_script"
+                      marginLeft="4"
+                      marginRight="6"
+                      text="dist/0.js"
+                      hint="脚本名称"
+                      textSize="13sp"
+                      inputType="text"
+                    />
+                  </horizontal>
+                </vertical>
+              </horizontal>
               <horizontal>
                 <button
                   style="Widget.AppCompat.Button.Colored"
@@ -928,6 +1047,15 @@ ui.layout(
                   style="Widget.AppCompat.Button.Colored"
                   id="ttxs_pro_reset2"
                   text="恢复默认"
+                  padding="12dp"
+                  w="*"
+                />
+              </horizontal>
+              <horizontal>
+                <button
+                  style="Widget.AppCompat.Button.Colored"
+                  id="ttxs_pro_clear"
+                  text="清除脚本缓存"
                   padding="12dp"
                   w="*"
                 />
@@ -951,7 +1079,6 @@ let TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
 // let BAIDUAPI = storages.create('BAIDUAPI');
 // let execution = undefined;
 let thread: threads.Thread | null = null;
-Initialize();
 
 // 版本更新检查
 // var apkurl = "https://gh-proxy.com/https://github.com/sec-an/Better-Auto-XXQG/releases/download/v2.2.0/v2.2.0.apk";
@@ -987,6 +1114,9 @@ let comment_list = [
   "自由，平等，公正，法治",
 ];
 let comments = comment_list.join("|");
+// console.log(comments);
+
+Initialize();
 
 // 创建选项菜单(右上角)
 interface Menu {
@@ -1172,6 +1302,15 @@ ui.update.on("long_click", () => {
 //   });
 // });
 
+ui.ttxs_pro_clear.click(function () {
+  threads.start(function () {
+    GLOBAL_CONFIG.put("script", "");
+    GLOBAL_CONFIG.put("main", "");
+    GLOBAL_CONFIG.put("UI", "");
+    console.log("脚本缓存已清除");
+  });
+});
+
 // 保存天天向上pro脚本设置
 function saveSettings() {
   GLOBAL_CONFIG.put("script_chosen", ui.script_chosen.getText() + "");
@@ -1229,7 +1368,7 @@ ui.ttxs_pro_save2.click(saveSettings);
 
 // 重置天天向上pro脚本设置
 function resetSettings() {
-  GLOBAL_CONFIG.put("script_chosen", ui.script_chosen.getText() + "");
+  GLOBAL_CONFIG.put("script_chosen", "dist/0.js");
   ui.script_chosen.setText(GLOBAL_CONFIG.get("script_chosen"));
 
   TTXS_PRO_CONFIG.put("test", false);
@@ -1524,14 +1663,14 @@ function getScriptA(filename: string): string {
 
 function getScript(url: string): string {
   try {
-    console.log("url:" + url);
+    // console.log("url:" + url);
     let res = http.get(url);
     console.log("statusCode:" + res.statusCode);
     if (res.statusCode == 200) {
-      console.log("学习脚本:地址" + url + "下载成功");
+      console.log("脚本: " + url + "下载成功");
       return res.body.string();
     } else {
-      console.log("学习脚本:地址" + url + "下载失败");
+      console.log("脚本: " + url + "下载失败");
     }
   } catch (error) {
     console.error(error);

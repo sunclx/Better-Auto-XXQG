@@ -1,9 +1,9 @@
 import * as esbuild from "https://deno.land/x/esbuild@v0.20.1/mod.js";
 import { denoPlugins } from "https://deno.land/x/esbuild_deno_loader@0.9.0/mod.ts";
 
-const result = await esbuild.build({
+await esbuild.build({
   plugins: [...denoPlugins()],
-  entryPoints: ["./src/0.jsx", "./src/UI.jsx", "./src/main.js"],
+  entryPoints: ["./src/0.tsx", "./src/UI.tsx", "./src/main.ts"],
   outdir: "./dist",
   bundle: true,
   platform: "node",
@@ -12,11 +12,11 @@ const result = await esbuild.build({
     ".js": "jsx",
   },
   jsx: "preserve",
-  // minify: true,
+  minify: true,
   target: ["ES6"],
 });
 
 // await result.watch();
 // console.log("watching...");
-console.log(result.outputFiles);
+// console.log(result.outputFiles);
 esbuild.stop();
