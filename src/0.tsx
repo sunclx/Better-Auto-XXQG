@@ -64,20 +64,29 @@ let jifen_map = {
 };
 let jifen_flag = "old";
 
+/**
+ * 使用Google ML Kit进行文字识别，并对识别结果进行排序。
+ * @param {Image} img - 需要进行文字识别的图片对象。
+ * @returns {object[]} 返回排序后的文字识别结果列表。
+ */
 function google_ocr_api(img: Image) {
   console.log("GoogleMLKit文字识别中");
+  // 调用Google ML Kit的OCR功能进行文字识别，限制结果数量为3
   let list = JSON.parse(
     JSON.stringify(
       (gmlkit.ocr(img, "zh") as { toArray(n: number): object }).toArray(3),
     ),
   ); // 识别文字，并得到results
-  let eps = 30; // 坐标误差
-  for (let i = 0; i < list.length; i++) { // 选择排序对上下排序,复杂度O(N²)但一般list的长度较短只需几十次运算
-    for (let j = i + 1; j < list.length; j++) {
+  let eps = 30; // 定义坐标误差，用于后续排序时考虑坐标的近似值
+
+  // 对识别结果进行上下位置的排序，采用选择排序算法
+  for (let i = 0; i < list.length; i++) { // 遍历列表进行排序
+    for (let j = i + 1; j < list.length; j++) { // 选择排序，比较并交换位置
+      // 如果当前元素的底部坐标大于比较元素的底部坐标，则交换两者位置
       if (list[i]["bounds"]["bottom"] > list[j]["bounds"]["bottom"]) {
-        let tmp = list[i];
-        list[i] = list[j];
-        list[j] = tmp;
+        let tmp = list[i]; // 临时存储当前元素
+        list[i] = list[j]; // 交换位置
+        list[j] = tmp; // 完成交换
       }
     }
   }
@@ -337,24 +346,36 @@ sleep(2000);
  * **********************************
 *************************************/
 
+/**
+ * 执行评论操作
+ * @returns {boolean} 返回操作是否成功
+ */
 function do_pinglun() {
+  // 进入发表观点项目
   entry_jifen_project("发表观点");
+  // 设置标题
   fSet("title", "评论…");
+  // 清除操作
   fClear();
+  // 等待页面加载
   sleep(1000);
+  // 滑动屏幕到评论区域
   swipe(device_w / 2, device_h * 0.7, device_w / 2, device_h * 0.4, 1000);
+  // 定位到评论卡片
   id("general_card_title_id").findOne().parent().parent();
+  // 输出尝试点击的标题
   fInfo("尝试点击title:" + id("general_card_title_id").findOne().text());
-  //   //log("文章click:", wen_box.click());
-  //   while (!id("general_card_title_id").findOne().parent().parent().click()) {log("文章click: false");}
-  //   log("文章click: true");
+  // 真实点击操作
   real_click(id("general_card_title_id").findOne().parent().parent());
+  // 等待内容加载
   log("等待加载");
   idContains("image-text-content").waitFor();
+  // 定位到评论输入框
   let text_edit = text("欢迎发表你的观点");
   log("查找评论框");
   text_edit.waitFor();
   sleep(1500);
+  // 点击评论输入框进行评论
   while (text_edit.exists()) {
     let pinglun_edit = text_edit.findOne(500);
     fInfo("尝试点击评论框中");
@@ -363,68 +384,81 @@ function do_pinglun() {
     fRefocus();
   }
   fInfo("评论框click: true");
+  // 选择评论内容
   let content_list = comment.split("|");
   log("评论列表：", content_list);
   let comment_content = content_list[random(0, content_list.length - 1)];
+  // 如果评论内容为空，则设置默认评论
   comment_content ||
     (fTips('评论内容不可设置为空，已重置为"不忘初心，牢记使命"'),
       comment_content = "不忘初心，牢记使命");
+  // 输入评论内容
   classNameEndsWith("EditText").findOne().setText(comment_content);
   sleep(1000);
+  // 发布评论
   text("发布").findOne().click();
   sleep(1000);
+  // 删除评论
   text("删除").findOne().click();
   sleep(1000);
+  // 确认删除
   text("确认").findOne().click();
   sleep(1000);
-  //   // 下面是分享
-  //   for (let i=0; i<2; i++) {
-  //     text_edit.findOne().parent().child(3).click();
-  //     sleep(500);
-  //     textContains("学习强国").findOne().parent().click();
-  //     sleep(500);
-  //     text("创建新的聊天").waitFor();
-  //     sleep(1000);
-  //     back();
-  //     sleep(1000);
-  //   }
-  // 回到首页
+  // 返回首页
   back();
   // 返回积分页
   jifen_init();
+  // 随机等待时间
   ran_sleep();
   return true;
 }
-
 /********时长部分*********/
+
+/**
+ * 执行视频学习任务
+ * @returns {boolean} 返回操作是否成功
+ */
 function do_shipin() {
+  // 进入积分项目
   entry_jifen_project("视听学习");
+  // 点击视频学习入口
   jifen_list.child(jifen_map["视频"]).child(3).click();
+  // 根据是否使用dd通设置标题
   if (ddtong) {
     fSet("title", "视听(dd通)…");
   } else {
     fSet("title", "视听学习…");
   }
+  // 清除日志
   fClear();
+  // 点击百灵按钮
   desc("百灵").findOne().click();
   sleep(1000);
+  // 检测温馨提示弹窗并关闭
   fInfo("检测温馨提示弹窗");
   if (text("温馨提示").findOne(1500)) {
     text("关闭").findOne().click();
     fInfo("检测到温馨提示并已关闭");
   }
+  // 再次点击百灵按钮
   desc("百灵").findOne().click();
+  // 定位到竖屏标志
   let shu = text("竖").findOne();
   sleep(1500);
-  // 定位到整个百灵frame_box
+  // 定位到百灵视频列表的frame_box
   let frame_box = shu.parent().parent().parent().parent();
+  // 等待视频时长信息出现
   textMatches(/\d{2}:\d{2}/).waitFor();
+  // 定位到视频列表
   let video_list = frame_box.findOne(className("android.widget.ListView"));
+  // 尝试点击第一个视频，如果失败则尝试点击视频标题
   video_list.child(1).child(1).child(0).click() ||
     fInfo(
       "尝试再次点击" + video_list.child(1).child(1).child(0).child(0).click(),
     );
+  // 等待分享按钮出现，表示视频已经开始播放
   text("分享").waitFor();
+  // 检测并关闭引导遮罩
   if (idContains("guide_view").findOne(1500)) {
     fInfo("检测到引导遮罩");
     sleep(1000);
@@ -433,45 +467,60 @@ function do_shipin() {
     click(device_w / 2, device_h / 4);
   }
   sleep(800);
-  //log(text("刷新重试").exists());
+  // 检测流量提醒并点击继续播放
   textMatches(/刷新重试|继续播放/).exists() &&
     (fInfo("检测到流量提醒"),
       textMatches(/刷新重试|继续播放/).findOne().click());
+  // 随机等待一段时间
   sleep(random(8000, 9500));
+  // 根据是否使用dd通设置重复次数
   let re_times = 6;
   if (ddtong) {
     re_times += 6;
   }
+  // 循环点击屏幕并滑动，模拟用户观看视频
   for (let i = 0; i < re_times; i++) {
     click(device_w / 2, device_h / 2);
     sleep(500);
     swipe(device_w / 2, device_h * 0.8, device_w / 2, device_h * 0.1, 1000);
     sleep(random(8000, 9500));
   }
+  // 返回上一页
   back();
   fInfo("视频个数已刷完");
   // 返回积分页
   jifen_init();
+  // 随机等待
   ran_sleep();
   return true;
 }
 
+/**
+ * 执行文章阅读任务
+ * @returns {boolean} 返回操作是否成功
+ */
 function do_wenzhang() {
-  //   jifen_list = refind_jifen();
-  // 点击进入本地
+  // 获取存储的已读文章列表
   let old_wen: string[] = storage_user.get("old_wen_list", []);
+  // 进入本地频道
   entry_jifen_project("本地频道");
+  // 根据是否使用dd通设置标题
   if (ddtong) {
     fSet("title", "文章(dd通)…");
   } else {
     fSet("title", "选读文章…");
   }
+  // 清除屏幕
   fClear();
+  // 打印切换地区信息
   fInfo(`切换地区为${district}`);
+  // 等待切换地区按钮出现
   text("切换地区").findOne(3000);
+  // 如果存在立即切换按钮，则点击取消
   if (text("立即切换").exists()) {
     text("取消").findOne(3000).click();
   }
+  // 执行切换地区操作
   log("切换地区");
   text("切换地区").findOne().click();
   log(`查找地区${district}`);
@@ -480,10 +529,10 @@ function do_wenzhang() {
   log(`切换地区${district}`);
   text(`${district}`).findOne().parent().parent().click();
   log("查找banner");
-  //let banner = className("android.support.v7.widget.RecyclerView").findOne();
+  // 查找新闻广播栏目
   let banner = classNameContains("RecyclerView").findOne();
   fInfo(`查找新闻广播${broadcast}`);
-  //fRefocus();
+  // 滚动查找指定的广播
   while (
     banner.findOne(
       text(`${broadcast}`).boundsInside(0, 0, device_w, device_h),
@@ -493,17 +542,20 @@ function do_wenzhang() {
     sleep(500);
   }
   let last_obj = banner.findOne(text(`${broadcast}`));
-  //   fInfo("点击北京新闻广播", text("北京新闻广播").findOne().parent().click());
+  // 点击找到的广播
   fInfo(`点击新闻广播${broadcast}：` + last_obj.parent().click());
+  // 等待广播播放时长
   fInfo("视听广播时长");
   sleep(11500);
+  // 返回上一级
   back();
+  // 清除屏幕
   fClear();
-  // 下面正式刷文章
+  // 开始刷文章
   fInfo("开始文章");
   sleep(1500);
   banner = classNameContains("RecyclerView").findOne();
-  //log(banner);
+  // 滚动查找指定的学习平台
   while (
     banner.findOne(
       text(`${platform}`).boundsInside(0, 0, device_w, device_h),
@@ -515,26 +567,27 @@ function do_wenzhang() {
   sleep(1000);
   fInfo(`查找学习平台${platform}，尝试点击`);
   let first_obj = banner.findOne(text(`${platform}`));
-  //   while (!text("北京学习平台").findOne().parent().click()) {log("click: false");}
-  //   log("click: true");
-  //   real_click(text("北京学习平台").findOne().parent());
+  // 点击找到的学习平台
   real_click(first_obj.parent());
   log("等待加载");
   sleep(1000);
+  // 等待子栏目出现
   text(`${subcolumn}`).waitFor();
   sleep(1000);
+  // 获取子栏目的位置
   let swipe_y =
     text(`${subcolumn}`).findOne().parent().parent().bounds().bottom;
   log("识别出顶部：", swipe_y);
+  // 重新聚焦
   fRefocus();
+  // 查找文章列表
   let listview = className("android.widget.ListView").depth(17).findOne();
-  // 先判断是否有可刷文章，没有则停止脚本
-  // while (!id("general_card_image_id").findOne(1000)) {listview.scrollForward();}
+  // 滚动列表预加载文章
   for (let i = 0; i < 2; i++) {
     listview.scrollForward();
     sleep(500);
   }
-  // 自定义没有刷过的文章筛选器
+  // 定义文章筛选器，排除已读和专题文章
   let wen_box_slt = className("android.view.ViewGroup").depth(20).filter(
     function (l: UiObject) {
       let title = l.findOne(idContains("general_card_title_id"));
@@ -548,59 +601,59 @@ function do_wenzhang() {
     },
   );
   log("查找文章");
-  //while (!idContains("general_card_image_id").findOne(500)) {
+  // 滚动查找未读文章
   while (!wen_box_slt.findOne(500)) {
     listview.scrollForward();
-    //sleep(500);
   }
   log("找到文章");
-  // 下面那句会定位到新思想的文章，不能加载过新思想
   let wen_box = wen_box_slt.findOne();
-  // 先做5次
+  // 初始化文章阅读次数
   let wen_num = 0;
   let re_times = 6;
   if (ddtong) {
     re_times += 6;
   }
+  // 循环阅读文章
   while (true) {
     let title = wen_box.findOne(idContains("general_card_title_id")).text();
     old_wen.push(title);
+    // 保持文章列表在100篇以内
     if (old_wen.length > 100) {
       old_wen.shift();
     }
+    // 清除屏幕
     fClear();
     fInfo("点击文章：" + title);
-    //wen_box.click();
     let title_click = wen_box.parent().parent().click();
     fInfo("点击：" + title_click);
+    // 等待文章内容加载
     classNameContains("com.uc.webview.export").waitFor();
     fInfo("查找webview");
     let father_view = className("android.webkit.WebView").findOne(9000);
     sleep(1000);
-    //     let father_view = className("android.view.View").depth(16).findOne();
-    // 判断是否为专题而不是文章
+    // 判断是否为专题文章
     if (father_view && father_view.find(idContains("__next")).empty()) {
       fInfo("查找文章内容");
       let content = idContains("image-text-content").findOne(9000);
-      // log(idContains("image-text-content").findOne().id());
       if (content) {
-        // 不先点一下划不动
+        // 点击文章头部以确保页面可以滚动
         idContains("xxqg-article-header").findOne().child(0).click();
       }
+      // 滑动阅读文章
       swipe(device_w / 2, device_h * 0.7, device_w / 2, device_h * 0.3, 1000);
       if (wen_num < re_times - 1) {
+        // 随机等待阅读时间
         sleep(random(9000, 10500));
       } else {
-        // 第6次停顿刷时间
-        //console.show();
+        // 最后一篇文章增加阅读时长
         toastLog("正在刷时长程序未停止");
         let shichang = random(330, 360);
         fClear();
         fInfo("开始刷时长，总共" + shichang + "秒");
         let wait_time = 1;
-        for (let i = 0; i < shichang; i++) { //*random(55, 60)
-          // 每15秒增加一次滑动防息屏
+        for (let i = 0; i < shichang; i++) {
           if (i % 15 == 0) {
+            // 每15秒滑动一次防止息屏
             swipe(
               device_w / 2,
               device_h * 0.6,
@@ -612,7 +665,6 @@ function do_wenzhang() {
           } else {
             sleep(1000);
           }
-          //w.info.setText("已观看文章" + wait_time + "秒，总共" + shichang + "秒");
           fSet("info", "已观看文章" + wait_time + "秒，总共" + shichang + "秒");
           wait_time++;
         }
@@ -625,9 +677,10 @@ function do_wenzhang() {
       wen_num -= 1;
     }
     back();
-    //id("general_card_image_id").waitFor();
+    // 等待文章列表加载
     className("android.widget.ListView").scrollable().depth(17).waitFor();
     sleep(1000);
+    // 滚动查找下一篇未读文章
     while (!wen_box_slt.exists()) {
       listview.scrollForward();
       sleep(200);
@@ -635,15 +688,16 @@ function do_wenzhang() {
     wen_box = wen_box_slt.findOne();
     wen_num += 1;
   }
-  // 更新已读文章库
+  // 更新已读文章列表
   storage_user.put("old_wen_list", old_wen);
   sleep(3000);
-  // 关闭音乐
+  // 关闭音乐或视频
   close_video();
   back();
   sleep(3000);
   // 返回积分页
   jifen_init();
+  // 随机等待
   ran_sleep();
   return true;
 }
@@ -692,13 +746,20 @@ function do_meiri() {
 }
 
 /********每周答题*********/
+/**
+ * 执行每周答题的流程
+ * @returns {boolean} 答题是否成功完成
+ */
 function do_meizhou() {
+  // 进入每周答题页面
   text("每周答题").findOne().parent().click();
   fSet("title", "每周答题…");
   fClear();
-  // 等待加载
+  // 等待页面加载完成
   textMatches(/.*月|发现新版本/).waitFor();
+  // 检查是否有新版本弹窗
   if (text("发现新版本").exists()) {
+    // 如果有新版本弹窗，则尝试关闭弹窗并返回失败
     return fError("有弹窗无法每周答题，可使用旧版修改版本号版取消弹窗"),
       sleep(1000),
       text("取消").findOne().click(),
@@ -711,17 +772,18 @@ function do_meizhou() {
       !0;
   }
   let scoll = depth(21).scrollable().findOne();
-  // 下面是倒叙作答
   let title;
+  // 根据全局变量meizhou_dao决定答题顺序
   if (meizhou_dao) {
+    // 倒序作答
     fInfo("倒序查找未做题目");
-    //当出现已作答时，点击最后一个未作答
     while (!text("已作答").exists()) {
       scoll.scrollForward();
       sleep(300);
     }
     let clt = text("未作答").find();
     if (clt.empty()) {
+      // 如果没有未作答的题目，则返回成功
       return fInfo("每周答题全部已作答。"),
         ran_sleep(),
         back(),
@@ -738,19 +800,16 @@ function do_meizhou() {
     title = clt[clt.length - 1].parent().child(0).text();
     fInfo(title + "开始作答");
     clt[clt.length - 1].parent().click();
-    // 测试用
-    // text("已作答").findOnce(0).click();
-  } // 下面是正序作答
-  else {
+  } else {
+    // 正序作答
     fInfo("正序查找未做题目");
-    // 找到未作答就停止滚动
     let dixian_slt = text("您已经看到了我的底线").filter(function (w) {
       log("底线：", w.bounds().top, device_h);
       return w.bounds().top <= device_h - 30;
     });
-    //while (true) { //测试用
     while (!text("未作答").exists()) {
       if (dixian_slt.exists()) {
+        // 如果到达页面底部，则返回成功
         return fInfo("每周答题全部已作答。"),
           back(),
           text("每周答题").waitFor(),
@@ -763,7 +822,6 @@ function do_meizhou() {
           ran_sleep(),
           !0;
       }
-      // 如果到底则设置倒序为true
       scoll.scrollForward();
       sleep(200);
     }
@@ -771,9 +829,9 @@ function do_meizhou() {
     fInfo(title + "开始作答");
     text("未作答").findOne().parent().click();
   }
-  // 等待加载
+  // 等待题目加载
   text("查看提示").waitFor();
-  // 获取右上题号，如1 /5
+  // 获取题号信息
   let tihao = className("android.view.View").depth(24).findOnce(1).text();
   let num = Number(tihao[0]);
   let sum = Number(tihao[tihao.length - 1]);
@@ -781,16 +839,15 @@ function do_meizhou() {
   while (num <= sum) {
     fClear();
     fInfo("第" + num + "题");
-    // 等待加载
+    // 等待当前题目加载
     text(num + substr).waitFor();
     num++;
     do_exec("（每周）");
-    // 点击确定下一题
+    // 点击确定进入下一题
     depth(20).text("确定").findOne().click();
     ran_sleep();
-    // 如果题做错了重来
+    // 检查是否答错，如果答错则尝试重答
     if (text("下一题").exists() || text("完成").exists()) {
-      //toastLog(title + "我无能为力啦，请手动作答吧");
       fInfo("做错尝试重答");
       text("答案解析").waitFor();
       upload_wrong_exec("（每周）");
@@ -804,7 +861,7 @@ function do_meizhou() {
       return false;
     }
   }
-  // 循环结束完成答题
+  // 完成答题，返回主界面
   text("返回").findOne().click();
   sleep(1000);
   back();
@@ -820,104 +877,93 @@ function do_meizhou() {
 }
 
 /********专项答题*********/
-/*专项答题中提示的层次与每日每周的不一样
- * 专项答题出现的倒计时会影响22,23层的结构*/
+/**
+ * 执行专项答题流程
+ * @returns {boolean} 返回是否完成专项答题
+ */
 function do_zhuanxiang() {
-  entry_jifen_project("专项答题");
-  fSet("title", "专项答题…");
-  fClear();
+  entry_jifen_project("专项答题"); // 进入积分项目中的专项答题
+  fSet("title", "专项答题…"); // 设置当前任务标题
+  fClear(); // 清除信息
   // 等待加载
-  depth(23).waitFor();
-  ran_sleep();
-  let scoll = depth(21).indexInParent(1).scrollable().findOne();
-  //let new_tihao = [];
+  depth(23).waitFor(); // 等待专项答题页面加载
+  ran_sleep(); // 随机延迟
+  let scoll = depth(21).indexInParent(1).scrollable().findOne(); // 获取可滚动视图
   // 下面是倒序答题
   if (zhuanxiang_dao) {
     // 当出现已满分时，点击最后一个开始答题
     while (!text("已满分").exists()) {
-      scoll.scrollForward();
-      // 不加延迟会很卡
-      sleep(200);
+      scoll.scrollForward(); // 向前滚动
+      sleep(200); // 延迟200ms，避免卡顿
     }
-    let clt = text("开始答题").find();
+    let clt = text("开始答题").find(); // 查找所有开始答题的按钮
     if (clt.empty()) {
-      fInfo("专项答题全部已作答。");
-      back();
-      text("登录").waitFor();
+      fInfo("专项答题全部已作答。"); // 如果没有找到开始答题的按钮，说明已经答完
+      back(); // 返回
+      text("登录").waitFor(); // 等待登录按钮出现，确保已返回
       ran_sleep();
       return true;
     }
     // 点击最后一项
-    clt[clt.length - 1].click();
-  } // 下面是正序
-  else {
-    // 直到找到开始答题
-    let dixian_slt = text("您已经看到了我的底线").filter(function (w) {
-      return w.bounds().top <= device_h - 30;
-    });
-    //while (true) { //测试用
-    while (!text("开始答题").exists()) { //开始答题
+    clt[clt.length - 1].click(); // 点击最后一个开始答题的按钮
+  } else {
+    // 正序答题
+    while (!text("开始答题").exists()) { // 开始答题
       // 如果到底则设置倒序为true
+      let dixian_slt = text("您已经看到了我的底线").filter(function (w) {
+        return w.bounds().top <= device_h - 30;
+      });
       if (dixian_slt.exists()) {
-        //storage_user.put('zhuanxiang_dao', true); 自定义不用读取
         fInfo("专项答题全部已作答。");
         back();
         text("登录").waitFor();
         ran_sleep();
         return true;
       }
-      // 滚动20次
+      // 滚动15次
       for (let i = 0; i < 15; i++) {
         scoll.scrollForward();
-        // 不加延迟会很卡
-        sleep(300);
+        sleep(300); // 延迟300ms，避免卡顿
       }
     }
-    text("开始答题").findOne().click();
+    text("开始答题").findOne().click(); // 点击开始答题
   }
   ran_sleep();
   // 等待加载
-  text("查看提示").waitFor();
-  sleep(2000);
+  text("查看提示").waitFor(); // 等待题目加载
+  sleep(2000); // 延迟2秒，确保题目已加载
   // 获取右上题号，如1 /5
   let tihao = className("android.view.View").depth(24).findOnce(1).text();
-  // 需要加个斜杠转义
-  let reg = /(\d+) \/(\d+)/;
-  // 获取数字
-  let match_result = tihao.match(reg);
+  let reg = /(\d+) \/(\d+)/; // 正则表达式匹配题号
+  let match_result = tihao.match(reg); // 获取匹配结果
   if (match_result == null) {
     fInfo("题号匹配失败，退出专项答题。");
     return;
   }
-  let num = Number(match_result[1]);
-  let sum = Number(match_result[2]);
-  let substr = " /" + sum;
-  //log(tihao);
+  let num = Number(match_result[1]); // 当前题号
+  let sum = Number(match_result[2]); // 总题数
+  let substr = " /" + sum; // 用于匹配题号的字符串
   while (num <= sum) {
     fClear();
     fInfo("第" + num + "题");
-    // 等待加载
-    text(num + substr).waitFor();
+    text(num + substr).waitFor(); // 等待当前题目加载
     num++;
-    do_exec();
+    do_exec(); // 执行答题
     // 点击确定下一题
     let next = className("android.view.View").filter(function (l) {
       return (l.text() == "下一题") || (l.text() == "完成");
     });
-    next.findOne().click();
-    //     if (!click("下一题")) {
-    //       click("完成");
-    //     }
+    next.findOne().click(); // 点击下一题或完成按钮
     ran_sleep();
   }
   // 循环结束完成答题
-  text("查看解析").waitFor();
-  sleep(1000);
+  text("查看解析").waitFor(); // 等待查看解析按钮出现
+  sleep(1000); // 延迟1秒
   // 如果题目答错，循环每一题并添加错题
   if (textMatches(/\d+分/).findOne().text() != "100分") {
     fInfo("有错题，尝试上传错题");
-    text("查看解析").findOne().click();
-    tihao = textMatches(reg).findOne().text();
+    text("查看解析").findOne().click(); // 点击查看解析
+    tihao = textMatches(reg).findOne().text(); // 重新获取题号
     let match_result = tihao.match(reg);
     if (match_result == null) {
       fInfo("题号匹配失败，退出专项答题。");
@@ -926,33 +972,30 @@ function do_zhuanxiang() {
     num = Number(match_result[1]);
     sum = Number(match_result[2]);
     substr = " /" + sum;
-    //log(tihao);
-    sleep(1500);
+    sleep(1500); // 延迟1.5秒
     while (num <= sum) {
-      // 等待加载
-      text(num + substr).waitFor();
+      text(num + substr).waitFor(); // 等待题目加载
       num++;
       if (textEndsWith("回答错误").exists()) {
-        upload_wrong_exec();
+        upload_wrong_exec(); // 上传错题
       }
       // 点击确定下一题
       let next = className("android.view.View").filter(function (l) {
         return (l.text() == "下一题") || (l.text() == "完成");
       });
-      next.findOne().click();
-      sleep(random(1000, 1500));
+      next.findOne().click(); // 点击下一题或完成按钮
+      sleep(random(1000, 1500)); // 随机延迟
     }
-    storage.put("dati_tiku", dati_tiku);
+    storage.put("dati_tiku", dati_tiku); // 保存错题库
   } else {
-    back();
+    back(); // 返回
     ran_sleep();
   }
-  back();
-  text("登录").waitFor();
+  back(); // 返回
+  text("登录").waitFor(); // 等待登录按钮出现
   ran_sleep();
   return true;
 }
-
 /********挑战答题*********/
 function do_tiaozhan() {
   if (ddtong) {
@@ -1680,70 +1723,72 @@ function do_duizhan(renshu: number) {
 // }
 
 /********订阅*********/
+/**
+ * 执行订阅操作
+ * @returns {boolean} 返回是否成功完成订阅
+ */
 function do_dingyue(): boolean {
-  entry_jifen_project("订阅");
-  fSet("title", "订阅…");
-  fClear();
-  let tab1 = descContains("Tab").findOne(9000);
-  if (!tab1) {
+  entry_jifen_project("订阅"); // 进入积分项目中的订阅部分
+  fSet("title", "订阅…"); // 设置当前任务标题
+  fClear(); // 清除信息
+  let tab1 = descContains("Tab").findOne(9000); // 查找包含"Tab"描述的元素
+  if (!tab1) { // 如果找不到，则返回并等待登录
     back();
     text("登录").waitFor();
     return false;
   }
-  let zuo1 = descContains("上新").findOne(9000);
-  if (!zuo1) {
+  let zuo1 = descContains("上新").findOne(9000); // 查找包含"上新"描述的元素
+  if (!zuo1) { // 如果找不到，则返回并等待登录
     back();
     text("登录").waitFor();
     return false;
   }
   // 上方标签
-  let tab_clt = descContains("Tab").untilFind();
-  let total_click = 0;
-  for (let tab of tab_clt) {
-    tab.click();
-    sleep(500);
+  let tab_clt = descContains("Tab").untilFind(); // 查找所有包含"Tab"描述的元素
+  let total_click = 0; // 初始化点击总数
+  for (let tab of tab_clt) { // 遍历所有找到的标签
+    tab.click(); // 点击标签
+    sleep(500); // 等待500ms
     // 左方分类
-    let zuo_clt = className("android.view.View").depth(14).findOne().children();
-    for (let zuo of zuo_clt) {
-      if (dingyue_dao) {
+    let zuo_clt = className("android.view.View").depth(14).findOne().children(); // 查找深度为14的View的子元素
+    for (let zuo of zuo_clt) { // 遍历左方分类
+      if (dingyue_dao) { // 如果是订阅到，则选择最后一个分类
         zuo = zuo_clt[zuo_clt.length - 1];
       }
-      zuo.click();
-      sleep(500);
+      zuo.click(); // 点击分类
+      sleep(500); // 等待500ms
       // 右方列表
-      className("android.view.View").depth(14).waitFor();
-      let you_clt = className("android.view.View").depth(14).findOnce(1);
-      let last_desc = "";
-      while (you_clt) {
-        //let img = captureScreen();
+      className("android.view.View").depth(14).waitFor(); // 等待右方列表加载
+      let you_clt = className("android.view.View").depth(14).findOnce(1); // 查找深度为14的View
+      let last_desc = ""; // 初始化最后一个描述
+      while (you_clt) { // 当右方列表存在时
         // 订阅按钮集合
-        //fInfo("查找订阅集合");
         let dingyue_clt = className("android.widget.ImageView").indexInParent(2)
-          .untilFind();
+          .untilFind(); // 查找订阅按钮集合
         try {
-          //fInfo(dingyue_clt[dingyue_clt.length-1].parent().child(1).desc().slice(0,4)+" 旧:"+last_desc.slice(0,4));
           if (
             dingyue_clt[dingyue_clt.length - 1].parent().child(1).desc() ==
               last_desc
-          ) {
+          ) { // 如果最后一个订阅按钮的描述与上次相同，则认为到达底部
             fClear();
             fInfo("到底了");
             break;
           }
-          // 最底下订阅的名称
+          // 更新最底下订阅的名称
           last_desc = dingyue_clt[dingyue_clt.length - 1].parent().child(1)
             .desc();
         } catch (e) {
           log(e);
           continue;
         }
-        let img = captureScreen();
-        for (let dingyue of dingyue_clt) {
-          if (dingyue.bounds().bottom >= device_h) {
+        let img = captureScreen(); // 截取屏幕
+        for (let dingyue of dingyue_clt) { // 遍历订阅按钮集合
+          if (dingyue.bounds().bottom >= device_h) { // 如果按钮在屏幕下方，则跳过
             continue;
           }
-          let pot;
+          let pot; // 初始化颜色匹配点
           try {
+            // 在订阅按钮区域内查找特定颜色
             pot = findColorInRegion(
               img,
               "#E42417",
@@ -1757,18 +1802,15 @@ function do_dingyue(): boolean {
             console.error(dingyue.bounds());
             console.error(dingyue.parent().child(1).desc());
           }
-          //if (pot && dingyue.bounds().bottom < device_h) {
-          if (pot) {
+          if (pot) { // 如果找到颜色匹配点
             fInfo("找到一个订阅");
             sleep(1000);
-            let is_click = dingyue.click();
+            let is_click = dingyue.click(); // 点击订阅
             fInfo("点击：" + is_click);
-            //click(dingyue.bounds().centerX(), dingyue.bounds().centerY());
             sleep(1000);
-            //click(pot.x, pot.y+5);
-            total_click += 1;
+            total_click += 1; // 点击总数加1
           }
-          if (total_click >= 2) {
+          if (total_click >= 2) { // 如果点击总数达到2，则完成订阅
             fInfo("订阅已完成");
             back();
             text("登录").waitFor();
@@ -1776,18 +1818,14 @@ function do_dingyue(): boolean {
             return true;
           }
         }
-        //img.recycle();
-        let scr_result = you_clt.scrollForward();
+        let scr_result = you_clt.scrollForward(); // 向前滚动
         sleep(500);
-        //         swipe(device_w*0.6, device_h*0.8, device_w*0.6, device_h*0.3, 800);
-        //         while (desc("加载中").exists()) { sleep(1000); }
       }
-      if (dingyue_dao) {
+      if (dingyue_dao) { // 如果是订阅到，则只检查年度上新
         fInfo("只检查年度上新");
         break;
       }
     }
-    //sleep(1000);
   }
   fInfo("无可订阅项目");
   back();
@@ -1796,54 +1834,73 @@ function do_dingyue(): boolean {
   return true;
 }
 
-/*********本地*********/
+/**
+ * 处理本地频道的积分项目。
+ * @returns {boolean} 返回操作是否成功完成。
+ */
 function do_bendi() {
+  // 进入本地频道积分项目
   entry_jifen_project("本地频道");
+  // 设置标题为本地
   fSet("title", "本地…");
+  // 清除之前的操作记录
   fClear();
+  // 查找并等待“切换地区”文本出现，超时时间为5秒
   text("切换地区").findOne(5000);
+  // 如果存在“立即切换”选项，则点击“取消”
   if (text("立即切换").exists()) {
     text("取消").findOne(3000).click();
   }
-  //let banner = className("android.support.v7.widget.RecyclerView").findOne();
+  // 查找包含RecyclerView的控件
   let banner = classNameContains("RecyclerView").findOne();
+  // 获取banner的第一个子项的第二个子项的文本
   let txt = banner.child(0).child(1).text();
+  // 点击banner的第一个子项
   banner.child(0).click();
+  // 等待文本内容为txt的TextView控件出现，深度为11
   className("android.widget.TextView").depth(11).text(txt).waitFor();
+  // 等待1.5秒
   sleep(1500);
+  // 返回上一级
   back();
+  // 随机等待一段时间
   ran_sleep();
+  // 初始化积分项目
   jifen_init();
+  // 再次随机等待
   ran_sleep();
+  // 返回操作成功完成
   return true;
 }
 /**************************************上方为执行各项目函数*********************************************/
 
-// 做一次题
+/**
+ * 根据题型执行相应的答题流程。
+ * @param {string} [type] - 可选参数，指定题目类型。
+ * @returns {boolean} 返回操作是否成功完成。
+ */
 function do_exec(type?: string) {
-  // 等待加载
+  // 等待“查看提示”按钮加载完成
   let tishi = text("查看提示").findOne();
-  //log(tishi);
-  // 点击查看提示按钮
+  // 点击“查看提示”按钮
   tishi.click();
-  // 随机延迟、等待提示
+  // 随机延迟，等待提示加载
   ran_sleep();
-  // 等待加载
+  // 等待提示文本加载完成
   text("提示").waitFor();
 
-  // 判断题型
-  /******************单选题*******************/
+  // 初始化答案变量
   let ans: string = "";
+  // 判断题型并处理
+  /******************单选题*******************/
   if (textStartsWith("单选题").exists()) {
-    // 获取题目
-    //let que_txt = className("android.view.View").depth(23).findOnce(1).text();
-    // 上面被专项答题影响了22、23层的元素数，只能通过其他层定位
+    // 获取题目文本
     let que_txt = className("android.view.View").depth(24).findOnce(1).parent()
       .parent().child(1).text();
-    // log(que_txt);
+    // 获取答案
     ans = get_ans_by_re(que_txt);
+    // 如果通过正则表达式获取到答案且答案存在于选项中，则点击该选项
     if (ans && depth(26).text(ans).exists()) {
-      // 定位选项并点击
       depth(26).text(ans).findOnce().parent().click();
     } //else if (ans = get_ans_by_http_dati(que_txt)) {
     else {
@@ -1889,6 +1946,7 @@ function do_exec(type?: string) {
           if (xuanxiang) {
             xuanxiang.click();
           } else {
+            // 如果没有相似度较高的选项，则随机点击一个选项
             className("android.widget.RadioButton").findOne().parent().click();
           }
           //log(xuanxiang.find().size());

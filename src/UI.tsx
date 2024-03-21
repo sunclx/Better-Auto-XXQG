@@ -1447,6 +1447,9 @@ ui.ttxs_pro_reset.click(resetSettings);
 ui.ttxs_pro_reset2.click(resetSettings);
 
 // 读取脚本设置
+/**
+ * 初始化函数，用于读取脚本设置
+ */
 function Initialize() {
   // ui.script_chosen.setSelection(GLOBAL_CONFIG.get("script_chosen", 0));
   //GLOBAL_CONFIG.put("script_chosen", ui.script_chosen.getText() + "");
@@ -1648,6 +1651,12 @@ ui.ttxs_pro_district_select.setOnItemSelectedListener(
 //     });
 // }
 
+/**
+ * 根据文件名获取脚本内容
+ *
+ * @param {string} filename - 文件名
+ * @returns {string} 返回脚本内容，如果下载失败则抛出错误
+ */
 function getScriptA(filename: string): string {
   let script;
   for (let i = 0; i < url_prefix.length; i++) {
@@ -1661,6 +1670,12 @@ function getScriptA(filename: string): string {
   throw new Error(`getScriptA: 文件下载失败,script为空,filename:${filename}`);
 }
 
+/**
+ * 根据给定的URL获取脚本内容
+ *
+ * @param {string} url - 脚本的URL
+ * @returns {string} 返回脚本内容，如果下载失败则返回空字符串
+ */
 function getScript(url: string): string {
   try {
     // console.log("url:" + url);
