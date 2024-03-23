@@ -1150,6 +1150,7 @@ function do_duizhan(renshu: number) {
   let num = 1;
   let err_flag = true;
   while (true) {
+    fClear();
     // 如果是第一题或者下面出错，则跳过前面等待过渡
     if (num != 1 && err_flag) {
       // 检查到其中一个过渡界面为止
@@ -1599,6 +1600,7 @@ function do_duizhan(renshu: number) {
       fError("未识别出选项，随机选择");
       className("android.widget.RadioButton").findOnce(random(0, radio_num - 1))
         .parent().click();
+      fClear();
       err_flag = false;
       continue;
     }
