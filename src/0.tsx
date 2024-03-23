@@ -1296,17 +1296,6 @@ function do_duizhan(renshu: number) {
       }
     }
 
-    //如果que_txt为空，则随机点击一个
-    if (que_txt == "") {
-      fInfo("未识别出题目，随机点击一个");
-      className("android.widget.RadioButton").findOnce(random(0, 1)).parent()
-        .click();
-      num++;
-      sleep(200);
-      fClear();
-      continue;
-    }
-
     if (renshu == 0) {
       fInfo("由于第一局匹配对手较强，正在挂机中。");
       fInfo("经测试挂机不会扣积分局数，此功能可在配置中关闭");
@@ -1412,6 +1401,17 @@ function do_duizhan(renshu: number) {
       log("error1:", e);
     }
     /************以上是因为随机选项顺序后失效的代码*****************/
+
+    //如果que_txt为空，则随机点击一个
+    if (que_txt == "") {
+      fInfo("未识别出题目，随机点击一个");
+      className("android.widget.RadioButton").findOnce(random(0, 1)).parent()
+        .click();
+      num++;
+      sleep(200);
+      fClear();
+      continue;
+    }
 
     // 如果上面答案不唯一或者不包含找到的选项，直到选项完全出现在屏幕
     try {
