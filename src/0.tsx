@@ -1405,6 +1405,7 @@ function do_duizhan(renshu: number) {
                 .click(),
             );
           }
+          fClear();
           num++;
           continue;
         } else if (duizhan_mode == 2) {
