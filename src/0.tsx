@@ -1292,7 +1292,7 @@ function do_duizhan(renshu: number) {
         fError("未识别出题目，可能被禁止截图或无障碍失效");
         img.recycle();
         que_img.recycle();
-        sleep(3000);
+        sleep(200);
       }
     }
 
@@ -1304,6 +1304,16 @@ function do_duizhan(renshu: number) {
       text("继续挑战").waitFor();
       continue;
     }
+    //如果que_txt为空，则随机点击一个
+    // if (que_txt == "") {
+    //   fInfo("未识别出题目，随机点击一个");
+    //   className("android.widget.RadioButton").findOnce(random(0, radio_num-1)).parent()
+    //     .click();
+    //   num++;
+    //   sleep(200);
+    //   fClear();
+    //   continue;
+    // }
     // 选项清洗标识
     let replace_sign: OcrReplace = "default_ocr_replace";
     let question_reg = new RegExp(update_info["question_reg"], "gi");
@@ -1359,13 +1369,19 @@ function do_duizhan(renshu: number) {
     /************以下是因为随机选项顺序后失效的代码*****************/
     try { //防止别人先答完出错
       let idx = 0;
-      if (ans_list.length <= 1) {
-        if (ans_list.length == 1 && idx_dict[ans_list[0][0]] != undefined) {
+      if (que_txt == "" || ans_list.length <= 1) {
+        if (que_txt == "") {
+          fInfo("未识别出题目，随机选择答案");
+          idx = random(0, radio_num - 1);
+        } else if (
+          ans_list.length == 1 && idx_dict[ans_list[0][0]] != undefined
+        ) {
           idx = idx_dict[ans_list[0][0]];
           fTips("答案:" + ans_list[0].slice(2));
           //           fInfo("答案:"+ ans_list[0]);
         } else if (ans_list.length == 0) {
-          fInfo("未找到答案");
+          fInfo("未找到答案，随机选择答案");
+          idx = random(0, radio_num - 1);
         }
         if (duizhan_mode == 1) {
           if (delay > 0 && num != 1) {
@@ -1401,17 +1417,6 @@ function do_duizhan(renshu: number) {
       log("error1:", e);
     }
     /************以上是因为随机选项顺序后失效的代码*****************/
-
-    //如果que_txt为空，则随机点击一个
-    if (que_txt == "") {
-      fInfo("未识别出题目，随机点击一个");
-      className("android.widget.RadioButton").findOnce(random(0, 1)).parent()
-        .click();
-      num++;
-      sleep(200);
-      fClear();
-      continue;
-    }
 
     // 如果上面答案不唯一或者不包含找到的选项，直到选项完全出现在屏幕
     try {
