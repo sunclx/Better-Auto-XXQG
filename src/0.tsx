@@ -1385,17 +1385,25 @@ function do_duizhan(renshu: number) {
           idx = random(0, radio_num - 1);
         }
         if (duizhan_mode == 1) {
-          if (delay > 0 && num != 1) {
-            sleep(random(delay, delay + 50));
-          } else {
-            // 直到选项完全出现在屏幕
-            while (
-              className("android.widget.ListView").findOne(1000)
-                .indexInParent() == 0
-            ) {
-              // no code
-            }
+          // if (delay > 0 && num != 1) {
+          //   sleep(random(delay, delay + 50));
+          // } else {
+          //   // 直到选项完全出现在屏幕
+          //   while (
+          //     className("android.widget.ListView").findOne(1000)
+          //       .indexInParent() == 0
+          //   ) {
+          //     // no code
+          //   }
+          // }
+
+          while (
+            className("android.widget.ListView").findOne(1000)
+              .indexInParent() == 0
+          ) {
+            // no code
           }
+
           let is_click = className("android.widget.RadioButton").findOnce(idx)
             .parent().click();
           log(is_click);
