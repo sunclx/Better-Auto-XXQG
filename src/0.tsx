@@ -1110,6 +1110,7 @@ function do_tiaozhan() {
 function do_duizhan(renshu: number) {
   //   jifen_list = refind_jifen();
   fClear();
+  let is_ocr = true;
 
   if (renshu == 2) {
     // 点击进入双人对战
@@ -1374,59 +1375,58 @@ function do_duizhan(renshu: number) {
     // type Index = "A" | "B" | "C" | "D";
     /************以下是因为随机选项顺序后失效的代码*****************/
     try { //防止别人先答完出错
+      // 定义一个变量idx，用于存储当前选中的答案的索引
       let idx = 0;
-      if (que_txt == "" || ans_list.length <= 1) {
-        if (que_txt == "") {
-          fInfo("未识别出题目，随机选择答案");
-          idx = random(0, radio_num - 1);
-        } else if (
-          ans_list.length == 1 && idx_dict[ans_list[0][0]] != undefined
-        ) {
-          idx = idx_dict[ans_list[0][0]];
-          fTips("答案:" + ans_list[0].slice(2));
-          //           fInfo("答案:"+ ans_list[0]);
-        } else if (ans_list.length == 0) {
-          fInfo("未找到答案，随机选择答案");
-          idx = random(0, radio_num - 1);
-        }
-        if (duizhan_mode == 1) {
-          // if (delay > 0 && num != 1) {
-          //   sleep(random(delay, delay + 50));
-          // } else {
-          //   // 直到选项完全出现在屏幕
-          //   while (
-          //     className("android.widget.ListView").findOne(1000)
-          //       .indexInParent() == 0
-          //   ) {
-          //     // no code
-          //   }
-          // }
 
-          while (
-            className("android.widget.ListView").findOne(1000)
-              .indexInParent() == 0
-          ) {
-            fInfo("等待选项完全出现在屏幕");
-          }
-          sleep(200);
-          let is_click = className("android.widget.RadioButton").findOnce(idx)
-            .parent().click();
-          log(is_click);
-          if (!is_click) {
-            sleep(200);
-            log(
-              className("android.widget.RadioButton").findOnce(idx).parent()
-                .click(),
-            );
-          }
-          fClear();
-          num++;
-          continue;
-        } else if (duizhan_mode == 2) {
-          num++;
-          textMatches(/第.+题|继续挑战/).waitFor();
-          continue;
+      // 检查题目是否为空，如果为空，则随机选择一个答案
+      if (que_txt == "") {
+        fInfo("未识别出题目，随机选择答案");
+        idx = random(0, radio_num - 1);
+        duizhan_mode = 1;
+      } // 检查答案列表的长度，如果长度为1且第一个答案的索引在字典中，那么就选择该答案
+      else if (ans_list.length == 1 && idx_dict[ans_list[0][0]] != undefined) {
+        idx = idx_dict[ans_list[0][0]];
+        fTips("答案:" + ans_list[0].slice(2));
+      } // 如果答案列表为空，那么就随机选择一个答案
+      else if (ans_list.length == 0) {
+        fInfo("未找到答案，随机选择答案");
+        idx = random(0, radio_num - 1);
+      }
+
+      // 根据duizhan_mode的值进行不同的操作
+      if (duizhan_mode == 1) {
+        // 等待选项完全出现在屏幕上
+        while (
+          className("android.widget.ListView").findOne(1000)
+            .indexInParent() == 0
+        ) {
+          // no code
         }
+
+        // 点击选中的答案
+        sleep(200);
+        let is_click = className("android.widget.RadioButton").findOnce(idx)
+          .parent().click();
+        log(is_click);
+
+        // 如果点击失败，那么就再次尝试点击
+        if (!is_click) {
+          sleep(200);
+          log(
+            className("android.widget.RadioButton").findOnce(idx).parent()
+              .click(),
+          );
+        }
+
+        // 清除之前的答案
+        fClear();
+
+        // 更新题目数量
+        num++;
+      } else if (duizhan_mode == 2) {
+        // 跳过这个题目，等待下一个题目
+        num++;
+        textMatches(/第.+题|继续挑战/).waitFor();
       }
     } catch (e) {
       log("error1:", e);
