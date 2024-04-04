@@ -77,7 +77,7 @@ function runUI(): void {
 // 检查是否为新版本
 if (isNewVersion) {
   console.log("This is a new version!");
-  import("./UI.tsx");
+  import("./UI2.tsx");
 } else {
   console.log("This is a old version!");
   start(); // 启动旧版本脚本

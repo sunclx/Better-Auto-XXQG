@@ -1256,7 +1256,7 @@ ui.start.click(function () {
     }
     let script_name: string = GLOBAL_CONFIG.get("script_name", "dist/0.js");
     script = script || getScriptA(script_name);
-    execution = engines.execScript("强国助手", script);
+    import("./02.tsx");
   });
 });
 
