@@ -44,6 +44,8 @@ let broadcast = TTXS_PRO_CONFIG.get("broadcast", "江苏新闻广播");
 let platform = TTXS_PRO_CONFIG.get("platform", "江苏学习平台");
 let subcolumn = TTXS_PRO_CONFIG.get("subcolumn", "总书记在江苏");
 
+let app_exit = TTXS_PRO_CONFIG.get("app_exit", true);
+
 /********定义全局变量*********/
 let jifen_list: UiObject,
   meizhou_dao: boolean,
@@ -63,6 +65,7 @@ let jifen_map = {
   "本地": 7,
 };
 let jifen_flag = "old";
+let appName = app.getAppName(currentPackage());
 
 /**
  * 使用Google ML Kit进行文字识别，并对识别结果进行排序。
@@ -1107,6 +1110,7 @@ function do_tiaozhan() {
 function do_duizhan(renshu: number) {
   //   jifen_list = refind_jifen();
   fClear();
+
   if (renshu == 2) {
     // 点击进入双人对战
     fSet("title", "双人对战");
@@ -1128,6 +1132,7 @@ function do_duizhan(renshu: number) {
     let start_click = text("开始比赛").findOne().click();
     fInfo("点击：" + start_click);
   }
+
   let delay = Number(jisu);
   if (delay > 0 && duizhan_mode == 1) {
     ui.run(function () {
@@ -1150,7 +1155,7 @@ function do_duizhan(renshu: number) {
   let num = 1;
   let err_flag = true;
   while (true) {
-    fClear();
+    // fClear();
     // 如果是第一题或者下面出错，则跳过前面等待过渡
     if (num != 1 && err_flag) {
       // 检查到其中一个过渡界面为止
@@ -1401,9 +1406,9 @@ function do_duizhan(renshu: number) {
             className("android.widget.ListView").findOne(1000)
               .indexInParent() == 0
           ) {
-            // no code
+            fInfo("等待选项完全出现在屏幕");
           }
-
+          sleep(200);
           let is_click = className("android.widget.RadioButton").findOnce(idx)
             .parent().click();
           log(is_click);
@@ -3372,5 +3377,10 @@ sleep(1000);
 console.hide();
 home();
 exit_app("学习强国");
-exit_app("学习");
+
+if (app_exit) {
+  fInfo("本软件");
+  exit_app(appName);
+}
+
 exit();

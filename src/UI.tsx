@@ -184,23 +184,6 @@ ui.layout(
                     w="auto"
                     textColor="#222222"
                     textSize="15sp"
-                    text="测试"
-                  />
-                </vertical>
-                <checkbox
-                  id="ttxs_pro_test"
-                  marginLeft="4"
-                  marginRight="6"
-                  checked="false"
-                />
-              </horizontal>
-              <horizontal gravity="center_vertical" padding="5 5">
-                <View bg="#00BFFF" h="*" w="10"></View>
-                <vertical padding="10 8" h="auto" w="0" layout_weight="1">
-                  <text
-                    w="auto"
-                    textColor="#222222"
-                    textSize="15sp"
                     text="看门狗(秒)"
                   />
                   <text
@@ -816,6 +799,40 @@ ui.layout(
                   <text
                     w="auto"
                     textColor="#222222"
+                    textSize="15sp"
+                    text="测试"
+                  />
+                </vertical>
+                <checkbox
+                  id="ttxs_pro_test"
+                  marginLeft="4"
+                  marginRight="6"
+                  checked="false"
+                />
+              </horizontal>
+              <horizontal gravity="center_vertical" padding="5 5">
+                <View bg="#00BFFF" h="*" w="10"></View>
+                <vertical padding="10 8" h="auto" w="0" layout_weight="1">
+                  <text
+                    w="auto"
+                    textColor="#222222"
+                    textSize="15sp"
+                    text="是否退出本程序"
+                  />
+                </vertical>
+                <checkbox
+                  id="ttxs_pro_app_exit"
+                  marginLeft="4"
+                  marginRight="6"
+                  checked="true"
+                />
+              </horizontal>
+              <horizontal gravity="center_vertical" padding="5 5">
+                <View bg="#00BFFF" h="*" w="10"></View>
+                <vertical padding="10 8" h="auto" w="0" layout_weight="1">
+                  <text
+                    w="auto"
+                    textColor="#222222"
                     textSize="16sp"
                     text="文章地区设置"
                   />
@@ -1315,6 +1332,7 @@ ui.ttxs_pro_clear.click(function () {
 function saveSettings() {
   GLOBAL_CONFIG.put("script_chosen", ui.script_chosen.getText() + "");
   TTXS_PRO_CONFIG.put("test", ui.ttxs_pro_test.isChecked());
+  TTXS_PRO_CONFIG.put("app_exit", ui.ttxs_pro_app_exit.isChecked());
   TTXS_PRO_CONFIG.put("watchdog", ui.ttxs_pro_watchdog.getText() + "");
   TTXS_PRO_CONFIG.put("slide_verify", ui.ttxs_pro_slide_verify.getText() + "");
   TTXS_PRO_CONFIG.put("fast_mode", ui.ttxs_pro_fast_mode.isChecked());
@@ -1456,6 +1474,7 @@ function Initialize() {
   ui.script_chosen.setText(GLOBAL_CONFIG.get("script_chosen", "dist/0.js"));
 
   ui.ttxs_pro_test.setChecked(TTXS_PRO_CONFIG.get("test", false));
+  ui.ttxs_pro_app_exit.setChecked(TTXS_PRO_CONFIG.get("app_exit", true));
   ui.ttxs_pro_watchdog.setText(TTXS_PRO_CONFIG.get("watchdog", "1800"));
   ui.ttxs_pro_slide_verify.setText(TTXS_PRO_CONFIG.get("slide_verify", "300"));
   ui.ttxs_pro_fast_mode.setChecked(TTXS_PRO_CONFIG.get("fast_mode", false));
