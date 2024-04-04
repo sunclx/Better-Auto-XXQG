@@ -1,5 +1,5 @@
 "ui";
-
+import { getScript, getScriptA, url_prefix } from "./utils.ts";
 importClass(java.net.HttpURLConnection);
 importClass(java.net.URL);
 importClass(java.io.File);
@@ -1107,21 +1107,6 @@ let thread: threads.Thread | null = null;
 //     checkversion();
 // }
 
-let username = "sunclx";
-let repo = "XXQG";
-let branch = "main";
-let url_prefix = [
-  `https://mirror.ghproxy.com/https://raw.githubusercontent.com/${username}/${repo}/${branch}/`,
-  `https://raw.kkgithub.com/${username}/${repo}/${branch}/`,
-  `https://ghproxy.net/https://raw.githubusercontent.com/${username}/${repo}/${branch}/`,
-  `https://fastly.jsdelivr.net/gh/${username}/${repo}@${branch}/`,
-  `https://fastraw.ixnic.net/${username}/${repo}/${branch}/`,
-  `https://cdn.jsdelivr.us/gh/${username}/${repo}@${branch}/`,
-  `https://jsdelivr.b-cdn.net/gh/${username}/${repo}@${branch}/`,
-  `https://github.moeyy.xyz/https://raw.githubusercontent.com/${username}/${repo}/${branch}/`,
-  `https://raw.cachefly.998111.xyz/${username}/${repo}/${branch}/`,
-  `https://raw.githubusercontent.com/${username}/${repo}/${branch}/`,
-];
 let comment_list = [
   "全心全意为人民服务",
   "不忘初心，牢记使命",
@@ -1669,48 +1654,6 @@ ui.ttxs_pro_district_select.setOnItemSelectedListener(
 //         app.viewFile(path);
 //     });
 // }
-
-/**
- * 根据文件名获取脚本内容
- *
- * @param {string} filename - 文件名
- * @returns {string} 返回脚本内容，如果下载失败则抛出错误
- */
-function getScriptA(filename: string): string {
-  let script;
-  for (let i = 0; i < url_prefix.length; i++) {
-    let url = url_prefix[i] + filename;
-    script = getScript(url);
-    if (script) {
-      return script;
-    }
-  }
-  // console.log("getScriptA: 文件下载失败,script为空", `filename:${filename}`);
-  throw new Error(`getScriptA: 文件下载失败,script为空,filename:${filename}`);
-}
-
-/**
- * 根据给定的URL获取脚本内容
- *
- * @param {string} url - 脚本的URL
- * @returns {string} 返回脚本内容，如果下载失败则返回空字符串
- */
-function getScript(url: string): string {
-  try {
-    // console.log("url:" + url);
-    let res = http.get(url);
-    console.log("statusCode:" + res.statusCode);
-    if (res.statusCode == 200) {
-      console.log("脚本: " + url + "下载成功");
-      return res.body.string();
-    } else {
-      console.log("脚本: " + url + "下载失败");
-    }
-  } catch (error) {
-    console.error(error);
-  }
-  return "";
-}
 
 // thread = threads.start(function () {
 //   //在新线程执行的代码

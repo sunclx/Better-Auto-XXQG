@@ -1,22 +1,14 @@
 import { getScript, getScriptA, url_prefix } from "./utils.ts";
 
 console.clear(); // 清除控制台信息
+// 以下为旧版本代码
 http.__okhttp__.setTimeout(10000); // 设置http请求的超时时间为10秒
 
 let GLOBAL_CONFIG = storages.create("GLOBAL_CONFIG"); // 创建或获取全局配置存储
 let UI: string = GLOBAL_CONFIG.get("UI"); // 从全局配置中获取UI脚本
 // let main: string = DB.get("main"); // 从数据库中获取main脚本，当前行已注释
-
 let isNewVersion = false; // 是否为新版本
 
-// 检查是否为新版本
-if (isNewVersion) {
-  console.log("This is a new version!");
-} else {
-  start(); // 启动旧版本脚本
-}
-
-// 以下为旧版本代码
 function start(): void {
   // runMain(); // 运行主脚本，当前行已注释
   runUI(); // 运行UI脚本
@@ -79,4 +71,14 @@ function runUI(): void {
       exit();
     }
   }
+}
+
+// 检查是否为新版本
+if (isNewVersion) {
+  console.log("This is a new version!");
+
+  // import("./UI.tsx");
+} else {
+  console.log("This is a old version!");
+  start(); // 启动旧版本脚本
 }
