@@ -1,12 +1,13 @@
 auto.waitFor();
 //mode = "fast"
 console.log("开始执行脚本0.js");
+let version = "0.0.1";
+console.log(`当前版本：${version}`);
 let delay_time = 3000;
 device.wakeUpIfNeeded();
 
 // 开始
 // 读取自定义配置
-
 let TTXS_PRO_CONFIG = storages.create("TTXS_PRO_CONFIG");
 let test = TTXS_PRO_CONFIG.get("test", false);
 let watchdog = TTXS_PRO_CONFIG.get("watchdog", "1800");
@@ -66,7 +67,8 @@ let jifen_map = {
 };
 let jifen_flag = "old";
 let appName = app.getAppName(currentPackage());
-
+console.log(currentPackage());
+console.log(appName);
 /**
  * 使用Google ML Kit进行文字识别，并对识别结果进行排序。
  * @param {Image} img - 需要进行文字识别的图片对象。
@@ -1395,12 +1397,16 @@ function do_duizhan(renshu: number) {
 
       // 根据duizhan_mode的值进行不同的操作
       if (duizhan_mode == 1) {
-        // 等待选项完全出现在屏幕上
-        while (
-          className("android.widget.ListView").findOne(1000)
-            .indexInParent() == 0
-        ) {
-          // no code
+        if (delay > 0 && num != 1) {
+          sleep(random(delay, delay + 50));
+        } else {
+          // 直到选项完全出现在屏幕
+          while (
+            className("android.widget.ListView").findOne(1000)
+              .indexInParent() == 0
+          ) {
+            // no code
+          }
         }
 
         // 点击选中的答案
@@ -1423,11 +1429,72 @@ function do_duizhan(renshu: number) {
 
         // 更新题目数量
         num++;
+        continue;
       } else if (duizhan_mode == 2) {
         // 跳过这个题目，等待下一个题目
         num++;
         textMatches(/第.+题|继续挑战/).waitFor();
+        continue;
       }
+      //gemini 版本
+      // // idx 用于存储待选择的答案索引
+      // let idx = 0;
+
+      // // 检查题目是否为空
+      // if (que_txt === "") {
+      //   // 未识别出题目，随机选择答案
+      //   console.log("未识别出题目，随机选择答案");
+      //   idx = Math.floor(Math.random() * radio_num); // 使用 Math.floor 获取随机整数
+      //   duizhan_mode = 1; // 进入答题模式
+      // } // 检查答案列表长度，若只有一个答案且其索引存在于字典中，则选择该答案
+      // else if (
+      //   ans_list.length === 1 && idx_dict[ans_list[0][0]] !== undefined
+      // ) {
+      //   idx = idx_dict[ans_list[0][0]];
+      //   console.log("答案: " + ans_list[0].slice(2)); // 输出答案文本
+      // } // 若无答案，随机选择
+      // else if (ans_list.length === 0) {
+      //   console.log("未找到答案，随机选择答案");
+      //   idx = Math.floor(Math.random() * radio_num);
+      // }
+
+      // // 根据模式执行操作
+      // if (duizhan_mode === 1) {
+      //   // 等待选项出现
+      //   while (
+      //     className("android.widget.ListView").findOne(1000).indexInParent() ===
+      //       0
+      //   ) {
+      //     // 等待...
+      //   }
+
+      //   // 点击选中答案
+      //   sleep(200); // 等待 200 毫秒
+      //   let is_click = className("android.widget.RadioButton").findOnce(idx)
+      //     .parent().click();
+      //   console.log(is_click ? "点击成功" : "点击失败");
+
+      //   // 若点击失败，再次尝试
+      //   if (!is_click) {
+      //     sleep(200);
+      //     console.log(
+      //       className("android.widget.RadioButton").findOnce(idx).parent()
+      //           .click()
+      //         ? "点击成功"
+      //         : "点击失败",
+      //     );
+      //   }
+
+      //   // 清除之前答案
+      //   fClear();
+
+      //   // 更新题目计数
+      //   num++;
+      // } else if (duizhan_mode === 2) {
+      //   // 跳过题目，等待下一题
+      //   num++;
+      //   textMatches(/第.+题|继续挑战/).waitFor();
+      // }
     } catch (e) {
       log("error1:", e);
     }
