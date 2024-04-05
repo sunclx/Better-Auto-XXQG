@@ -1,5 +1,5 @@
 "ui";
-import { debounce, getScript, getScriptA, url_prefix } from "./utils.ts";
+import { getScript, getScriptA, url_prefix } from "./utils.ts";
 import { init, start } from "./02.tsx";
 
 importClass(java.net.HttpURLConnection);
