@@ -1,5 +1,7 @@
 "ui";
-import { getScript, getScriptA, url_prefix } from "./utils.ts";
+import { debounce, getScript, getScriptA, url_prefix } from "./utils.ts";
+import { init, start } from "./02.tsx";
+
 importClass(java.net.HttpURLConnection);
 importClass(java.net.URL);
 importClass(java.io.File);
@@ -1245,8 +1247,10 @@ ui.log.click(function () {
 // 下载并运行所选脚本
 ui.start.click(function () {
   threads.shutDownAll();
+  thread?.interrupt();
   if (thread != null && thread.isAlive()) {
     alert("注意", "脚本正在运行，请结束之前进程");
+
     return;
   }
   thread = threads.start(function () {
@@ -1256,7 +1260,8 @@ ui.start.click(function () {
     }
     let script_name: string = GLOBAL_CONFIG.get("script_name", "dist/0.js");
     script = script || getScriptA(script_name);
-    import("./02.tsx");
+    init();
+    start();
   });
 });
 

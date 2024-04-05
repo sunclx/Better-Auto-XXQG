@@ -1,3 +1,5 @@
+import { google_ocr_api, paddle_ocr_api } from "./utils.ts";
+
 auto.waitFor();
 //mode = "fast"
 console.log("开始执行脚本0.js");
@@ -66,178 +68,24 @@ let jifen_map = {
   "本地": 7,
 };
 let jifen_flag = "old";
-let appName = app.getAppName(currentPackage());
-console.log(currentPackage());
-console.log(appName);
-/**
- * 使用Google ML Kit进行文字识别，并对识别结果进行排序。
- * @param {Image} img - 需要进行文字识别的图片对象。
- * @returns {object[]} 返回排序后的文字识别结果列表。
- */
-function google_ocr_api(img: Image) {
-  console.log("GoogleMLKit文字识别中");
-  // 调用Google ML Kit的OCR功能进行文字识别，限制结果数量为3
-  let list = JSON.parse(
-    JSON.stringify(
-      (gmlkit.ocr(img, "zh") as { toArray(n: number): object }).toArray(3),
-    ),
-  ); // 识别文字，并得到results
-  let eps = 30; // 定义坐标误差，用于后续排序时考虑坐标的近似值
-
-  // 对识别结果进行上下位置的排序，采用选择排序算法
-  for (let i = 0; i < list.length; i++) { // 遍历列表进行排序
-    for (let j = i + 1; j < list.length; j++) { // 选择排序，比较并交换位置
-      // 如果当前元素的底部坐标大于比较元素的底部坐标，则交换两者位置
-      if (list[i]["bounds"]["bottom"] > list[j]["bounds"]["bottom"]) {
-        let tmp = list[i]; // 临时存储当前元素
-        list[i] = list[j]; // 交换位置
-        list[j] = tmp; // 完成交换
-      }
-    }
-  }
-
-  for (let i = 0; i < list.length; i++) { // 在上下排序完成后，进行左右排序
-    for (let j = i + 1; j < list.length; j++) {
-      // 由于上下坐标并不绝对，采用误差eps
-      if (
-        Math.abs(list[i]["bounds"]["bottom"] - list[j]["bounds"]["bottom"]) <
-          eps &&
-        list[i]["bounds"]["left"] > list[j]["bounds"]["left"]
-      ) {
-        let tmp = list[i];
-        list[i] = list[j];
-        list[j] = tmp;
-      }
-    }
-  }
-  let res = "";
-  for (let i = 0; i < list.length; i++) {
-    res += list[i]["text"];
-  }
-  list = null;
-  return res;
-}
-
-/**
- * 对传入的图片进行文字识别，并返回排序后的文字结果。
- * @param {Image} img - 传入的图片对象。
- * @param {number} eps - 坐标误差，默认为 30。
- * @returns {string} 返回排序后的文字结果。
- */
-function paddle_ocr_api(img: Image, eps?: number) {
-  eps ||= 30; // 坐标误差
-  console.log("PaddleOCR文字识别中");
-  let list = JSON.parse(JSON.stringify(paddle.ocr(img))); // 识别文字，并得到results
-  for (let i = 0; i < list.length; i++) { // 选择排序对上下排序,复杂度O(N²)但一般list的长度较短只需几十次运算
-    for (let j = i + 1; j < list.length; j++) {
-      if (list[i]["bounds"]["bottom"] > list[j]["bounds"]["bottom"]) {
-        let tmp = list[i];
-        list[i] = list[j];
-        list[j] = tmp;
-      }
-    }
-  }
-
-  for (let i = 0; i < list.length; i++) { // 在上下排序完成后，进行左右排序
-    for (let j = i + 1; j < list.length; j++) {
-      // 由于上下坐标并不绝对，采用误差eps
-      if (
-        Math.abs(list[i]["bounds"]["bottom"] - list[j]["bounds"]["bottom"]) <
-          eps &&
-        list[i]["bounds"]["left"] > list[j]["bounds"]["left"]
-      ) {
-        let tmp = list[i];
-        list[i] = list[j];
-        list[j] = tmp;
-      }
-    }
-  }
-  let res = "";
-  for (let i = 0; i < list.length; i++) {
-    res += list[i]["text"];
-  }
-  list = null;
-  return res;
-}
-
-if (fast_mode) {
-  auto.setMode("fast");
-}
-events.observeToast();
-sleep(delay_time);
-/*****************更新内容弹窗部分*****************/
-let storage = storages.create("songgedodo");
-// 脚本版本号
-// var last_version = "V12.0";
-// var engine_version = "V12.3";
-// let newest_version = "V12.4";
-// if (storage.get(engine_version, true)) {
-//   storage.remove(last_version);
-//   let gengxin_rows = "脚本有风险，仅供学习交流;更新内容：;1.原脚本会进入“我的”界面获取用户名，区分历史刷过文章，现取消此设定;2.可自定义滑动验证界面震动提醒时间;3.禁止截屏会随机选一个选项;4.自定义评论内容;脚本测试环境：强国V2.45.0;联系方式：tg: t.me/wyqg_ttxs;（点击取消不再提示）".split(";");
-//   let is_show = confirm(engine_version + "版更新内容", gengxin_rows.join("\n"));
-//   if (!is_show) {
-//     storage.put(engine_version, false);
-//   }
-// }
-let w = fInit();
-// console.setTitle("天天向上");
-// console.show();
-fInfo("天天向上Pro" + "脚本初始化");
-// 初始化宽高
-let [device_w, device_h] = init_wh();
-// log("fina:", device_w, device_h);
-// OCR初始化，重写内置OCR module
+let storage: Storage;
+let w: floaty.FloatyRawWindow;
+let device_w: number, device_h: number;
+let tiku: Tiku;
+let dati_tiku: DatiTiku;
+let update_info: UpdateInfo;
+let yuan_yl: number;
+let nolocate_thread: threads.Thread;
 // deno-lint-ignore no-explicit-any
 let ocr: any;
-if (ocr_choice == 2) {
-  fInfo("初始化第三方ocr插件");
-  try {
-    ocr = plugins.load("com.hraps.ocr");
-    // deno-lint-ignore no-explicit-any
-    ocr.recognizeText = function (img: any) {
-      let results = this.detect(img.getBitmap(), 1);
-      let all_txt = "";
-      for (let i = 0; i < results.size(); i++) {
-        let re = results.get(i);
-        all_txt += re.text;
-      }
-      return all_txt;
-    };
-  } catch (e) {
-    fError("未安装第三方OCR插件，请安装后重新运行");
-    alert("未安装第三方OCR插件，点击确认跳转浏览器下载，密码为ttxs");
-    app.openUrl("https://wwc.lanzouo.com/ikILs001d0wh");
-    exit();
-  }
-}
-// sleep(2000);
+let appName: string;
 
-// 自动允许权限进程
-threads.start(function () {
-  //在新线程执行的代码
-  //sleep(500);
-  toastLog("开始自动获取截图权限");
-  let btn = className("android.widget.Button").textMatches(
-    /允许|立即开始|START NOW/,
-  ).findOne(5000);
-  if (btn) {
-    sleep(1000);
-    btn.click();
-  }
-  toastLog("结束获取截图权限");
-});
-
-fInfo("请求截图权限");
-// 请求截图权限、似乎请求两次会失效
-if (!requestScreenCapture(false)) { // false为竖屏方向
-  fError("请求截图失败");
-  exit();
+type MyType = [string, string, string | null, string | null, string | null];
+type DatiTiku = Array<MyType>;
+interface Tiku {
+  [key: string]: TikuType;
 }
-// 防止设备息屏
-fInfo("设置屏幕常亮");
-device.keepScreenOn(3600 * 1000);
-// 下载题库
-fInfo("检测题库更新");
+type TikuType = [string, string, number];
 
 interface UpdateInfo {
   // 版本号
@@ -267,6 +115,7 @@ interface UpdateInfo {
   // 包含 OCR 替换规则
   "include_ocr_replace": { [key: string]: string[] };
 }
+
 type OcrReplace =
   | "default_ocr_replace"
   | "old_ocr_replace"
@@ -274,73 +123,153 @@ type OcrReplace =
   | "other_ocr_replace"
   | "include_ocr_replace";
 
-let update_info: UpdateInfo = get_tiku_by_http(
-  "https://gitcode.net/m0_64980826/songge_tiku/-/raw/master/info.json",
-) as UpdateInfo;
-fInfo("正在加载对战题库......请稍等\n题库版本:" + update_info["tiku_version"]);
-fInfo("如果不动就是正在下载，多等会");
-type TikuType = [string, string, number];
-interface Tiku {
-  [key: string]: TikuType;
-}
-let tiku: Tiku = {};
-try {
-  tiku = get_tiku_by_http(update_info["tiku_link"]) as Tiku;
-} catch (e) {
-  tiku = get_tiku_by_http(update_info["tiku_link2"]) as Tiku;
-}
-// var tiku = get_tiku_by_gitee();
-fInfo(
-  "正在加载专项题库......请稍等\n题库版本:" + update_info["dati_tiku_version"],
-);
-type MyType = [string, string, string | null, string | null, string | null];
-type DatiTiku = Array<MyType>;
-let dati_tiku: DatiTiku = [];
-try {
-  dati_tiku = update_dati_tiku() as DatiTiku;
-} catch (e) {
-  fError("网络原因未获取到在线题库，请尝试切换流量或者更换114DNS");
-  dati_tiku = get_tiku_by_ct(
-    "https://webapi.ctfile.com/get_file_url.php?uid=35157972&fid=555754562&file_chk=94c3c662ba28f583d2128a1eb9d78af4&app=0&acheck=2&rd=0.14725283060014105",
-  ) as DatiTiku;
-}
-// 设置资源保存路径
-files.createWithDirs("/sdcard/天天向上/");
-// 调整音量
-let yuan_yl = 10;
-if (yl_on) {
-  fInfo("设置媒体音量");
-  yuan_yl = device.getMusicVolume();
-  let max_yl = device.getMusicMaxVolume();
-  let yl = Math.ceil(yinliang * max_yl / 100);
-  //log(yuan_yl, max_yl, yl, typeof yl);
-  device.setMusicVolume(yl);
-  fInfo("当前音量：" + device.getMusicVolume());
-}
-if (is_exit) {
-  fInfo("运行前重置学习APP");
-  exit_app("学习强国");
-  sleep(1500);
-}
-// 检测地理位置权限代码，出现就点掉
-fInfo("开始位置权限弹窗检测");
-let nolocate_thread = threads.start(function () {
-  //在新线程执行的代码
-  id("title_text").textContains("地理位置").waitFor();
-  fInfo("检测到位置权限弹窗");
-  sleep(1000);
-  text("暂不开启").findOne().click();
-  fInfo("已关闭定位");
-});
-fInfo("跳转学习APP");
-// launch('cn.xuexi.android');
-app.launchApp("学习强国");
-sleep(2000);
-// console.hide();
-// 命令行方式启动，似乎需要root
-// var result_shell = shell("pm disable cn.xuexi.android");
-// log(result_shell.code, result_shell.error);
-/***************不要动****************
+export function init() {
+  appName = app.getAppName(currentPackage());
+  console.log(appName);
+
+  if (fast_mode) {
+    auto.setMode("fast");
+  }
+  events.observeToast();
+  sleep(delay_time);
+  /*****************更新内容弹窗部分*****************/
+  storage = storages.create("songgedodo");
+  // 脚本版本号
+  // var last_version = "V12.0";
+  // var engine_version = "V12.3";
+  // let newest_version = "V12.4";
+  // if (storage.get(engine_version, true)) {
+  //   storage.remove(last_version);
+  //   let gengxin_rows = "脚本有风险，仅供学习交流;更新内容：;1.原脚本会进入“我的”界面获取用户名，区分历史刷过文章，现取消此设定;2.可自定义滑动验证界面震动提醒时间;3.禁止截屏会随机选一个选项;4.自定义评论内容;脚本测试环境：强国V2.45.0;联系方式：tg: t.me/wyqg_ttxs;（点击取消不再提示）".split(";");
+  //   let is_show = confirm(engine_version + "版更新内容", gengxin_rows.join("\n"));
+  //   if (!is_show) {
+  //     storage.put(engine_version, false);
+  //   }
+  // }
+  w = fInit();
+  // console.setTitle("天天向上");
+  // console.show();
+  fInfo("天天向上Pro" + "脚本初始化");
+  // 初始化宽高
+  [device_w, device_h] = init_wh();
+  // log("fina:", device_w, device_h);
+  // OCR初始化，重写内置OCR module
+  if (ocr_choice == 2) {
+    fInfo("初始化第三方ocr插件");
+    try {
+      ocr = plugins.load("com.hraps.ocr");
+      // deno-lint-ignore no-explicit-any
+      ocr.recognizeText = function (img: any) {
+        let results = this.detect(img.getBitmap(), 1);
+        let all_txt = "";
+        for (let i = 0; i < results.size(); i++) {
+          let re = results.get(i);
+          all_txt += re.text;
+        }
+        return all_txt;
+      };
+    } catch (e) {
+      fError("未安装第三方OCR插件，请安装后重新运行");
+      alert("未安装第三方OCR插件，点击确认跳转浏览器下载，密码为ttxs");
+      app.openUrl("https://wwc.lanzouo.com/ikILs001d0wh");
+      exit();
+    }
+  }
+  sleep(2000);
+
+  // 自动允许权限进程
+  threads.start(function () {
+    //在新线程执行的代码
+    //sleep(500);
+    toastLog("开始自动获取截图权限");
+    let btn = className("android.widget.Button").textMatches(
+      /允许|立即开始|START NOW/,
+    ).findOne(5000);
+    if (btn) {
+      sleep(1000);
+      btn.click();
+    }
+    toastLog("结束获取截图权限");
+  });
+
+  fInfo("请求截图权限");
+  // 请求截图权限、似乎请求两次会失效
+  if (!requestScreenCapture(false)) { // false为竖屏方向
+    fError("请求截图失败");
+    exit();
+  }
+  // 防止设备息屏
+  fInfo("设置屏幕常亮");
+  device.keepScreenOn(3600 * 1000);
+  // 下载题库
+  fInfo("检测题库更新");
+
+  update_info = get_tiku_by_http(
+    "https://gitcode.net/m0_64980826/songge_tiku/-/raw/master/info.json",
+  ) as UpdateInfo;
+  fInfo(
+    "正在加载对战题库......请稍等\n题库版本:" + update_info["tiku_version"],
+  );
+  fInfo("如果不动就是正在下载，多等会");
+
+  tiku = {};
+  try {
+    tiku = get_tiku_by_http(update_info["tiku_link"]) as Tiku;
+  } catch (e) {
+    tiku = get_tiku_by_http(update_info["tiku_link2"]) as Tiku;
+  }
+  // var tiku = get_tiku_by_gitee();
+  fInfo(
+    "正在加载专项题库......请稍等\n题库版本:" +
+      update_info["dati_tiku_version"],
+  );
+
+  dati_tiku = [];
+  try {
+    dati_tiku = update_dati_tiku() as DatiTiku;
+  } catch (e) {
+    fError("网络原因未获取到在线题库，请尝试切换流量或者更换114DNS");
+    dati_tiku = get_tiku_by_ct(
+      "https://webapi.ctfile.com/get_file_url.php?uid=35157972&fid=555754562&file_chk=94c3c662ba28f583d2128a1eb9d78af4&app=0&acheck=2&rd=0.14725283060014105",
+    ) as DatiTiku;
+  }
+  // 设置资源保存路径
+  files.createWithDirs("/sdcard/天天向上/");
+  // 调整音量
+  yuan_yl = 10;
+  if (yl_on) {
+    fInfo("设置媒体音量");
+    yuan_yl = device.getMusicVolume();
+    let max_yl = device.getMusicMaxVolume();
+    let yl = Math.ceil(yinliang * max_yl / 100);
+    //log(yuan_yl, max_yl, yl, typeof yl);
+    device.setMusicVolume(yl);
+    fInfo("当前音量：" + device.getMusicVolume());
+  }
+  if (is_exit) {
+    fInfo("运行前重置学习APP");
+    exit_app("学习强国");
+    sleep(1500);
+  }
+  // 检测地理位置权限代码，出现就点掉
+  fInfo("开始位置权限弹窗检测");
+  nolocate_thread = threads.start(function () {
+    //在新线程执行的代码
+    id("title_text").textContains("地理位置").waitFor();
+    fInfo("检测到位置权限弹窗");
+    sleep(1000);
+    text("暂不开启").findOne().click();
+    fInfo("已关闭定位");
+  });
+  fInfo("跳转学习APP");
+  // launch('cn.xuexi.android');
+  app.launchApp("学习强国");
+  sleep(2000);
+  // console.hide();
+  // 命令行方式启动，似乎需要root
+  // var result_shell = shell("pm disable cn.xuexi.android");
+  // log(result_shell.code, result_shell.error);
+  /***************不要动****************
  * **********************************
 // 创建一个安卓动作，打开软件，此功能可以跳过开屏页，还在实验中
 // app.startActivity({
@@ -350,6 +279,7 @@ sleep(2000);
 // });
  * **********************************
 *************************************/
+}
 
 /**
  * 执行评论操作
@@ -2204,8 +2134,12 @@ function get_ans_by_re(que_txt: string) {
   }
   // log(res);
   // 生成正则表达式
-  let reg2_str = "/" + res[1] + "([^，。？、；：” ]*)" + res[2] + "/";
-  let reg2 = eval(reg2_str);
+  // let reg2_str = "/" + res[1] + "([^，。？、；：” ]*)" + res[2] + "/";
+  // let reg2 = eval(reg2_str);
+  // 提取正则表达式字符串
+  const pattern = res[1] + "([^，。？、；：” ]*)" + res[2];
+  // 创建正则表达式对象
+  const reg2 = new RegExp(pattern);
   // log(reg2);
   // 获取试题信息、匹配答案
   // let tishi_txt = className("android.view.View").depth(23).findOnce(6).text();
@@ -2624,8 +2558,8 @@ function str_similar(str1: string, str2: string) {
   let muzi = str1.length > str2.length ? str2 : str1;
   let instr = str1.length > str2.length ? str1 : str2;
 
-  let reg = "/[" + muzi + "]{1}/g";
-  let resu = instr.match(eval(reg));
+  let reg = `[${muzi}]{1}`;
+  let resu = instr.match(new RegExp(reg, "g"));
   if (resu) {
     return (resu.length / instr.length);
   } else {
@@ -2996,6 +2930,9 @@ function fInfo(str: string) {
       w.container,
     );
     textView.setText(str.toString());
+    if (w.container.getChildCount() > 8) {
+      w.container.removeViewAt(0);
+    }
     w.container.addView(textView);
   });
   console.info(str);
@@ -3015,6 +2952,9 @@ function fError(str: string) {
       w.container,
     );
     textView.setText(str.toString());
+    if (w.container.getChildCount() > 8) {
+      w.container.removeViewAt(0);
+    }
     w.container.addView(textView);
   });
   console.error(str);
@@ -3034,6 +2974,9 @@ function fTips(str: string) {
       w.container,
     );
     textView.setText(str.toString());
+    if (w.container.getChildCount() > 8) {
+      w.container.removeViewAt(0);
+    }
     w.container.addView(textView);
   });
   console.info(str);
@@ -3393,61 +3336,61 @@ function main(userinfo?: string[]) {
 }
 
 /*******************主程序部分*******************/
+export function start() {
+  // 分割账号
+  let noverify_thread = noverify();
+  // let zhanghao_list = [];
+  // if (zhanghao) {
+  //   for (let zh of zhanghao.split("\n")) {
+  //     let userinfo = zh.split(/:|：/);
+  //     zhanghao_list.push(userinfo);
+  //   }
+  //   // if (zhanghao_list.length > 3) {zhanghao_list.length = 3;}
+  //   //console.verbose(zhanghao_list);
+  //   for (let userinfo of zhanghao_list) {
+  //     console.verbose(userinfo);
+  //     main(userinfo);
+  //   }
+  //   fClear();
+  //   fInfo("登录回账号1");
+  //   console.verbose(zhanghao_list[0][0], zhanghao_list[0][1]);
+  //   login(zhanghao_list[0][0], zhanghao_list[0][1]);
+  // } else {
+  //   main();
+  // }
+  main();
+  if (noverify_thread.isAlive()) {
+    noverify_thread.interrupt();
+  }
 
-// 分割账号
-let noverify_thread = noverify();
-// let zhanghao_list = [];
-// if (zhanghao) {
-//   for (let zh of zhanghao.split("\n")) {
-//     let userinfo = zh.split(/:|：/);
-//     zhanghao_list.push(userinfo);
-//   }
-//   // if (zhanghao_list.length > 3) {zhanghao_list.length = 3;}
-//   //console.verbose(zhanghao_list);
-//   for (let userinfo of zhanghao_list) {
-//     console.verbose(userinfo);
-//     main(userinfo);
-//   }
-//   fClear();
-//   fInfo("登录回账号1");
-//   console.verbose(zhanghao_list[0][0], zhanghao_list[0][1]);
-//   login(zhanghao_list[0][0], zhanghao_list[0][1]);
-// } else {
-//   main();
-// }
-main();
-if (noverify_thread.isAlive()) {
-  noverify_thread.interrupt();
+  /*****************结束后配置*****************/
+  //console.show();
+  // console.clear();
+  fInfo("已全部结束");
+  // 调回原始音量
+  if (yl_on) {
+    fInfo("调回初始音量:" + yuan_yl);
+    device.setMusicVolume(yuan_yl);
+  }
+  // 取消屏幕常亮
+  fInfo("取消屏幕常亮");
+  device.cancelKeepingAwake();
+  // exit_app("学习强国");
+  // if (email) {
+  //   send_email(email);
+  // }
+  // 震动提示
+  device.vibrate(500);
+  fInfo("一秒后关闭悬浮窗");
+  device.cancelVibration();
+  sleep(1000);
+  console.hide();
+  home();
+  exit_app("学习强国");
+
+  if (app_exit) {
+    fInfo("本软件");
+    exit_app(appName);
+  }
+  exit();
 }
-
-/*****************结束后配置*****************/
-//console.show();
-// console.clear();
-fInfo("已全部结束");
-// 调回原始音量
-if (yl_on) {
-  fInfo("调回初始音量:" + yuan_yl);
-  device.setMusicVolume(yuan_yl);
-}
-// 取消屏幕常亮
-fInfo("取消屏幕常亮");
-device.cancelKeepingAwake();
-// exit_app("学习强国");
-// if (email) {
-//   send_email(email);
-// }
-// 震动提示
-device.vibrate(500);
-fInfo("一秒后关闭悬浮窗");
-device.cancelVibration();
-sleep(1000);
-console.hide();
-home();
-exit_app("学习强国");
-
-if (app_exit) {
-  fInfo("本软件");
-  exit_app(appName);
-}
-
-exit();
